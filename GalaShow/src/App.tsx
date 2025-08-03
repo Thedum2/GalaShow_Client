@@ -1,25 +1,35 @@
 import './App.css'
-import {Unity, useUnityContext} from "react-unity-webgl";
-import {Fragment} from "react";
+import {Unity, useUnityContext} from 'react-unity-webgl'
+import {Fragment} from 'react'
 
 function App() {
-
     const {unityProvider, loadingProgression, isLoaded} = useUnityContext({
-        loaderUrl: "../build/unity/Downloads.loader.js",
-        dataUrl: "../build/unity/Downloads.data",
-        frameworkUrl: "../build/unity/Downloads.framework.js",
-        codeUrl: "../build/unity/Downloads.wasm",
-    });
+        loaderUrl: 'build/unity/Downloads.loader.js',
+        dataUrl: 'build/unity/Downloads.data',
+        frameworkUrl: 'build/unity/Downloads.framework.js',
+        codeUrl: 'build/unity/Downloads.wasm',
+    })
 
     return (
         <Fragment>
+            <header className="w-full py-4 bg-black text-white text-center text-2xl font-bold z-10">
+                Galashow Unity Stage
+            </header>
+
             {!isLoaded && (
-                <p>Loading Application... {Math.round(loadingProgression * 100)}%</p>
+                <div className="absolute inset-0 flex items-center justify-center bg-black text-white z-20">
+                    <p className="text-lg">
+                        Loading... {Math.round(loadingProgression * 100)}%
+                    </p>
+                </div>
             )}
-            <Unity
-                unityProvider={unityProvider}
-                style={{visibility: isLoaded ? "visible" : "hidden"}}
-            />
+
+            <main className="w-full h-[calc(100vh-4rem)]">
+                <Unity
+                    unityProvider={unityProvider}
+                    className={`w-full h-full ${isLoaded ? 'block' : 'invisible'}`}
+                />
+            </main>
         </Fragment>
     )
 }

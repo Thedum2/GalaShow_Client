@@ -1,0 +1,69 @@
+﻿name: Deploy Galashow Client
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: "Deploy Stage"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-northeast-2
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: |
+          if [ "${{ inputs.stage }}" = "prod" ]; then
+            npm run build -- --mode production
+          else
+            npm run build -- --mode development
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          if [ "${{ inputs.stage }}" = "prod" ]; then
+            aws s3 sync build s3://${{ secrets.S3_BUCKET_PROD }} --delete
+          else
+            aws s3 sync build s3://${{ secrets.S3_BUCKET_DEV }} --delete
+          fi
+
+      - name: Invalidate CloudFront cache
+        run: |
+          if [ "${{ inputs.stage }}" = "prod" ]; then
+            aws cloudfront create-invalidation \
+              --distribution-id ${{ secrets.DISTRIBUTION_ID_PROD }} \
+              --paths "/*"
+          else
+            aws cloudfront create-invalidation \
+              --distribution-id ${{ secrets.DISTRIBUTION_ID_DEV }} \
+              --paths "/*"
+          fi
