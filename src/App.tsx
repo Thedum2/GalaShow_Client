@@ -4,10 +4,10 @@ import {Fragment} from 'react'
 
 function App() {
     const {unityProvider, loadingProgression, isLoaded} = useUnityContext({
-        loaderUrl: 'build/unity/Downloads.loader.js',
-        dataUrl: 'build/unity/Downloads.data',
-        frameworkUrl: 'build/unity/Downloads.framework.js',
-        codeUrl: 'build/unity/Downloads.wasm',
+        loaderUrl: '../build/unity/WebGL.loader.js',
+        dataUrl: '../build/unity/WebGL.data',
+        frameworkUrl: '../build/unity/WebGL.framework.js',
+        codeUrl: '../build/unity/WebGL.wasm',
     })
 
     return (

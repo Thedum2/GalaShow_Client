@@ -1,46 +1,70 @@
-﻿name: Deploy Galashow Client
+﻿name: Build & Deploy Galashow
 
 on:
   workflow_dispatch:
     inputs:
       stage:
-        description: "Deploy Stage"
+        description: "Deploy Stage (dev 또는 prod)"
         required: true
         default: "dev"
         type: choice
         options:
           - dev
           - prod
+      client_branch:
+        description: "Galashow_Client 브랜치"
+        required: true
+        default: "develop"
+        type: string
 
 jobs:
-  deploy:
+  build_and_deploy:
     runs-on: ubuntu-latest
-
     env:
-      AWS_REGION: ap-northeast-2
+      AWS_REGION: ${{ secrets.AWS_REGION }}
 
     steps:
-      - name: Checkout source
+      # 1) 소스 + 서브모듈(LFS 포함) 체크아웃
+      - name: Checkout code + submodules
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ inputs.client_branch }}
+          fetch-depth: 0
+          submodules: recursive
+          lfs: true
 
-      - name: Setup Node
+      # 2) (옵션) 워크스페이스 구조 확인
+      - name: Debug workspace
+        run: |
+          echo "Working dir: $(pwd)"
+          ls -R .
+
+      # 3) Node.js 설치
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
+      # 4) 의존성 설치 (루트에서)
       - name: Install dependencies
         run: npm install
 
+      # 5) 빌드 (루트에서)
       - name: Build project
         run: |
           if [ "${{ inputs.stage }}" = "prod" ]; then
-            npm run build -- --mode production
+            npm run build:prod
           else
-            npm run build -- --mode development
+            npm run build:dev
           fi
 
+      # 6) (옵션) 빌드 결과 확인
+      - name: Debug build output
+        run: |
+          echo ">>> build 디렉토리 구조"
+          ls -R build
+
+      # 7) AWS 자격증명 구성
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -48,22 +72,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # 8) S3에 업로드
       - name: Deploy to S3
         run: |
+          cd build/react
           if [ "${{ inputs.stage }}" = "prod" ]; then
-            aws s3 sync build s3://${{ secrets.S3_BUCKET_PROD }} --delete
+            aws s3 sync . s3://${{ secrets.S3_BUCKET_PROD }} --delete
           else
-            aws s3 sync build s3://${{ secrets.S3_BUCKET_DEV }} --delete
+            aws s3 sync . s3://${{ secrets.S3_BUCKET_DEV }} --delete
           fi
 
+      # 9) CloudFront 캐시 무효화
       - name: Invalidate CloudFront cache
         run: |
-          if [ "${{ inputs.stage }}" = "prod" ]; then
-            aws cloudfront create-invalidation \
-              --distribution-id ${{ secrets.DISTRIBUTION_ID_PROD }} \
-              --paths "/*"
-          else
-            aws cloudfront create-invalidation \
-              --distribution-id ${{ secrets.DISTRIBUTION_ID_DEV }} \
-              --paths "/*"
-          fi
+          DIST_ID=$(
+            if [ "${{ inputs.stage }}" = "prod" ]; then
+              echo ${{ secrets.DISTRIBUTION_ID_PROD }}
+            else
+              echo ${{ secrets.DISTRIBUTION_ID_DEV }}
+            fi
+          )
+          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"

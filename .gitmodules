@@ -1,0 +1,3 @@
+[submodule "build/unity"]
+	path = build/unity
+	url = https://github.com/Thedum2/GalaShow_UnityBuild.git
