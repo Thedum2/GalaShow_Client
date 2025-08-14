@@ -1,5 +1,5 @@
 ﻿import React, {useMemo, useState} from "react";
-import type {MessageLog, UnityMessage, UnityRoute} from "../bridge/unity";
+import type {MessageLog, UnityMessage, UnityRoute} from "@/bridge/unity";
 import {
     AlertCircle,
     ArrowLeft,
@@ -10,13 +10,11 @@ import {
     Filter,
     MessageCircle,
     MessageSquare,
-    Play,
     Search,
     Send,
     Settings,
     Trash2,
-    XCircle,
-    Zap
+    XCircle
 } from "lucide-react";
 
 interface Props {
@@ -35,26 +33,14 @@ const MessageInterfaceSample: React.FC<Props> = ({
                                                      className = "",
                                                  }) => {
 
-    const [selectedRoute, setSelectedRoute] = useState<UnityRoute>("SampleModule_HelloWorld");
-    const [inputMessage, setInputMessage] = useState("");
+    const [customRoute, setCustomRoute] = useState("");
     const [customData, setCustomData] = useState("");
-    const [isAdvancedMode, setIsAdvancedMode] = useState(false);
     const [isSending, setIsSending] = useState(false);
-
-    const routes: { value: UnityRoute; label: string; description: string }[] = [
-        {value: "SampleModule_HelloWorld", label: "Hello World", description: "기본 통신 테스트"},
-        {value: "GameManager_PlayerAction", label: "Player Action", description: "플레이어 액션 처리"},
-        {value: "UIManager_UpdateInterface", label: "UI Update", description: "UI 인터페이스 업데이트"},
-        {value: "SceneManager_LoadScene", label: "Scene Load", description: "씬 로드 관리"},
-    ];
-
-    // 로그 패널 상태
     const [filter, setFilter] = useState<"all" | "R2U" | "U2R">("all");
     const [typeFilter, setTypeFilter] = useState<"all" | "REQ" | "ACK" | "NTY">("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
 
-    // 로그 필터링/통계
     const filteredMessages = useMemo(() => {
         return messages
             .filter((m) => {
@@ -97,36 +83,13 @@ const MessageInterfaceSample: React.FC<Props> = ({
         direction === "R2U" ? <ArrowRight size={16} className="text-blue-500"/> :
             <ArrowLeft size={16} className="text-green-500"/>;
 
-    // 요청/알림 전송
-    const createSampleData = () => ({
-        name: "giene",
-        age: 20,
-        message: inputMessage || "Hello from MessagingPanel!",
-        timestamp: new Date().toISOString(),
-        route: selectedRoute,
-        browserInfo: {
-            userAgent: navigator.userAgent,
-            language: navigator.language,
-            platform: navigator.platform,
-            screenSize: {width: screen.width, height: screen.height},
-        },
-    });
-
-    const createNotificationData = () => ({
-        type: "user_interaction",
-        action: "manual_notification",
-        target: selectedRoute,
-        message: inputMessage || "Manual notification from MessagingPanel",
-        timestamp: new Date().toISOString(),
-        windowInfo: {width: window.innerWidth, height: window.innerHeight, scrollY: window.scrollY},
-    });
 
     const handleSendRequest = async () => {
         if (isSending) return;
         setIsSending(true);
         try {
-            const data = isAdvancedMode && customData.trim() ? JSON.parse(customData) : createSampleData();
-            await onSendRequest(selectedRoute, data);
+            const data = customData.trim() ? JSON.parse(customData) : ""
+            await onSendRequest(customRoute as UnityRoute, data);
         } catch (e) {
             alert(`REQ 전송 실패: ${e}`);
         } finally {
@@ -136,21 +99,13 @@ const MessageInterfaceSample: React.FC<Props> = ({
 
     const handleSendNotification = () => {
         try {
-            const data = isAdvancedMode && customData.trim() ? JSON.parse(customData) : createNotificationData();
-            onSendNotification("React_UserAction_Notify", data);
+            const data = customData.trim() ? JSON.parse(customData) : ""
+            onSendNotification(customRoute as UnityRoute, data);
         } catch {
             alert("잘못된 JSON 형식입니다.");
         }
     };
 
-    const handleQuickAction = (action: string) => {
-        onSendNotification("React_UserAction_Notify", {
-            type: "quick_action",
-            action,
-            timestamp: new Date().toISOString(),
-            source: "messaging_panel",
-        });
-    };
 
     const handleDownloadLogs = () => {
         const dataStr = JSON.stringify(filteredMessages, null, 2);
@@ -165,22 +120,13 @@ const MessageInterfaceSample: React.FC<Props> = ({
 
     return (
         <div className={`bg-white rounded-lg shadow ${className}`}>
-            {/* 헤더 */}
             <div className="p-4 border-b bg-gray-50 rounded-t-lg flex items-center justify-between">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Settings size={20}/>
-                    메시징 패널 (컨트롤 + 로그)
+                    INTERFACE SAMPLE
                 </h3>
 
                 <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setIsAdvancedMode((v) => !v)}
-                        className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                            isAdvancedMode ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                    >
-                        {isAdvancedMode ? "기본 모드" : "고급 모드"}
-                    </button>
                     <button
                         onClick={handleDownloadLogs}
                         disabled={filteredMessages.length === 0}
@@ -200,51 +146,32 @@ const MessageInterfaceSample: React.FC<Props> = ({
                 </div>
             </div>
 
-            {/* 본문: 좌 컨트롤 / 우 로그 */}
+
             <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* 왼쪽: 컨트롤 */}
                 <div className="space-y-4">
-                    {/* Route 선택 */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Unity Route 선택</label>
-                        <select
-                            value={selectedRoute}
-                            onChange={(e) => setSelectedRoute(e.target.value as UnityRoute)}
-                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            {routes.map((r) => (
-                                <option key={r.value} value={r.value}>
-                                    {r.label} - {r.description}
-                                </option>
-                            ))}
-                        </select>
+
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Unity Route 입력</label>
+                        <input
+                            value={customRoute}
+                            type="text"
+                            placeholder='SampleScene_HelloWorld'
+                            onChange={(e) => setCustomRoute(e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                        />
                     </div>
 
-                    {/* 메시지 입력 */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            {isAdvancedMode ? "JSON 데이터" : "메시지 내용"}
-                        </label>
-                        {isAdvancedMode ? (
-                            <textarea
-                                value={customData}
-                                onChange={(e) => setCustomData(e.target.value)}
-                                placeholder='{"key":"value","message":"custom data"}'
-                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                                rows={6}
-                            />
-                        ) : (
-                            <input
-                                type="text"
-                                value={inputMessage}
-                                onChange={(e) => setInputMessage(e.target.value)}
-                                placeholder="Unity로 전송할 메시지를 입력하세요..."
-                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        )}
+                        <label className="block text-sm font-medium text-gray-700 mb-2">JSON 데이터</label>
+                        <textarea
+                            value={customData}
+                            onChange={(e) => setCustomData(e.target.value)}
+                            placeholder='{"key":"value","message":"custom data"}'
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                            rows={6}
+                        />
                     </div>
 
-                    {/* 액션 버튼 */}
                     <div className="flex gap-3">
                         <button
                             onClick={handleSendRequest}
@@ -262,43 +189,9 @@ const MessageInterfaceSample: React.FC<Props> = ({
                             NTY 전송
                         </button>
                     </div>
-
-                    {/* 빠른 액션 */}
-                    <div className="border-t pt-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">빠른 액션</label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                            <button onClick={() => handleQuickAction("start_game")}
-                                    className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm">
-                                <Play size={14}/>
-                                게임 시작
-                            </button>
-                            <button onClick={() => handleQuickAction("pause_game")}
-                                    className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm">
-                                ⏸️ 일시정지
-                            </button>
-                            <button onClick={() => handleQuickAction("reset_game")}
-                                    className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm">
-                                🔄 리셋
-                            </button>
-                            <button onClick={() => handleQuickAction("power_up")}
-                                    className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm">
-                                <Zap size={14}/>
-                                파워업
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* 도움말 */}
-                    <div className="text-xs text-gray-500 space-y-1">
-                        <div><strong>REQ:</strong> Unity에서 응답(ACK)을 기다리는 요청</div>
-                        <div><strong>NTY:</strong> 단방향 알림(응답 없음)</div>
-                        <div><strong>빠른 액션:</strong> 미리 정의된 게임 액션 전송</div>
-                    </div>
                 </div>
 
-                {/* 오른쪽: 로그 */}
                 <div>
-                    {/* 통계 */}
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-4">
                         <div className="text-center">
                             <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
@@ -326,7 +219,6 @@ const MessageInterfaceSample: React.FC<Props> = ({
                         </div>
                     </div>
 
-                    {/* 필터/검색 */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-3">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16}/>
@@ -363,7 +255,6 @@ const MessageInterfaceSample: React.FC<Props> = ({
                         </div>
                     </div>
 
-                    {/* 목록 */}
                     <div className="max-h-96 overflow-y-auto border rounded">
                         {filteredMessages.length === 0 ? (
                             <div className="p-8 text-center text-gray-500">

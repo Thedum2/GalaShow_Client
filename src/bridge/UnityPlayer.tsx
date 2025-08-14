@@ -28,7 +28,6 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                 </h2>
             </div>
 
-            {/* 부모 컨테이너에 반드시 크기 지정 */}
             <div className="relative bg-gray-900 rounded-lg overflow-hidden shadow-lg" style={size}>
                 <Unity
                     unityProvider={unityProvider}
@@ -36,7 +35,6 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                     className="unity-canvas"
                 />
 
-                {/* 로딩 오버레이는 토글만 */}
                 {!isLoaded && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-white">
                         <div className="text-center">
@@ -54,7 +52,7 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                     </div>
                 )}
 
-                {/* 정보 오버레이 */}
+
                 <div className="absolute bottom-2 left-2 text-xs text-white bg-black bg-opacity-50 px-2 py-1 rounded">
                     Unity WebGL | {size.width} × {size.height}
                 </div>
@@ -64,22 +62,18 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
             </div>
 
             <div className="mt-3 space-y-1">
-                <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">상태:</span>
+                <div className="flex items-centet text-sm">
+                    <span className="text-gray-600">상태:  </span>
                     <span className={`font-medium ${isLoaded ? "text-green-600" : "text-yellow-600"}`}>
             {isLoaded ? "Loaded" : `Loading ${Math.round(loadingProgression * 100)}%`}
           </span>
                 </div>
 
-                <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">해상도:</span>
+                <div className="flex items-center text-sm">
+                    <span className="text-gray-600">해상도:  </span>
                     <span className="text-gray-800 font-mono">
             {size.width} × {size.height}
           </span>
-                </div>
-
-                <div className="text-xs text-gray-500 border-t pt-2 space-y-1">
-                    <div>• Unity WebGL Build가 로드됩니다</div>
                 </div>
             </div>
         </div>

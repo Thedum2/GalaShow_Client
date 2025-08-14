@@ -76,7 +76,6 @@ export const useUnity = () => {
         };
     }, [addEventListener, removeEventListener, unityProvider, sendMessage, unityService]);
 
-    // R2U: 요청/알림 헬퍼
     const sendRequest = useCallback(
         async (route: UnityRoute, data: any) => {
             if (!isLoaded) throw new Error('Unity가 아직 로드되지 않았습니다.');
@@ -132,9 +131,9 @@ export const useUnity = () => {
     }, [messages.length]);
 
     return {
-        unityProvider,           // <Unity unityProvider={...}/>
-        isLoaded,                // useUnityContext에서 자동 관리
-        loadingProgression,      // useUnityContext에서 자동 관리
+        unityProvider,
+        isLoaded,
+        loadingProgression,
         sendRequest,
         sendNotification,
         messages,

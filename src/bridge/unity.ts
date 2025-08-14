@@ -25,19 +25,6 @@ export interface UnityContextConfig {
     codeUrl: string;
 }
 
-export interface PerformanceInfo {
-    fps: number;
-    memoryUsage: number;
-    qualityLevel: number;
-    targetFrameRate: number;
-}
-
 export type UnityRoute =
-    | 'SampleModule_HelloWorld'
-    | 'GameManager_PlayerAction'
-    | 'UIManager_UpdateInterface'
-    | 'SceneManager_LoadScene'
-    | 'Unity_GameState_Update'
-    | 'Unity_System_Ready'
-    | 'React_UserAction_Notify';
+    | 'SampleScene_HelloWorld'
 

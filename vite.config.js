@@ -14,7 +14,6 @@ export default defineConfig({
       targets: [
         {
           src: 'build/unity/',
-          //unity/는 자동으로 생성 ,(최종 경로 build/unity)
           dest: 'build',
         },
       ],
