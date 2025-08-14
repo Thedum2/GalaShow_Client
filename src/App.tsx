@@ -1,37 +1,34 @@
-import './App.css'
-import {Unity, useUnityContext} from 'react-unity-webgl'
-import {Fragment} from 'react'
+import {useUnity} from "./bridge/useUnity";
+import UnityPlayer from "./bridge/UnityPlayer";
+import MessageInterfaceSample from "./components/MessageInterfaceSample";
 
-function App() {
-    const {unityProvider, loadingProgression, isLoaded} = useUnityContext({
-        loaderUrl: '../build/unity/WebGL.loader.js',
-        dataUrl: '../build/unity/WebGL.data',
-        frameworkUrl: '../build/unity/WebGL.framework.js',
-        codeUrl: '../build/unity/WebGL.wasm',
-    })
+export default function App() {
+    const {
+        unityProvider,
+        isLoaded,
+        loadingProgression,
+        sendRequest,
+        sendNotification,
+        messages,
+        clearMessages,
+    } = useUnity();
 
     return (
-        <Fragment>
-            <header className="w-full py-4 bg-black text-white text-center text-2xl font-bold z-10">
-                Galashow Unity Stage
-            </header>
-
-            {!isLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black text-white z-20">
-                    <p className="text-lg">
-                        Loading... {Math.round(loadingProgression * 100)}%
-                    </p>
-                </div>
-            )}
-
-            <main className="w-full h-[calc(100vh-4rem)]">
-                <Unity
+        <div className="min-h-screen bg-gray-100 p-4 space-y-4">
+            <div className="bg-white rounded-lg shadow p-4">
+                <UnityPlayer
                     unityProvider={unityProvider}
-                    className={`w-full h-full ${isLoaded ? 'block' : 'invisible'}`}
+                    isLoaded={isLoaded}
+                    loadingProgression={loadingProgression}
                 />
-            </main>
-        </Fragment>
-    )
-}
+            </div>
 
-export default App
+            <MessageInterfaceSample
+                onSendRequest={sendRequest}
+                onSendNotification={sendNotification}
+                messages={messages}
+                onClearMessages={clearMessages}
+            />
+        </div>
+    );
+}
