@@ -1,5 +1,5 @@
-﻿import React, {useMemo, useState} from "react";
-import type {MessageLog, UnityMessage, UnityRoute} from "@/bridge/unity";
+﻿import React, { useMemo, useState } from "react";
+import type { MessageLog, UnityMessage, UnityRoute } from "@/bridge/unity";
 import {
     AlertCircle,
     ArrowLeft,
@@ -26,12 +26,12 @@ interface Props {
 }
 
 const MessageInterfaceSample: React.FC<Props> = ({
-                                                     onSendRequest,
-                                                     onSendNotification,
-                                                     messages,
-                                                     onClearMessages,
-                                                     className = "",
-                                                 }) => {
+    onSendRequest,
+    onSendNotification,
+    messages,
+    onClearMessages,
+    className = "",
+}) => {
 
     const [customRoute, setCustomRoute] = useState("");
     const [customData, setCustomData] = useState("");
@@ -40,6 +40,10 @@ const MessageInterfaceSample: React.FC<Props> = ({
     const [typeFilter, setTypeFilter] = useState<"all" | "REQ" | "ACK" | "NTY">("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
+
+    const routeOptions = [
+        "SampleScene_HelloWorld",
+    ];
 
     const filteredMessages = useMemo(() => {
         return messages
@@ -63,32 +67,32 @@ const MessageInterfaceSample: React.FC<Props> = ({
         const success = messages.filter((m) => m.status === "success").length;
         const error = messages.filter((m) => m.status === "error").length;
         const pending = messages.filter((m) => m.status === "pending").length;
-        return {total, r2u, u2r, success, error, pending};
+        return { total, r2u, u2r, success, error, pending };
     }, [messages]);
 
     const getStatusIcon = (status?: string) => {
         switch (status) {
             case "success":
-                return <CheckCircle size={16} className="text-green-500"/>;
+                return <CheckCircle size={16} className="text-green-500" />;
             case "error":
-                return <XCircle size={16} className="text-red-500"/>;
+                return <XCircle size={16} className="text-red-500" />;
             case "pending":
-                return <AlertCircle size={16} className="text-yellow-500"/>;
+                return <AlertCircle size={16} className="text-yellow-500" />;
             default:
-                return <Clock size={16} className="text-gray-400"/>;
+                return <Clock size={16} className="text-gray-400" />;
         }
     };
 
     const getDirectionIcon = (direction: string) =>
-        direction === "R2U" ? <ArrowRight size={16} className="text-blue-500"/> :
-            <ArrowLeft size={16} className="text-green-500"/>;
+        direction === "R2U" ? <ArrowRight size={16} className="text-blue-500" /> :
+            <ArrowLeft size={16} className="text-green-500" />;
 
 
     const handleSendRequest = async () => {
         if (isSending) return;
         setIsSending(true);
         try {
-            const data = customData.trim() ? JSON.parse(customData) : ""
+            const data = JSON.parse(customData.trim());
             await onSendRequest(customRoute as UnityRoute, data);
         } catch (e) {
             alert(`REQ 전송 실패: ${e}`);
@@ -99,17 +103,17 @@ const MessageInterfaceSample: React.FC<Props> = ({
 
     const handleSendNotification = () => {
         try {
-            const data = customData.trim() ? JSON.parse(customData) : ""
+            const data = JSON.parse(customData.trim());
             onSendNotification(customRoute as UnityRoute, data);
-        } catch {
-            alert("잘못된 JSON 형식입니다.");
+        } catch (e) {
+            alert(`NTY 전송 실패: ${e}`);
         }
     };
 
 
     const handleDownloadLogs = () => {
         const dataStr = JSON.stringify(filteredMessages, null, 2);
-        const blob = new Blob([dataStr], {type: "application/json"});
+        const blob = new Blob([dataStr], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -122,7 +126,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
         <div className={`bg-white rounded-lg shadow ${className}`}>
             <div className="p-4 border-b bg-gray-50 rounded-t-lg flex items-center justify-between">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Settings size={20}/>
+                    <Settings size={20} />
                     INTERFACE SAMPLE
                 </h3>
 
@@ -132,7 +136,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
                         disabled={filteredMessages.length === 0}
                         className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-1"
                     >
-                        <Download size={14}/>
+                        <Download size={14} />
                         Export
                     </button>
                     <button
@@ -140,7 +144,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
                         disabled={messages.length === 0}
                         className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-1"
                     >
-                        <Trash2 size={14}/>
+                        <Trash2 size={14} />
                         Clear
                     </button>
                 </div>
@@ -150,15 +154,19 @@ const MessageInterfaceSample: React.FC<Props> = ({
             <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-4">
                     <div>
-
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Unity Route 입력</label>
-                        <input
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Unity Route 선택</label>
+                        <select
                             value={customRoute}
-                            type="text"
-                            placeholder='SampleScene_HelloWorld'
                             onChange={(e) => setCustomRoute(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                        />
+                        >
+                            <option value="">-- Route를 선택하세요 --</option>
+                            {routeOptions.map((route) => (
+                                <option key={route} value={route}>
+                                    {route}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div>
@@ -178,14 +186,14 @@ const MessageInterfaceSample: React.FC<Props> = ({
                             disabled={isSending}
                             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                         >
-                            <Send size={16}/>
+                            <Send size={16} />
                             {isSending ? "전송 중..." : "REQ 전송"}
                         </button>
                         <button
                             onClick={handleSendNotification}
                             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                         >
-                            <MessageCircle size={16}/>
+                            <MessageCircle size={16} />
                             NTY 전송
                         </button>
                     </div>
@@ -221,7 +229,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-3">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16}/>
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search messages..."
@@ -250,7 +258,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
                             <option value="NTY">Notification</option>
                         </select>
                         <div className="text-sm text-gray-600 flex items-center">
-                            <Filter size={16} className="mr-1"/>
+                            <Filter size={16} className="mr-1" />
                             Showing {filteredMessages.length} of {messages.length}
                         </div>
                     </div>
@@ -258,7 +266,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
                     <div className="max-h-96 overflow-y-auto border rounded">
                         {filteredMessages.length === 0 ? (
                             <div className="p-8 text-center text-gray-500">
-                                <MessageSquare size={48} className="mx-auto mb-4 opacity-50"/>
+                                <MessageSquare size={48} className="mx-auto mb-4 opacity-50" />
                                 <p>No messages found</p>
                                 <p className="text-sm mt-2">
                                     {messages.length === 0 ? "Unity와 통신을 시작하세요." : "필터를 조정해 보세요."}
@@ -269,29 +277,27 @@ const MessageInterfaceSample: React.FC<Props> = ({
                                 {filteredMessages.map((m) => (
                                     <div key={m.id} className="p-4 hover:bg-gray-50">
                                         <div className="cursor-pointer"
-                                             onClick={() => setExpandedMessage(expandedMessage === m.id ? null : m.id)}>
+                                            onClick={() => setExpandedMessage(expandedMessage === m.id ? null : m.id)}>
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center space-x-3">
                                                     {getDirectionIcon(m.direction)}
                                                     <span
-                                                        className={`px-2 py-1 text-xs rounded font-mono ${
-                                                            m.direction === "R2U" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"
-                                                        }`}
+                                                        className={`px-2 py-1 text-xs rounded font-mono ${m.direction === "R2U" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"
+                                                            }`}
                                                     >
-                            {m.direction}
-                          </span>
+                                                        {m.direction}
+                                                    </span>
                                                     <span
-                                                        className={`px-2 py-1 text-xs rounded font-mono ${
-                                                            m.type === "REQ"
-                                                                ? "bg-orange-100 text-orange-700"
-                                                                : m.type === "ACK"
-                                                                    ? "bg-purple-100 text-purple-700"
-                                                                    : "bg-gray-100 text-gray-700"
-                                                        }`}
+                                                        className={`px-2 py-1 text-xs rounded font-mono ${m.type === "REQ"
+                                                            ? "bg-orange-100 text-orange-700"
+                                                            : m.type === "ACK"
+                                                                ? "bg-purple-100 text-purple-700"
+                                                                : "bg-gray-100 text-gray-700"
+                                                            }`}
                                                     >
-                            {m.type}
-                          </span>
-                                                    <span className="font-mono text-sm">{m.route}</span>
+                                                        {m.type}
+                                                    </span>
+                                                    <span className="font-mono text-sm text-gray-900">{m.route}</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     {getStatusIcon(m.status)}
@@ -304,9 +310,9 @@ const MessageInterfaceSample: React.FC<Props> = ({
                                         {expandedMessage === m.id && (
                                             <div className="mt-3 p-3 bg-gray-100 rounded border">
                                                 <h4 className="font-medium text-gray-900 mb-2">Message Data:</h4>
-                                                <pre className="text-xs bg-white p-2 rounded border overflow-x-auto">
-                          {JSON.stringify(m.data, null, 2)}
-                        </pre>
+                                                <pre className="text-xs bg-black p-2 rounded border overflow-x-auto">
+                                                    {JSON.stringify(m.data, null, 2)}
+                                                </pre>
                                                 <div className="mt-2 text-xs text-gray-600">
                                                     <div>Message ID: {m.id}</div>
                                                     <div>Timestamp: {new Date(m.timestamp).toISOString()}</div>
