@@ -1,8 +1,9 @@
-﻿import {UnityMessage, UnityRoute} from './unity';
+﻿import {MessageSendType, UnityMessage, UnityRoute} from './unityConfig';
 
 export class UnityService {
     private sendMessage?: (gameObject: string, methodName: string, parameter: string) => void;
     private eventListeners: Map<string, (message: UnityMessage) => void> = new Map();
+    private messageCounter = 0;
 
     constructor() {
         this.setupGlobalEventHandler();
@@ -12,30 +13,20 @@ export class UnityService {
         this.sendMessage = sendMessageFn;
     }
 
-    sendRequest(route: UnityRoute, data: any): Promise<UnityMessage> {
+    sendRequest(message: UnityMessage): Promise<UnityMessage> {
         return new Promise((resolve, reject) => {
             if (!this.sendMessage) {
-                reject(new Error('Unity가 연결되지 않았습니다.'));
+                reject(new Error('Unity Not Loaded'));
                 return;
             }
 
-            const messageId = this.generateMessageId();
-            const message: UnityMessage = {
-                ok: true,
-                type: 'REQ',
-                route,
-                id: messageId,
-                data,
-                timestamp: Date.now()
-            };
-
             const responseHandler = (response: UnityMessage) => {
-                if (response.type === 'ACK' && response.ref === messageId) {
+                if (response.type === 'ACK' && response.ref === message.id) {
                     this.removeEventListener('U2R', responseHandler);
                     if (response.ok) {
                         resolve(response);
                     } else {
-                        reject(new Error(`Unity 처리 실패: ${JSON.stringify(response.data)}`));
+                        reject(new Error(`Unity Fail: ${JSON.stringify(response.data)}`));
                     }
                 }
             };
@@ -43,7 +34,7 @@ export class UnityService {
             this.addEventListener('U2R', responseHandler);
 
             try {
-                this.sendMessage('CommunicationManager', 'ReceiveFromReact', JSON.stringify(message));
+                this.sendMessage('ReactBridge', 'ReceiveFromReact', JSON.stringify(message));
             } catch (error) {
                 this.removeEventListener('U2R', responseHandler);
                 reject(error);
@@ -56,35 +47,42 @@ export class UnityService {
         });
     }
 
-    sendNotification(route: UnityRoute, data: any): void {
+    sendNotification(message: UnityMessage): void {
         if (!this.sendMessage) {
-            console.error('Unity가 연결되지 않았습니다.');
+            console.error('Unity Not Loaded');
             return;
         }
 
-        const message: UnityMessage = {
-            ok: true,
-            type: 'NTY',
-            route,
-            id: this.generateMessageId(),
-            data,
-            timestamp: Date.now()
-        };
-
         try {
-            this.sendMessage('CommunicationManager', 'ReceiveFromReact', JSON.stringify(message));
+            this.sendMessage('ReactBridge', 'ReceiveFromReact', JSON.stringify(message));
         } catch (error) {
-            console.error('Unity 알림 전송 실패:', error);
+            console.error('Unity NTY Failed:', error);
         }
     }
 
     addEventListener(eventName: string, handler: (message: UnityMessage) => void): void {
-        const listeners = this.eventListeners.get(eventName) || [];
         this.eventListeners.set(eventName, handler);
     }
 
     removeEventListener(eventName: string, handler: (message: UnityMessage) => void): void {
         this.eventListeners.delete(eventName);
+    }
+
+    createMessage(
+        type: MessageSendType,
+        route: UnityRoute,
+        data: any,
+        ref?: string
+    ): UnityMessage {
+        return {
+            ok: true,
+            type,
+            route,
+            id: this.generateMessageId(),
+            data,
+            timestamp: Date.now(),
+            ...(ref && {ref})
+        };
     }
 
     createSampleData(message: string = 'Hello from React!'): any {
@@ -124,6 +122,9 @@ export class UnityService {
     }
 
     private generateMessageId(): string {
-        return `react_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        this.messageCounter += 1;
+        const uuid = crypto.randomUUID();
+        const now = Date.now();
+        return `r2u_${uuid}_${now}_${this.messageCounter}`;
     }
 }

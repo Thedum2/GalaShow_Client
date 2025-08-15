@@ -1,17 +1,10 @@
 ﻿import {useCallback, useEffect, useState} from 'react';
 import {useUnityContext} from 'react-unity-webgl';
 import {UnityService} from './unityService';
-import {MessageLog, UnityContextConfig, UnityMessage, UnityRoute} from './unity';
-
-const unityConfig: UnityContextConfig = {
-    loaderUrl: './build/unity/WebGL.loader.js',
-    dataUrl: './build/unity/WebGL.data',
-    frameworkUrl: './build/unity/WebGL.framework.js',
-    codeUrl: './build/unity/WebGL.wasm',
-};
+import {unityConfig, UnityMessage, UnityRoute} from './unityConfig';
 
 export const useUnity = () => {
-    const [messages, setMessages] = useState<MessageLog[]>([]);
+    const [messages, setMessages] = useState<UnityMessage[]>([]);
     const [unityService] = useState(() => new UnityService());
 
     const {
@@ -21,12 +14,7 @@ export const useUnity = () => {
         sendMessage,
         addEventListener,
         removeEventListener,
-    } = useUnityContext({
-        loaderUrl: unityConfig.loaderUrl,
-        dataUrl: unityConfig.dataUrl,
-        frameworkUrl: unityConfig.frameworkUrl,
-        codeUrl: unityConfig.codeUrl,
-    } as any);
+    } = useUnityContext(unityConfig);
 
     useEffect(() => {
         const on = (event: string, handler: any) => {
@@ -39,28 +27,6 @@ export const useUnity = () => {
             else if ((unityProvider as any)?.off) (unityProvider as any).off(event, handler);
         };
 
-        const handleU2R = (raw: unknown) => {
-            try {
-                const payload = typeof raw === 'string' ? (JSON.parse(raw) as UnityMessage) : (raw as UnityMessage);
-                const log: MessageLog = {
-                    id: `u2r_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-                    direction: 'U2R',
-                    type: (payload.type as any) || 'NTY',
-                    route: payload.route || 'unknown',
-                    data: payload.data,
-                    timestamp: Date.now(),
-                    status: 'success',
-                } as any;
-                setMessages((prev) => [...prev, log]);
-
-                (unityService as any).eventListeners?.get?.('U2R')?.(payload);
-            } catch (e) {
-                console.error('Unity 메시지 파싱 실패:', e, raw);
-            }
-        };
-
-        on('U2R', handleU2R);
-
         unityService.setSendMessage((go, method, param) => {
             if (typeof sendMessage === 'function') {
                 sendMessage(go, method, param);
@@ -71,6 +37,26 @@ export const useUnity = () => {
             }
         });
 
+        const handleU2R = (raw: unknown) => {
+            try {
+                const payload = typeof raw === 'string' ? (JSON.parse(raw) as UnityMessage) : (raw as UnityMessage);
+                const messageWithStatus: UnityMessage = {
+                    ...payload,
+                    id: payload.id || `u2r_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+                    direction: 'U2R',
+                    status: 'success'
+                };
+
+                setMessages((prev) => [...prev, messageWithStatus]);
+                const handler = (unityService as any).eventListeners?.get?.('U2R');
+                if (handler) handler(payload);
+
+            } catch (e) {
+                console.error('Unity 메시지 파싱 실패:', e, raw);
+            }
+        };
+
+        on('U2R', handleU2R);
         return () => {
             off('U2R', handleU2R);
         };
@@ -78,28 +64,26 @@ export const useUnity = () => {
 
     const sendRequest = useCallback(
         async (route: UnityRoute, data: any) => {
-            if (!isLoaded) throw new Error('Unity가 아직 로드되지 않았습니다.');
-            const id = `r2u_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+            if (!isLoaded) throw new Error('Unity Not Loaded');
+            const message = unityService.createMessage('REQ', route, data);
+            const messageWithStatus: UnityMessage = {
+                ...message,
+                direction: 'R2U',
+                status: 'pending'
+            };
 
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id,
-                    direction: 'R2U',
-                    type: 'REQ',
-                    route,
-                    data,
-                    timestamp: Date.now(),
-                    status: 'pending',
-                } as any,
-            ]);
+            setMessages((prev) => [...prev, messageWithStatus]);
 
             try {
-                const res = await unityService.sendRequest(route, data);
-                setMessages((prev) => prev.map((m) => (m.id === id ? {...m, status: 'success'} as any : m)));
+                const res = await unityService.sendRequest(message);
+                setMessages((prev) => prev.map((m) =>
+                    m.id === message.id ? {...m, status: 'success'} : m
+                ));
                 return res;
             } catch (e) {
-                setMessages((prev) => prev.map((m) => (m.id === id ? {...m, status: 'error'} as any : m)));
+                setMessages((prev) => prev.map((m) =>
+                    m.id === message.id ? {...m, status: 'error'} : m
+                ));
                 throw e;
             }
         },
@@ -108,20 +92,19 @@ export const useUnity = () => {
 
     const sendNotification = useCallback(
         (route: UnityRoute, data: any) => {
-            if (!isLoaded) return console.warn('Unity가 아직 로드되지 않았습니다.');
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: `r2u_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-                    direction: 'R2U',
-                    type: 'NTY',
-                    route,
-                    data,
-                    timestamp: Date.now(),
-                    status: 'success',
-                } as any,
-            ]);
-            unityService.sendNotification(route, data);
+            if (!isLoaded) {
+                console.warn('Unity Not Loaded');
+                return;
+            }
+            const message = unityService.createMessage('NTY', route, data);
+            const messageWithStatus: UnityMessage = {
+                ...message,
+                direction: 'R2U',
+                status: 'success'
+            };
+
+            setMessages((prev) => [...prev, messageWithStatus]);
+            unityService.sendNotification(message);
         },
         [isLoaded, unityService]
     );

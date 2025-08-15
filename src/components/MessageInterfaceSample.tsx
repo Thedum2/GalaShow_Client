@@ -1,5 +1,5 @@
-﻿import React, { useMemo, useState } from "react";
-import type { MessageLog, UnityMessage, UnityRoute } from "@/bridge/unity";
+﻿import React, {useMemo, useState} from "react";
+import {UnityMessage, UnityRoute} from "@/bridge/unityConfig";
 import {
     AlertCircle,
     ArrowLeft,
@@ -20,18 +20,18 @@ import {
 interface Props {
     onSendRequest: (route: UnityRoute, data: any) => Promise<UnityMessage>;
     onSendNotification: (route: UnityRoute, data: any) => void;
-    messages: MessageLog[];
+    messages: UnityMessage[];
     onClearMessages: () => void;
     className?: string;
 }
 
 const MessageInterfaceSample: React.FC<Props> = ({
-    onSendRequest,
-    onSendNotification,
-    messages,
-    onClearMessages,
-    className = "",
-}) => {
+                                                     onSendRequest,
+                                                     onSendNotification,
+                                                     messages,
+                                                     onClearMessages,
+                                                     className = "",
+                                                 }) => {
 
     const [customRoute, setCustomRoute] = useState("");
     const [customData, setCustomData] = useState("");
@@ -42,7 +42,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
     const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
 
     const routeOptions = [
-        "SampleScene_HelloWorld",
+        "SampleManager_HelloWorld",
     ];
 
     const filteredMessages = useMemo(() => {
@@ -83,16 +83,15 @@ const MessageInterfaceSample: React.FC<Props> = ({
         }
     };
 
-    const getDirectionIcon = (direction: string) =>
+    const getDirectionIcon = (direction?: string) =>
         direction === "R2U" ? <ArrowRight size={16} className="text-blue-500" /> :
             <ArrowLeft size={16} className="text-green-500" />;
 
-
     const handleSendRequest = async () => {
-        if (isSending) return;
+        if (isSending || !customRoute) return;
         setIsSending(true);
         try {
-            const data = JSON.parse(customData.trim());
+            const data = customData.trim() ? JSON.parse(customData.trim()) : {};
             await onSendRequest(customRoute as UnityRoute, data);
         } catch (e) {
             alert(`REQ 전송 실패: ${e}`);
@@ -102,14 +101,14 @@ const MessageInterfaceSample: React.FC<Props> = ({
     };
 
     const handleSendNotification = () => {
+        if (!customRoute) return;
         try {
-            const data = JSON.parse(customData.trim());
+            const data = customData.trim() ? JSON.parse(customData.trim()) : {};
             onSendNotification(customRoute as UnityRoute, data);
         } catch (e) {
             alert(`NTY 전송 실패: ${e}`);
         }
     };
-
 
     const handleDownloadLogs = () => {
         const dataStr = JSON.stringify(filteredMessages, null, 2);
@@ -150,7 +149,6 @@ const MessageInterfaceSample: React.FC<Props> = ({
                 </div>
             </div>
 
-
             <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-4">
                     <div>
@@ -183,7 +181,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
                     <div className="flex gap-3">
                         <button
                             onClick={handleSendRequest}
-                            disabled={isSending}
+                            disabled={isSending || !customRoute}
                             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                         >
                             <Send size={16} />
@@ -191,7 +189,8 @@ const MessageInterfaceSample: React.FC<Props> = ({
                         </button>
                         <button
                             onClick={handleSendNotification}
-                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                            disabled={!customRoute}
+                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                         >
                             <MessageCircle size={16} />
                             NTY 전송
@@ -277,15 +276,15 @@ const MessageInterfaceSample: React.FC<Props> = ({
                                 {filteredMessages.map((m) => (
                                     <div key={m.id} className="p-4 hover:bg-gray-50">
                                         <div className="cursor-pointer"
-                                            onClick={() => setExpandedMessage(expandedMessage === m.id ? null : m.id)}>
+                                             onClick={() => setExpandedMessage(expandedMessage === m.id ? null : m.id)}>
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center space-x-3">
                                                     {getDirectionIcon(m.direction)}
                                                     <span
                                                         className={`px-2 py-1 text-xs rounded font-mono ${m.direction === "R2U" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"
-                                                            }`}
+                                                        }`}
                                                     >
-                                                        {m.direction}
+                                                        {m.direction || "---"}
                                                     </span>
                                                     <span
                                                         className={`px-2 py-1 text-xs rounded font-mono ${m.type === "REQ"
@@ -293,7 +292,7 @@ const MessageInterfaceSample: React.FC<Props> = ({
                                                             : m.type === "ACK"
                                                                 ? "bg-purple-100 text-purple-700"
                                                                 : "bg-gray-100 text-gray-700"
-                                                            }`}
+                                                        }`}
                                                     >
                                                         {m.type}
                                                     </span>
@@ -310,13 +309,15 @@ const MessageInterfaceSample: React.FC<Props> = ({
                                         {expandedMessage === m.id && (
                                             <div className="mt-3 p-3 bg-gray-100 rounded border">
                                                 <h4 className="font-medium text-gray-900 mb-2">Message Data:</h4>
-                                                <pre className="text-xs bg-black p-2 rounded border overflow-x-auto">
+                                                <pre
+                                                    className="text-xs bg-black p-2 rounded border overflow-x-auto text-amber-50">
                                                     {JSON.stringify(m.data, null, 2)}
                                                 </pre>
                                                 <div className="mt-2 text-xs text-gray-600">
                                                     <div>Message ID: {m.id}</div>
                                                     <div>Timestamp: {new Date(m.timestamp).toISOString()}</div>
                                                     {m.status && <div>Status: {m.status}</div>}
+                                                    {m.ref && <div>Reference: {m.ref}</div>}
                                                 </div>
                                             </div>
                                         )}

@@ -12,6 +12,7 @@ export default function App() {
         messages,
         clearMessages,
     } = useUnity();
+
     return (
 
         <div className="min-h-screen bg-gray-100 p-4 space-y-4">
