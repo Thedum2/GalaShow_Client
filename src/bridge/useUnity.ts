@@ -47,6 +47,7 @@ export const useUnity = () => {
                     status: 'success'
                 };
 
+                console.trace('[BRIDGE] [UNITY TO REACT]:', payload);
                 setMessages((prev) => [...prev, messageWithStatus]);
                 const handler = (unityService as any).eventListeners?.get?.('U2R');
                 if (handler) handler(payload);
