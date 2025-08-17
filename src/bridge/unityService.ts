@@ -1,166 +1,136 @@
-﻿import {MessageSendType, UnityMessage, UnityRoute} from './unityConfig';
+﻿import {makeEnvelope, parseFrame, serializeFrame, toTopic, UnityFrame, UnityMessage,} from "./unityConfig";
+import {MainHandler} from "./handler/MainHandler";
 
-export class UnityService {
-    private sendMessage?: (gameObject: string, methodName: string, parameter: string) => void;
-    private eventListeners: Map<string, (message: UnityMessage) => void> = new Map();
-    private messageCounter = 0;
-    private enableLogging = true;
 
-    constructor() {
-        this.setupGlobalEventHandler();
+export type UnityTransport = {
+    send: (text: string) => void; // Unity 쪽으로 문자열 전송
+    subscribe: (fn: (text: string) => void) => () => void; // Unity→React 이벤트 수신 등록/해제
+};
+
+/**
+ * 10초 타임아웃 기본값
+ */
+const DEFAULT_TIMEOUT_MS = 10_000;
+
+class UnityBridgeService {
+    private transport: UnityTransport | null = null;
+    private unsubscribe: (() => void) | null = null;
+
+    // REQ→ACK 매칭용 딕셔너리 (id → resolver)
+    private pending = new Map<string, {
+        resolve: (data: any) => void;
+        reject: (err: any) => void;
+        timer: any;
+    }>();
+
+    /**
+     * Unity와 실제 연결(transport)을 붙이는 초기화 함수.
+     */
+    init(transport: UnityTransport) {
+        if (this.transport) return; // 중복 초기화 방지
+        this.transport = transport;
+        this.unsubscribe = transport.subscribe(this.onUnityMessage);
+        console.log("[bridge] UnityBridgeService initialized");
     }
 
-    setLogging(enabled: boolean) {
-        this.enableLogging = enabled;
+    /**
+     * 언마운트/종료 시 호출.
+     */
+    dispose() {
+        this.pending.forEach(p => clearTimeout(p.timer));
+        this.pending.clear();
+        if (this.unsubscribe) this.unsubscribe();
+        this.unsubscribe = null;
+        this.transport = null;
+        console.log("[bridge] UnityBridgeService disposed");
     }
 
-    sendRequest(message: UnityMessage): Promise<UnityMessage> {
-        return new Promise((resolve, reject) => {
-            if (!this.sendMessage) {
-                reject(new Error('Unity Not Loaded'));
-                return;
-            }
+    /**
+     * React→Unity REQ 전송 및 ACK 대기
+     */
+    sendReq<TReq = any, TAck = any>(route: string, data: TReq, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<TAck> {
+        const env = makeEnvelope("R2U", "REQ", route, data);
+        const topic = toTopic("R2U", route, "REQ");
+        const frame: UnityFrame = {topic, payload: env};
 
-            this.log('R2U', message);
+        return new Promise<TAck>((resolve, reject) => {
+            if (!this.transport) return reject(new Error("Unity transport not ready"));
 
-            const responseHandler = (response: UnityMessage) => {
-                if (response.type === 'ACK' && response.ref === message.id) {
-                    this.removeEventListener('U2R', responseHandler);
-                    if (response.ok) {
-                        this.log('U2R', response, 'SUCCESS');
-                        resolve(response);
-                    } else {
-                        this.log('U2R', response, 'ERROR');
-                        reject(new Error(`Unity Fail: ${JSON.stringify(response.data)}`));
-                    }
-                }
-            };
+            const timer = setTimeout(() => {
+                this.pending.delete(env.id);
+                reject(new Error(`ACK timeout for ${route} (id=${env.id})`));
+            }, timeoutMs);
 
-            this.addEventListener('U2R', responseHandler);
+            this.pending.set(env.id, {resolve: (data: any) => resolve(data as TAck), reject, timer});
 
-            try {
-                this.sendMessage('BridgeManager', 'ReceiveMessage', JSON.stringify(message));
-            } catch (error) {
-                this.removeEventListener('U2R', responseHandler);
-                this.log('R2U', message, 'ERROR');
-                reject(error);
-            }
-
-            setTimeout(() => {
-                this.removeEventListener('U2R', responseHandler);
-                this.log('R2U', message, 'TIMEOUT');
-                reject(new Error('Unity 응답 타임아웃'));
-            }, 10000);
+            this.transport.send(serializeFrame(frame));
         });
     }
 
-    setSendMessage(sendMessageFn: (gameObject: string, methodName: string, parameter: string) => void) {
-        this.sendMessage = sendMessageFn;
-    }
-
-    sendNotification(message: UnityMessage): void {
-        if (!this.sendMessage) {
-            console.error('Unity Not Loaded');
-            return;
-        }
-
-        this.log('R2U', message);
-
-        try {
-            this.sendMessage('ReactBridge', 'OnReactMessage', JSON.stringify(message));
-        } catch (error) {
-            this.log('R2U', message, 'ERROR');
-            console.error('Unity NTY Failed:', error);
-        }
-    }
-
-    private log(direction: 'R2U' | 'U2R', message: UnityMessage, status?: 'SUCCESS' | 'ERROR' | 'TIMEOUT') {
-        if (!this.enableLogging) return;
-
-        const prefix = direction === 'R2U' ? '[BRIDGE] [REACT TO UNITY]:' : '[BRIDGE] [UNITY TO REACT]:';
-        const statusColor = status === 'ERROR' ? 'color: #ff6b6b' :
-            status === 'SUCCESS' ? 'color: #51cf66' :
-                status === 'TIMEOUT' ? 'color: #ffd43b' :
-                    'color: #339af0';
-
-        console.groupCollapsed(`%c${prefix} ${message.type} ${message.route}`, statusColor);
-        console.log('Message ID:', message.id);
-        console.log('Route:', message.route);
-        console.log('Type:', message.type);
-        console.log('Data:', message.data);
-        console.log('Timestamp:', new Date(message.timestamp).toISOString());
-        if (message.ref) console.log('Reference:', message.ref);
-        if (status) console.log('Status:', status);
-        console.trace('Stack Trace');
-        console.groupEnd();
-    }
-
-    addEventListener(eventName: string, handler: (message: UnityMessage) => void): void {
-        this.eventListeners.set(eventName, handler);
-    }
-
-    removeEventListener(eventName: string, handler: (message: UnityMessage) => void): void {
-        this.eventListeners.delete(eventName);
-    }
-
-    createMessage(
-        type: MessageSendType,
-        route: UnityRoute,
-        data: any,
-        ref?: string
-    ): UnityMessage {
-        return {
-            ok: true,
-            type,
+    /**
+     * React→Unity ACK 전송 (Unity에서 보낸 REQ에 대한 응답). id는 반드시 그대로 사용.
+     */
+    sendAck<T = any>(route: string, id: string, data: T, ok = true) {
+        const envelope: UnityMessage<T> = {
+            ok,
+            type: "ACK",
             route,
-            id: this.generateMessageId(),
+            id, // REQ와 동일 id 사용
             data,
             timestamp: Date.now(),
-            ...(ref && {ref})
         };
+        const topic = toTopic("R2U", route, "ACK");
+        const frame: UnityFrame = {topic, payload: envelope};
+        if (!this.transport) throw new Error("Unity transport not ready");
+        this.transport.send(serializeFrame(frame));
     }
 
-    createSampleData(message: string = 'Hello from React!'): any {
-        return {
-            name: 'giene',
-            age: 20,
-            message,
-            timestamp: new Date().toISOString(),
-            browserInfo: {
-                userAgent: navigator.userAgent,
-                language: navigator.language,
-                platform: navigator.platform
+    /**
+     * React→Unity NTY 전송 (one-way)
+     */
+    sendNty<T = any>(route: string, data: T) {
+        const env = makeEnvelope("R2U", "NTY", route, data);
+        const topic = toTopic("R2U", route, "NTY");
+        const frame: UnityFrame = {topic, payload: env};
+        if (!this.transport) throw new Error("Unity transport not ready");
+        this.transport.send(serializeFrame(frame));
+    }
+
+    private onUnityMessage = async (raw: string) => {
+        const frame = parseFrame(raw);
+        if (!frame) return;
+        const {payload} = frame;
+
+        try {
+            if (payload.type === "ACK") {
+                const p = this.pending.get(payload.id);
+                if (p) {
+                    clearTimeout(p.timer);
+                    this.pending.delete(payload.id);
+                    p.resolve(payload.data);
+                }
+                await MainHandler.handleIncomingAck(payload);
+                return;
             }
-        };
-    }
 
-    createUserActionData(action: string, target: string): any {
-        return {
-            type: 'user_action',
-            action,
-            target,
-            timestamp: new Date().toISOString(),
-            windowSize: {
-                width: window.innerWidth,
-                height: window.innerHeight
+            if (payload.type === "REQ") {
+                try {
+                    const ackData = await MainHandler.handleIncomingRequest(payload);
+                    this.sendAck(payload.route, payload.id, ackData, true);
+                } catch (reqErr: any) {
+                    this.sendAck(payload.route, payload.id, {message: String(reqErr?.message ?? reqErr)}, false);
+                }
+                return;
             }
-        };
-    }
 
-    private setupGlobalEventHandler(): void {
-        (window as any).unityReactHandler = (eventName: string, messageData: UnityMessage) => {
-            this.log('U2R', messageData);
-            const handler = this.eventListeners.get(eventName);
-            if (handler) {
-                handler(messageData);
+            if (payload.type === "NTY") {
+                await MainHandler.handleIncomingNotify(payload);
+                return;
             }
-        };
-    }
-
-    private generateMessageId(): string {
-        this.messageCounter += 1;
-        const uuid = crypto.randomUUID();
-        const now = Date.now();
-        return `r2u_${uuid}_${now}_${this.messageCounter}`;
-    }
+        } catch (err) {
+            console.error("[bridge] onUnityMessage error:", err);
+        }
+    };
 }
+
+export const unityService = new UnityBridgeService();

@@ -15,7 +15,7 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                                                      loadingProgression,
                                                      className = "",
                                                  }) => {
-    const dimensions = () => ({width: "1700px", height: "300px"});
+    const dimensions = () => ({width: "1700px", height: "500px"});
 
     const size = dimensions();
 
@@ -28,10 +28,10 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                 </h2>
             </div>
 
-            <div className="relative bg-gray-900 rounded-lg overflow-hidden shadow-lg" style={size}>
+            <div className="relative bg-gray-900 rounded-lg overflow-hidden" style={size}>
                 <Unity
                     unityProvider={unityProvider}
-                    style={{width: "100%", height: "100%", display: "block"}}
+                    style={{border: "20px solid cyan", width: "100%", height: "100%", display: "block"}}
                     className="unity-canvas"
                 />
 
