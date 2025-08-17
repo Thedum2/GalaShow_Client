@@ -39,7 +39,7 @@ export class UnityService {
             this.addEventListener('U2R', responseHandler);
 
             try {
-                this.sendMessage('ReactBridge', 'ReceiveFromReact', JSON.stringify(message));
+                this.sendMessage('BridgeManager', 'ReceiveMessage', JSON.stringify(message));
             } catch (error) {
                 this.removeEventListener('U2R', responseHandler);
                 this.log('R2U', message, 'ERROR');
@@ -67,7 +67,7 @@ export class UnityService {
         this.log('R2U', message);
 
         try {
-            this.sendMessage('ReactBridge', 'ReceiveFromReact', JSON.stringify(message));
+            this.sendMessage('ReactBridge', 'OnReactMessage', JSON.stringify(message));
         } catch (error) {
             this.log('R2U', message, 'ERROR');
             console.error('Unity NTY Failed:', error);
