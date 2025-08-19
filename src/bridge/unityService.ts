@@ -1,31 +1,31 @@
-﻿import {makeEnvelope, parseFrame, serializeFrame, toTopic, UnityFrame, UnityMessage,} from "./unityConfig";
+﻿import {
+    DEFAULT_TIMEOUT_MS,
+    makeEnvelope,
+    parseFrame,
+    serializeFrame,
+    toTopic,
+    UnityFrame,
+    UnityMessage,
+} from "./unityConfig";
 import {MainHandler} from "./handler/MainHandler";
 
 
 export type UnityTransport = {
-    send: (text: string) => void; // Unity 쪽으로 문자열 전송
-    subscribe: (fn: (text: string) => void) => () => void; // Unity→React 이벤트 수신 등록/해제
+    send: (text: string) => void;
+    subscribe: (fn: (text: string) => void) => () => void;
 };
 
-/**
- * 10초 타임아웃 기본값
- */
-const DEFAULT_TIMEOUT_MS = 10_000;
 
 class UnityBridgeService {
     private transport: UnityTransport | null = null;
     private unsubscribe: (() => void) | null = null;
 
-    // REQ→ACK 매칭용 딕셔너리 (id → resolver)
     private pending = new Map<string, {
         resolve: (data: any) => void;
         reject: (err: any) => void;
         timer: any;
     }>();
 
-    /**
-     * Unity와 실제 연결(transport)을 붙이는 초기화 함수.
-     */
     init(transport: UnityTransport) {
         if (this.transport) return; // 중복 초기화 방지
         this.transport = transport;
@@ -33,9 +33,6 @@ class UnityBridgeService {
         console.log("[bridge] UnityBridgeService initialized");
     }
 
-    /**
-     * 언마운트/종료 시 호출.
-     */
     dispose() {
         this.pending.forEach(p => clearTimeout(p.timer));
         this.pending.clear();
@@ -45,9 +42,6 @@ class UnityBridgeService {
         console.log("[bridge] UnityBridgeService disposed");
     }
 
-    /**
-     * React→Unity REQ 전송 및 ACK 대기
-     */
     sendReq<TReq = any, TAck = any>(route: string, data: TReq, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<TAck> {
         const env = makeEnvelope("R2U", "REQ", route, data);
         const topic = toTopic("R2U", route, "REQ");
@@ -67,9 +61,6 @@ class UnityBridgeService {
         });
     }
 
-    /**
-     * React→Unity ACK 전송 (Unity에서 보낸 REQ에 대한 응답). id는 반드시 그대로 사용.
-     */
     sendAck<T = any>(route: string, id: string, data: T, ok = true) {
         const envelope: UnityMessage<T> = {
             ok,
@@ -85,9 +76,6 @@ class UnityBridgeService {
         this.transport.send(serializeFrame(frame));
     }
 
-    /**
-     * React→Unity NTY 전송 (one-way)
-     */
     sendNty<T = any>(route: string, data: T) {
         const env = makeEnvelope("R2U", "NTY", route, data);
         const topic = toTopic("R2U", route, "NTY");

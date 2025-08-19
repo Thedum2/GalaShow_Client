@@ -6,7 +6,7 @@ export type NtyHandler = (action: string, data: any) => Promise<void> | void;
 export type AckHandler = (action: string, data: any) => Promise<void> | void;
 
 export interface BridgeHandler {
-    namespace: string;
+    route: string;
     onRequest?: ReqHandler;
     onNotify?: NtyHandler;
     onAck?: AckHandler;
@@ -16,14 +16,13 @@ class MainHandlerRegistry {
     private handlers = new Map<string, BridgeHandler>();
 
     register(handler: BridgeHandler) {
-        this.handlers.set(handler.namespace, handler);
+        this.handlers.set(handler.route, handler);
     }
 
     unregister(namespace: string) {
         this.handlers.delete(namespace);
     }
 
-    /** Unity→React 로 들어온 REQ 처리: ACK로 보낼 data를 반환 */
     async handleIncomingRequest(envelope: UnityMessage): Promise<any> {
         const {namespace, action} = splitRoute(envelope.route);
         const h = this.handlers.get(namespace);
@@ -31,14 +30,12 @@ class MainHandlerRegistry {
         return await h.onRequest(action, envelope.data);
     }
 
-    /** Unity→React 로 들어온 NTY 처리 */
     async handleIncomingNotify(envelope: UnityMessage): Promise<void> {
         const {namespace, action} = splitRoute(envelope.route);
         const h = this.handlers.get(namespace);
         if (h?.onNotify) await h.onNotify(action, envelope.data);
     }
 
-    /** React→Unity 로 보낸 REQ의 ACK가 도착했을 때 핸들러에게도 통지(옵션) */
     async handleIncomingAck(envelope: UnityMessage): Promise<void> {
         const {namespace, action} = splitRoute(envelope.route);
         const h = this.handlers.get(namespace);
