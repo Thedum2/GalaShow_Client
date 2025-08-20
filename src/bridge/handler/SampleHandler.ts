@@ -1,5 +1,6 @@
 ﻿import type {BridgeHandler} from "./MainHandler";
-import {unityService} from "@/bridge/unityService";
+import {unityService} from "../unityService";
+import {UIBus} from "../unityConfig";
 
 export const SampleApi = {
     changeSphereColor(color: string) {
@@ -21,18 +22,18 @@ export const SampleApi = {
 export const SampleHandler: BridgeHandler = {
     route: "SampleHandler",
     async onRequest(action, data) {
-        switch (action) {
-
-        }
+        console.log("[SampleHandler] onRequest", action, data);
     },
 
     onNotify(action, data) {
-        switch (action) {
+        console.log("[SampleHandler] onNotify", action, data);
 
+        if (action === 'ChangeBorderColor') {
+            UIBus.changeBorderColor(data.color);   
         }
     },
 
     onAck(action, data) {
-
+        console.log("[SampleHandler] onAck", action, data);
     },
 };

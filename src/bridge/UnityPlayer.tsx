@@ -1,6 +1,7 @@
-﻿import React from "react";
+﻿import React, {useEffect, useState} from "react";
 import {Unity} from "react-unity-webgl";
 import {Monitor} from "lucide-react";
+import {UIBus} from "../bridge/unityConfig";
 
 interface UnityPlayerProps {
     unityProvider: any;
@@ -13,11 +14,20 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                                                      unityProvider,
                                                      isLoaded,
                                                      loadingProgression,
-                                                     className = "",
+                                                     className = ""
                                                  }) => {
     const dimensions = () => ({width: "1700px", height: "500px"});
-
     const size = dimensions();
+
+    //==================================
+    const [currentBorderColor, setCurrentBorderColor] = useState("cyan");
+    useEffect(() => {
+        UIBus.onBorderColorChange(setCurrentBorderColor);
+    }, []);
+    //==================================
+
+
+
 
     return (
         <div className={`bg-gray-50 p-4 rounded-lg ${className}`}>
@@ -31,7 +41,12 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
             <div className="relative bg-gray-900 rounded-lg overflow-hidden" style={size}>
                 <Unity
                     unityProvider={unityProvider}
-                    style={{border: "20px solid cyan", width: "100%", height: "100%", display: "block"}}
+                    style={{
+                        border: `20px solid ${currentBorderColor}`,
+                        width: "100%",
+                        height: "100%",
+                        display: "block"
+                    }}
                     className="unity-canvas"
                 />
 
@@ -52,7 +67,6 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                     </div>
                 )}
 
-
                 <div className="absolute bottom-2 left-2 text-xs text-white bg-black bg-opacity-50 px-2 py-1 rounded">
                     Unity WebGL | {size.width} × {size.height}
                 </div>
@@ -62,22 +76,28 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
             </div>
 
             <div className="mt-3 space-y-1">
-                <div className="flex items-centet text-sm">
-                    <span className="text-gray-600">상태:  </span>
+                <div className="flex items-center text-sm">
+                    <span className="text-gray-600">상태: </span>
                     <span className={`font-medium ${isLoaded ? "text-green-600" : "text-yellow-600"}`}>
-            {isLoaded ? "Loaded" : `Loading ${Math.round(loadingProgression * 100)}%`}
-          </span>
+                        {isLoaded ? "Loaded" : `Loading ${Math.round(loadingProgression * 100)}%`}
+                    </span>
                 </div>
 
                 <div className="flex items-center text-sm">
-                    <span className="text-gray-600">해상도:  </span>
+                    <span className="text-gray-600">해상도: </span>
                     <span className="text-gray-800 font-mono">
-            {size.width} × {size.height}
-          </span>
+                        {size.width} × {size.height}
+                    </span>
+                </div>
+
+                <div className="flex items-center text-sm">
+                    <span className="text-gray-600">테두리 색상: </span>
+                    <span className="text-gray-800 font-mono">
+                        {currentBorderColor}
+                    </span>
                 </div>
             </div>
         </div>
     );
 };
-
 export default UnityPlayer;

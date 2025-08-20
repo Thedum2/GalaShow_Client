@@ -15,7 +15,7 @@ import {
     Trash2,
     XCircle
 } from "lucide-react";
-import {SampleApi} from "@/bridge/handler/SampleHandler";
+import {SampleApi} from "../bridge/handler/SampleHandler";
 
 type UnityMsg = {
     id: string;

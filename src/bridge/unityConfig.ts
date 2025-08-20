@@ -13,12 +13,7 @@ export interface UnityMessage<T = any> {
     route: string;
     id: string;
     data: T;
-    timestamp: number;
-}
-
-export interface UnityFrame<T = any> {
-    topic: string;
-    payload: UnityMessage<T>;
+    timestamp: string;
 }
 
 export const UNITY_BUILD = {
@@ -28,8 +23,23 @@ export const UNITY_BUILD = {
     codeUrl: "/build/unity/WebGL.wasm",
 } as const;
 
-export function toTopic(direction: Direction, route: string, type: MsgType) {
-    return `${direction}_${route}_${type}`;
+
+export function parseUnityMessage(raw: string): UnityMessage | null {
+    try {
+        const parsed = JSON.parse(raw);
+
+        return {
+            ok: parsed.ok,
+            type: parsed.type as MsgType,
+            route: parsed.route,
+            id: parsed.id,
+            data: parsed.data,
+            timestamp: parsed.timestamp,
+        };
+    } catch (error) {
+        console.error('[parseUnityMessage] JSON parse error:', error);
+        return null;
+    }
 }
 
 export function dirToPrefix(direction: Direction) {
@@ -42,23 +52,6 @@ export function makeId(direction: Direction) {
     const prefix = dirToPrefix(direction);
     seq[prefix] += 1;
     return `${prefix}_${uuidv4()}_${Date.now()}_${seq[prefix]}`;
-}
-
-
-export function serializeFrame(frame: UnityFrame): string {
-    return `${frame.topic}\n${JSON.stringify(frame.payload)}`;
-}
-
-export function parseFrame(raw: string): UnityFrame | null {
-    const [topic, ...rest] = raw.split(/\r?\n/);
-    if (!topic || rest.length === 0) return null;
-    try {
-        const payload = JSON.parse(rest.join("\n")) as UnityMessage;
-        return {topic, payload};
-    } catch (err) {
-        console.warn("[bridge] parseFrame error:", err);
-        return null;
-    }
 }
 
 export function splitRoute(route: string): { namespace: string; action: string } {
@@ -80,7 +73,24 @@ export function makeEnvelope<T>(
         route,
         id: id ?? makeId(direction),
         data,
-        timestamp: Date.now(),
+        timestamp: Date.now().toString(),
     };
 }
+
+
+//====================================================
+
+let _changeBorderColorCallback: (color: string) => void = () => {
+};
+
+export const UIBus = {
+    // React 컴포넌트가 자신의 상태 변경 함수를 등록하는 곳
+    onBorderColorChange: (callback: (color: string) => void) => {
+        _changeBorderColorCallback = callback;
+    },
+    // 핸들러 등 다른 곳에서 색상 변경을 요청하는 곳
+    changeBorderColor: (color: string) => {
+        _changeBorderColorCallback(color);
+    }
+};
 

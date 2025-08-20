@@ -1,8 +1,7 @@
-﻿import {useEffect} from "react";
+﻿import {useEffect, useMemo, useRef} from "react";
 import {useUnityContext} from "react-unity-webgl";
 import {UNITY_BUILD} from "./unityConfig";
-import {unityService} from "./unityService";
-import {ReactUnityEventParameter} from "react-unity-webgl/distribution/types/react-unity-event-parameters";
+import {unityService, UnityTransport} from "./unityService";
 
 export function useUnity() {
     const {
@@ -19,29 +18,42 @@ export function useUnity() {
         codeUrl: UNITY_BUILD.codeUrl,
     });
 
+    const sendRef = useRef(sendMessage);
     useEffect(() => {
-        if (!isLoaded) return;
+        sendRef.current = sendMessage;
+    }, [sendMessage]);
 
-        const transport = {
+    const transport: UnityTransport = useMemo(() => {
+        return {
             send: (text: string) => {
-                sendMessage("BridgeManager", "ReceiveMessage", text);
+                sendRef.current("BridgeManager", "ReceiveMessage", text);
             },
             subscribe: (fn: (text: string) => void) => {
-                addEventListener("BridgeMessage", (...parameters: ReactUnityEventParameter[]) => {
-                    const text = parameters[0] as string;
+                const handler = (raw: any) => {
+                    const text = typeof raw === "string" ? raw : (() => {
+                        try {
+                            return JSON.stringify(raw);
+                        } catch {
+                            return String(raw);
+                        }
+                    })();
+                    console.log("[handler] onUnityMessage ←", text);
                     fn(text);
-                });
-                return () => removeEventListener("BridgeMessage", (...parameters: ReactUnityEventParameter[]) => {
-                    const text = parameters[0] as string;
-                    fn(text);
-                });
-
+                };
+                addEventListener("onUnityMessage", handler);
+                return () => removeEventListener("onUnityMessage", handler);
             },
         };
+    }, [addEventListener, removeEventListener]);
 
+    useEffect(() => {
         unityService.init(transport);
-        return () => unityService.dispose();
-    }, [isLoaded, sendMessage, addEventListener, removeEventListener]);
+        console.log("[bridge] init()");
+        return () => {
+            unityService.dispose();
+            console.log("[bridge] dispose()");
+        };
+    }, [transport]);
 
     return {unityProvider, isLoaded, loadingProgression, bridge: unityService};
 }

@@ -1,12 +1,4 @@
-﻿import {
-    DEFAULT_TIMEOUT_MS,
-    makeEnvelope,
-    parseFrame,
-    serializeFrame,
-    toTopic,
-    UnityFrame,
-    UnityMessage,
-} from "./unityConfig";
+﻿import {DEFAULT_TIMEOUT_MS, makeEnvelope, parseUnityMessage, UnityMessage,} from "./unityConfig";
 import {MainHandler} from "./handler/MainHandler";
 
 
@@ -27,7 +19,7 @@ class UnityBridgeService {
     }>();
 
     init(transport: UnityTransport) {
-        if (this.transport) return; // 중복 초기화 방지
+        if (this.transport) return;
         this.transport = transport;
         this.unsubscribe = transport.subscribe(this.onUnityMessage);
         console.log("[bridge] UnityBridgeService initialized");
@@ -44,9 +36,6 @@ class UnityBridgeService {
 
     sendReq<TReq = any, TAck = any>(route: string, data: TReq, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<TAck> {
         const env = makeEnvelope("R2U", "REQ", route, data);
-        const topic = toTopic("R2U", route, "REQ");
-        const frame: UnityFrame = {topic, payload: env};
-
         return new Promise<TAck>((resolve, reject) => {
             if (!this.transport) return reject(new Error("Unity transport not ready"));
 
@@ -57,38 +46,38 @@ class UnityBridgeService {
 
             this.pending.set(env.id, {resolve: (data: any) => resolve(data as TAck), reject, timer});
 
-            this.transport.send(serializeFrame(frame));
+            this.transport.send(JSON.stringify(env));
         });
     }
 
     sendAck<T = any>(route: string, id: string, data: T, ok = true) {
-        const envelope: UnityMessage<T> = {
+
+        const env: UnityMessage<T> = {
             ok,
             type: "ACK",
             route,
-            id, // REQ와 동일 id 사용
+            id,
             data,
-            timestamp: Date.now(),
+            timestamp: Date.now().toString(),
         };
-        const topic = toTopic("R2U", route, "ACK");
-        const frame: UnityFrame = {topic, payload: envelope};
         if (!this.transport) throw new Error("Unity transport not ready");
-        this.transport.send(serializeFrame(frame));
+        this.transport.send(JSON.stringify(env));
     }
 
     sendNty<T = any>(route: string, data: T) {
         const env = makeEnvelope("R2U", "NTY", route, data);
-        const topic = toTopic("R2U", route, "NTY");
-        const frame: UnityFrame = {topic, payload: env};
         if (!this.transport) throw new Error("Unity transport not ready");
-        this.transport.send(serializeFrame(frame));
+        this.transport.send(JSON.stringify(env));
     }
 
-    private onUnityMessage = async (raw: string) => {
-        const frame = parseFrame(raw);
-        if (!frame) return;
-        const {payload} = frame;
+    public onUnityMessage = async (raw: string) => {
+        const payload: UnityMessage | null = parseUnityMessage(raw);
 
+        if (!payload) {
+            console.error("[bridge] onUnityMessage invalid message:", raw);
+            return;
+        }
+        
         try {
             if (payload.type === "ACK") {
                 const p = this.pending.get(payload.id);
