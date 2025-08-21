@@ -23,6 +23,11 @@ export const SampleHandler: BridgeHandler = {
     route: "SampleHandler",
     async onRequest(action, data) {
         console.log("[SampleHandler] onRequest", action, data);
+
+        if (action == 'CalculateMultiply') {
+            const result = data.a * data.b;
+            return {result};
+        }
     },
 
     onNotify(action, data) {

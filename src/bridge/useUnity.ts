@@ -26,6 +26,7 @@ export function useUnity() {
     const transport: UnityTransport = useMemo(() => {
         return {
             send: (text: string) => {
+                console.log("[handler] send ←", text);
                 sendRef.current("BridgeManager", "ReceiveMessage", text);
             },
             subscribe: (fn: (text: string) => void) => {
