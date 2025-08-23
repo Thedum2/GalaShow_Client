@@ -1,44 +1,41 @@
-﻿import type {BridgeHandler} from "./MainHandler";
-import {unityService} from "../unityService";
-import {UIBus} from "../unityConfig";
+﻿import type { BridgeHandler } from "./MainHandler";
+import { unityService } from "../unityService";
+import { UIBus } from "../unityConfig";
 
 export const SampleApi = {
     changeSphereColor(color: string) {
-        return unityService.sendNty('SampleHandler_ChangeSphereColor', {color});
+        return unityService.sendNty("SampleHandler_ChangeSphereColor", { color });
     },
-    calculateAdd(
-        a: number,
-        b: number,
-        onAck: (ack: { result: number }) => void,
-        onError?: (err: any) => void
-    ) {
-        unityService
-            .sendReq('SampleHandler_CalculateAdd', {a, b})
-            .then(onAck)
-            .catch(onError ?? (() => {
-            }));
+    calculateAdd(a: number, b: number, onAck: (ack: { result: number }) => void, onError?: (err: any) => void) {
+        unityService.sendReq("SampleHandler_CalculateAdd", { a, b }).then(onAck).catch(onError ?? (() => {}));
     },
-}
+};
+
 export const SampleHandler: BridgeHandler = {
     route: "SampleHandler",
     async onRequest(action, data) {
-        console.log("[SampleHandler] onRequest", action, data);
-
-        if (action == 'CalculateMultiply') {
+        if (typeof window !== "undefined") {
+            window.postMessage({ type: "REQ", route: `SampleHandler_${action}`, data, direction: "U2R" }, "*");
+        }
+        if (action === "CalculateMultiply") {
             const result = data.a * data.b;
-            return {result};
+            if (typeof window !== "undefined") {
+                window.postMessage({ type: "ACK", route: `SampleHandler_${action}`, data: { result }, direction: "U2R" }, "*");
+            }
+            return { result };
         }
     },
-
     onNotify(action, data) {
-        console.log("[SampleHandler] onNotify", action, data);
-
-        if (action === 'ChangeBorderColor') {
-            UIBus.changeBorderColor(data.color);   
+        if (action === "ChangeBorderColor") {
+            UIBus.changeBorderColor(data.color);
+        }
+        if (typeof window !== "undefined") {
+            window.postMessage({ type: "NTY", route: `SampleHandler_${action}`, data, direction: "U2R" }, "*");
         }
     },
-
     onAck(action, data) {
-        console.log("[SampleHandler] onAck", action, data);
+        if (typeof window !== "undefined") {
+            window.postMessage({ type: "ACK", route: `SampleHandler_${action}`, data, direction: "U2R" }, "*");
+        }
     },
 };

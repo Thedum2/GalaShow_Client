@@ -49,6 +49,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # 4-1) env생성
+      - name: Generate .env file
+        run: |
+          if [ "${{ inputs.stage }}" = "prod" ]; then
+            echo "VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}" >> .env.production
+            echo "VITE_MODE=production" >> .env.production
+          else
+            echo "VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}" >> .env.development
+            echo "VITE_MODE=development" >> .env.development
+          fi
+
       # 5) 빌드 (루트에서)
       - name: Build project
         run: |
