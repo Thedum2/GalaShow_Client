@@ -1,9 +1,10 @@
 ﻿import * as React from 'react'
+import {IconProps} from "@/types/common";
 
 type SVGRComponent = React.ComponentType<React.SVGProps<SVGSVGElement> & { title?: string }>
 
 
-const lazyModules = import.meta.glob('../../assets/svg/**/*.svg', { import: 'default' }) as Record<
+const lazyModules = import.meta.glob('../../assets/svg/**/*.svg') as Record<
     string,
     () => Promise<{ default: SVGRComponent }>
 >
@@ -38,14 +39,6 @@ const buildEagerRegistry = (): EagerReg => {
 const LAZY_REG = buildLazyRegistry()
 const EAGER_REG = buildEagerRegistry()
 
-export type IconProps = {
-    name: string
-    size?: number | string
-    color?: string
-    title?: string
-    className?: string
-    mode?: 'lazy' | 'eager'
-} & Omit<React.SVGProps<SVGSVGElement>, 'width' | 'height' | 'color' | 'title'>
 
 function FallbackBox({
                          size = '1em',

@@ -1,5 +1,5 @@
 import {httpClient} from "../httpClient";
-import {BackgroundAsset} from "@/model/response/background/BackgroundAsset";
+import {BackgroundAsset} from "@/api/model/response/background/BackgroundAsset";
 
 export const BackgroundApi = {
     get(): Promise<BackgroundAsset[]> {

@@ -1,16 +1,7 @@
-﻿import { Lock } from "lucide-react";
+﻿import {Lock} from "lucide-react";
 import React from "react";
+import {LoginCardProps} from "@/types/components";
 
-type LoginCardProps = {
-    title: string;
-    subtitle?: string;
-    color: "blue" | "green" | "gray" | "indigo";
-    buttonText: string;
-    onClick?: () => void;
-    disabled?: boolean;
-    logo?: React.ReactNode;
-    glow?: string;
-};
 
 const COLOR_MAP: Record<LoginCardProps["color"], string> = {
     blue: "bg-blue-600 hover:bg-blue-500 border-blue-400/20",
@@ -33,7 +24,7 @@ export default function LoginCard({
 
     return (
         <div
-            className={`relative z-10 group rounded-2xl bg-gradient-to-b from-neutral-900/70 to-neutral-900/40 
+            className={`relative group rounded-2xl bg-gradient-to-b from-neutral-900/70 to-neutral-900/40 
       border border-white/10 backdrop-blur-md p-6 sm:p-8
       shadow-[0_10px_30px_rgba(0,0,0,0.35)]
       transition-all duration-300
@@ -45,8 +36,9 @@ export default function LoginCard({
                 className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ring-2 ${glow}`}
             />
             <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 border border-white/10">
-                    {logo ?? <Lock className="text-white/80" />}
+                <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 border border-white/10">
+                    {logo ?? <Lock className="text-white/80"/>}
                 </div>
                 <div className="flex-1">
                     <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">{title}</h3>

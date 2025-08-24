@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    overscroll-behavior: none;
+}
+
+html, body {
+    touch-action: none;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

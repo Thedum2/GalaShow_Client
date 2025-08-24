@@ -1,8 +1,8 @@
 ﻿import {useEffect, useMemo, useRef} from "react";
 import {useUnityContext} from "react-unity-webgl";
 import {UNITY_BUILD} from "./unityConfig";
-import {unityService, UnityTransport} from "./unityService";
-
+import {unityService} from "@/bridge/unityService";
+import {UnityTransport} from "@/types/bridge";
 export function useUnity() {
     const {
         unityProvider,

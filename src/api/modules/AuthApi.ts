@@ -1,6 +1,6 @@
 import {httpClient} from "../httpClient";
-import {LoginRequest} from "@/model/response/auth/LoginRequest";
-import {AuthSession} from "@/model/response/auth/AuthSession";
+import {LoginRequest} from "@/api/model/response/auth/LoginRequest";
+import {AuthSession} from "@/api/model/response/auth/AuthSession";
 import {TokenStorage} from "../utils/TokenStorage";
 
 export const AuthApi = {

@@ -16,18 +16,7 @@ import {
     XCircle
 } from "lucide-react";
 import { SampleApi } from "@/bridge/handler/SampleHandler";
-
-type UnityMsgType = "REQ" | "ACK" | "NTY";
-type Direction = "R2U" | "U2R";
-type LocalStatus = "pending" | "success" | "error";
-
-type UnityMsg = {
-    type: UnityMsgType;
-    route: string;
-    data: any;
-    direction: Direction;
-    status?: LocalStatus;
-};
+import {Direction, LocalStatus, UnityMsg, UnityMsgType} from "@/types/bridge";
 
 const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = "" }) => {
     const [messages, setMessages] = useState<UnityMsg[]>([]);

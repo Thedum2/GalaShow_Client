@@ -1,12 +1,6 @@
 ﻿import {DEFAULT_TIMEOUT_MS, makeEnvelope, parseUnityMessage, UnityMessage,} from "./unityConfig";
 import {MainHandler} from "./handler/MainHandler";
-
-
-export type UnityTransport = {
-    send: (text: string) => void;
-    subscribe: (fn: (text: string) => void) => () => void;
-};
-
+import {UnityTransport} from "@/types/bridge";
 
 class UnityBridgeService {
     private transport: UnityTransport | null = null;

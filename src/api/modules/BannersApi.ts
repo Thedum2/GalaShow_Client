@@ -1,5 +1,5 @@
 import {httpClient} from "../httpClient";
-import {Banner} from "@/model/response/banner/Banner";
+import {Banner} from "@/api/model/response/banner/Banner";
 
 export const BannersApi = {
     get(): Promise<Banner[]> {

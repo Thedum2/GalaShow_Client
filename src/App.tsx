@@ -2,7 +2,7 @@ import {MainHandler} from "./bridge/handler/MainHandler";
 import {SampleHandler} from "./bridge/handler/SampleHandler";
 import {useEffect} from "react";
 import {Routes, Route} from "react-router-dom";
-import MainPage from "@/pages/MainPage";
+import Welcome from "@/pages/Welcome";
 
 
 export default function App() {
@@ -13,7 +13,7 @@ export default function App() {
 
     return (
         <Routes>
-            <Route path="/" element={<MainPage/>}/>
+            <Route path="/" element={<Welcome/>}/>
         </Routes>
     );
 }

@@ -1,15 +1,13 @@
 ﻿import {v4 as uuidv4} from "uuid";
+import {Direction, UnityMsgType} from "@/types/bridge";
 
-export type Direction = "U2R" | "R2U";
-export type MsgType = "REQ" | "ACK" | "NTY";
-export type StatusType = "success" | "In progress" | "fail";
 
 
 export const DEFAULT_TIMEOUT_MS = 10_000;
 
 export interface UnityMessage<T = any> {
     ok: boolean;
-    type: MsgType;
+    type: UnityMsgType;
     route: string;
     id: string;
     data: T;
@@ -30,7 +28,7 @@ export function parseUnityMessage(raw: string): UnityMessage | null {
 
         return {
             ok: parsed.ok,
-            type: parsed.type as MsgType,
+            type: parsed.type as UnityMsgType,
             route: parsed.route,
             id: parsed.id,
             data: parsed.data,
@@ -62,7 +60,7 @@ export function splitRoute(route: string): { namespace: string; action: string }
 
 export function makeEnvelope<T>(
     direction: Direction,
-    type: MsgType,
+    type: UnityMsgType,
     route: string,
     data: T,
     id?: string,

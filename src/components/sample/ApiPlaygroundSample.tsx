@@ -5,8 +5,8 @@ import { BackgroundApi } from "@/api/modules/BackgroundApi";
 import { PoliciesApi } from "@/api/modules/PoliciesApi";
 import { SnsLinksApi } from "@/api/modules/SnsLinksApi";
 import { TokenStorage } from "@/api/utils/TokenStorage";
-import {AuthSession} from "@/model/response/auth/AuthSession";
-import {LoginRequest} from "@/model/response/auth/LoginRequest";
+import {AuthSession} from "@/api/model/response/auth/AuthSession";
+import {LoginRequest} from "@/api/model/response/auth/LoginRequest";
 
 export default function ApiPlaygroundSample() {
     const [loginId, setLoginId] = useState("dev");

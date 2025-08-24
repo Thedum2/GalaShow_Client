@@ -1,5 +1,5 @@
 import {httpClient} from "../httpClient";
-import {SnsLink} from "@/model/response/sns/SnsLink";
+import {SnsLink} from "@/api/model/response/sns/SnsLink";
 
 export const SnsLinksApi = {
     get(): Promise<SnsLink[]> {

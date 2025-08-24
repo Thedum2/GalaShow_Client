@@ -1,4 +1,5 @@
-type Tokens = { accessToken: string; refreshToken?: string | null };
+import {Tokens} from "@/types/common";
+
 const ACCESS_KEY = "access_token";
 const REFRESH_KEY = "refresh_token";
 export const TokenStorage = {
