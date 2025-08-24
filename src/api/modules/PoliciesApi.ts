@@ -1,4 +1,4 @@
-import {httpClient} from "../httpClient";
+import {httpClient} from "@/api";
 import {PolicyLinks} from "@/api/model/response/policy/PolicyLinks";
 
 export const PoliciesApi = {

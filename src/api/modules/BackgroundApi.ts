@@ -1,4 +1,4 @@
-import {httpClient} from "../httpClient";
+import {httpClient} from "@/api";
 import {BackgroundAsset} from "@/api/model/response/background/BackgroundAsset";
 
 export const BackgroundApi = {

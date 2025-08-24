@@ -1,4 +1,4 @@
-import {httpClient} from "../httpClient";
+import {httpClient} from "@/api";
 import {Banner} from "@/api/model/response/banner/Banner";
 
 export const BannersApi = {

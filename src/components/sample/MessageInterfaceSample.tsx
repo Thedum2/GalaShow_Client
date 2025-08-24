@@ -27,8 +27,7 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
     const [typeFilter, setTypeFilter] = useState<"all" | UnityMsgType>("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-    const seqRef = useRef(0);
-
+    useRef(0);
     const routeOptions = [
         "SampleHandler_ChangeSphereColor",
         "SampleHandler_CalculateAdd",

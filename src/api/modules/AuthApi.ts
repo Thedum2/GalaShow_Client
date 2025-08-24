@@ -1,7 +1,7 @@
-import {httpClient} from "../httpClient";
+import {httpClient} from "@/api";
 import {LoginRequest} from "@/api/model/response/auth/LoginRequest";
 import {AuthSession} from "@/api/model/response/auth/AuthSession";
-import {TokenStorage} from "../utils/TokenStorage";
+import {TokenStorage} from "@/api";
 
 export const AuthApi = {
     async login(req: LoginRequest): Promise<AuthSession> {

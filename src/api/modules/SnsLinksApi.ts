@@ -1,4 +1,4 @@
-import {httpClient} from "../httpClient";
+import {httpClient} from "@/api";
 import {SnsLink} from "@/api/model/response/sns/SnsLink";
 
 export const SnsLinksApi = {
