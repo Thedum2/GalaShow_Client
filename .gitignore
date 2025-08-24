@@ -65,9 +65,6 @@ hs_err_pid*
 .AppleDouble
 .LSOverride
 
-# Icon must end with two \r
-Icon
-
 # Thumbnails
 ._*
 
@@ -160,11 +157,6 @@ __generated__
 
 ### ReactNative.macOS Stack ###
 # General
-
-# Icon must end with two \r
-Icon
-
-
 # Thumbnails
 
 # Files that might appear in the root of a volume

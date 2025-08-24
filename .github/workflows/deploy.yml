@@ -55,9 +55,11 @@ jobs:
           if [ "${{ inputs.stage }}" = "prod" ]; then
             echo "VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}" >> .env.production
             echo "VITE_MODE=production" >> .env.production
+            echo "VITE_BASE_PATH=/" >> .env.production
           else
             echo "VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}" >> .env.development
             echo "VITE_MODE=development" >> .env.development
+            echo "VITE_BASE_PATH=/" >> .env.development
           fi
 
       # 5) 빌드 (루트에서)
