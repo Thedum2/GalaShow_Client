@@ -11,14 +11,14 @@ export interface StepsBoxProps {
 }
 
 export interface LoginCardProps {
-    title: string;
-    subtitle?: string;
-    color: "blue" | "green" | "gray" | "indigo";
-    buttonText: string;
-    onClick?: () => void;
-    disabled?: boolean;
-    logo?: React.ReactNode;
-    glow?: string;
+  title: string;
+  color: string;
+  buttonText: string;
+  buttonIcon?: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  logo?: React.ReactNode;
+  glow?: string;
 }
 
 export interface RibbonProps {
