@@ -1,4 +1,4 @@
-import {HelpCircle, Users, Star, Gamepad2, Mic, Heart, LogIn} from "lucide-react";
+import {HelpCircle, Users, Star, Gamepad2, Mic, Heart} from "lucide-react";
 import LoginCard from "@/components/LoginCard";
 import Icon from "@/components/icons/Icon";
 import StepsBox from "@/components/StepsBox";
@@ -7,36 +7,66 @@ import RibbonOverlay from "@/components/RibbonOverlay";
 const stepSets = [
     [
         {
-            icon: <HelpCircle className="h-6 w-6"/>,
+            icon: <HelpCircle className="h-[72px] w-[72px] p-4"/>,
             title: "매 라운드 선택지 중 하나를 고르세요",
-            desc: "방장(스트리머)의 선택을 맞추면 생존!",
+            desc: "방장(스트리머)의 선택을 맞추세요!",
+            iconBgColor: "#0545B1",
+            badge: 'NEW',
+            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            progress: 60,
+            accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Users className="h-6 w-6"/>,
-            title: "다수결/소수결/특정 플레이어에 따라 생존이 결정",
-            desc: "라운드마다 규칙이 달라져요.",
+            icon: <Users className="h-[72px] w-[72px] p-4"/>,
+            title: "선택에 따라 생존자가 결정됩니다",
+            desc: "다수결, 소수결 또는 특별 규칙!",
+            iconBgColor: "#03C75A",
+            badge: 'NEW',
+            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            progress: 60,
+            accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Star className="h-6 w-6"/>,
+            icon: <Star className="h-[72px] w-[72px] p-4"/>,
             title: "마지막까지 살아남으면 승리!",
-            desc: "점수와 랭크로 보상 획득.",
+            desc: "너가 이겼다....",
+            iconBgColor: "#EAB308",
+            badge: 'NEW',
+            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            progress: 60,
+            accent: 'rgba(56,189,248,0.14)',
         },
     ],
     [
         {
-            icon: <Gamepad2 className="h-6 w-6"/>,
+            icon: <Gamepad2 className="h-[72px] w-[72px] p-4"/>,
             title: "새로운 게임 모드",
             desc: "전혀 다른 방식의 게임을 즐겨보세요.",
+            iconBgColor: "#0545B1",
+            badge: 'NEW',
+            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            progress: 60,
+            accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Mic className="h-6 w-6"/>,
-            title: "음성으로 참여하기",
-            desc: "목소리로 직접 게임에 참여할 수 있습니다.",
+            icon: <Mic className="h-[72px] w-[72px] p-4"/>,
+            title: "채팅으로 참여하기",
+            desc: "채팅으로 직접 게임에 참여할 수 있습니다.",
+            iconBgColor: "#03C75A",
+            badge: 'NEW',
+            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            progress: 60,
+            accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Heart className="h-6 w-6"/>,
+            icon: <Heart className="h-[72px] w-[72px] p-4"/>,
             title: "팬들을 위한 특별 라운드",
             desc: "스트리머와 팬이 함께 만드는 특별한 순간!",
+            iconBgColor: "#707070",
+            badge: 'NEW',
+            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            progress: 60,
+            accent: 'rgba(56,189,248,0.14)',
         },
     ]
 ];
@@ -98,7 +128,7 @@ export default function Welcome() {
 
                     {/* 3. StepsBox Area */}
                     <div className="grow-[3] basis-0 flex justify-center items-center overflow-hidden">
-                        <StepsBox stepSets={stepSets}/>
+                        <StepsBox title="플레이 방법" stepSets={stepSets}/>
                     </div>
                 </div>
 

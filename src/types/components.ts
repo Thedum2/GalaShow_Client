@@ -4,6 +4,7 @@ export interface Step {
     icon: React.ReactElement;
     title: string;
     desc: string;
+    iconBgColor?: string;
 }
 
 export interface StepsBoxProps {

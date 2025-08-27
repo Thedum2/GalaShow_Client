@@ -31,7 +31,6 @@ export function useScaleFit(
                 mode === 'cover'   ? sCover   :
                     mode === 'width'   ? sx       :
                         mode === 'height'  ? sy       :
-                            // contain-bleed: contain과 cover 사이 보간
                             sContain + (sCover - sContain) * clamp(opts?.bleedRatio ?? 0.18, 0, 1)
 
         if (opts?.maxScale != null) s = Math.min(s, opts.maxScale)

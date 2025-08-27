@@ -19,6 +19,7 @@ export interface BackgroundProps {
     bgPosition?: string
     className?: string
     overlayOpacity?: number
+    bgType?: BackgroundType
 }
 
 export type IconProps = {

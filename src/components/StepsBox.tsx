@@ -1,79 +1,270 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Step } from '@/types/components';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface StepsBoxProps {
+    title: string;
     stepSets: Step[][];
 }
 
-const StepsBox: React.FC<StepsBoxProps> = ({ stepSets }) => {
-    const [currentSetIndex, setCurrentSetIndex] = useState(0);
+type StepExtra = {
+    mediaUrl?: string;
+    media?: React.ReactNode;
+    badge?: string;
+    progress?: number;
+    accent?: string;
+};
 
-    const handleNext = () => {
-        setCurrentSetIndex((prevIndex) => (prevIndex + 1) % stepSets.length);
+const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const allSteps = useMemo(() => stepSets.flat(), [stepSets]);
+    const stepSpacingPct = 100;
+
+    const goNext = useCallback(() => {
+        setCurrentIndex((prev) => (prev === allSteps.length - 1 ? 0 : prev + 1));
+    }, [allSteps.length]);
+
+    const startTimer = useCallback(() => {
+        if (timerRef.current) clearInterval(timerRef.current);
+        timerRef.current = setInterval(goNext, 3000);
+    }, [goNext]);
+
+    useEffect(() => {
+        if (allSteps.length > 1) startTimer();
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, [allSteps.length, startTimer]);
+
+    useEffect(() => {
+        setCurrentIndex(0);
+    }, [stepSets]);
+
+    const handleSlideClick = (index: number) => {
+        setCurrentIndex(index);
+        startTimer();
     };
 
-    const handlePrev = () => {
-        setCurrentSetIndex((prevIndex) => (prevIndex - 1 + stepSets.length) % stepSets.length);
+    const handleMouseEnter = () => {
+        if (timerRef.current) clearInterval(timerRef.current);
     };
 
-    const goToStep = (index: number) => {
-        setCurrentSetIndex(index);
+    const handleMouseLeave = () => {
+        startTimer();
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            goNext();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            setCurrentIndex((p) => (p === 0 ? allSteps.length - 1 : p - 1));
+        }
+    };
+
+    if (!allSteps || allSteps.length === 0) {
+        return (
+            <div className="w-full max-w-[1447px] h-[300px] mx-auto p-6 bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center">
+                <h2 className="text-2xl font-bold text-center mb-4">{title}</h2>
+                <p>No steps to display.</p>
+            </div>
+        );
     }
 
-    const currentSteps = stepSets[currentSetIndex];
-
     return (
-        <div className="w-[1447px] h-[268px] mx-auto p-4 md:p-6 bg-white/5 backdrop-blur-sm rounded-2xl relative">
-            <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left min-h-[140px]">
-                {currentSteps.map((step, index) => (
-                    <React.Fragment key={index}>
-                        <div className="flex-1 p-2 md:p-4">
-                            <div className="flex justify-center md:justify-start mb-2">
-                                <div className="p-2 bg-white/10 rounded-full">
-                                    {step.icon}
-                                </div>
-                            </div>
-                            <h3 className="font-bold text-base md:text-lg mb-1">{step.title}</h3>
-                            <p className="text-xs md:text-sm text-white/70">{step.desc}</p>
-                        </div>
-                        {index < currentSteps.length - 1 && (
-                            <div className="hidden md:block h-16 w-px bg-white/20 mx-4"></div>
-                        )}
-                    </React.Fragment>
-                ))}
+        <div
+            className="relative w-full max-w-[1447px] h-[300px] mx-auto bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col p-3 md:p-4"
+            style={{
+                boxShadow:
+                    '0 0 20px 3px rgba(100, 180, 255, 0.2), 0 0 8px 1px rgba(100, 180, 255, 0.1) inset',
+            }}
+        >
+            <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
+                <span className="text-xs md:text-sm text-white/60">
+          {currentIndex + 1} / {allSteps.length}
+        </span>
             </div>
 
-            {/* Navigation Arrows */}
-            {stepSets.length > 1 && (
-                <>
-                    <div className="absolute inset-y-0 left-0 flex items-center">
-                        <button onClick={handlePrev} className="p-2 m-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                            <ChevronLeft className="h-5 w-5" />
-                        </button>
-                    </div>
-                    <div className="absolute inset-y-0 right-0 flex items-center">
-                        <button onClick={handleNext} className="p-2 m-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                            <ChevronRight className="h-5 w-5" />
-                        </button>
-                    </div>
-                </>
-            )}
+            {/* 배경 패턴 */}
+            <div className="pointer-events-none absolute inset-0 -z-10 opacity-20">
+                <div className="w-full h-full bg-[radial-gradient(ellipse_at_top,rgba(56,189,248,0.2),transparent_60%),radial-gradient(ellipse_at_bottom,rgba(167,139,250,0.15),transparent_60%)]" />
+            </div>
 
-            {/* Page Dots */}
-            {stepSets.length > 1 && (
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2">
-                    {stepSets.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => goToStep(index)}
-                            className={`w-2 h-2 rounded-full transition-colors ${
-                                currentSetIndex === index ? 'bg-white' : 'bg-white/40 hover:bg-white/70'
-                            }`}
-                        />
-                    ))}
-                </div>
-            )}
+            <div
+                className="flex-grow relative overflow-hidden rounded-xl"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onKeyDown={handleKeyDown}
+                tabIndex={0}
+                role="region"
+                aria-roledescription="carousel"
+                aria-label={title}
+                aria-live="polite"
+            >
+                {allSteps.map((raw, i) => {
+                    const step = raw as Step & StepExtra;
+                    const offset = i - currentIndex;
+                    const isActive = offset === 0;
+
+                    const transform = `translateX(calc(-50% + ${offset * stepSpacingPct}%)) scale(${
+                        isActive ? 1 : 0.95
+                    })`;
+                    const zIndex = allSteps.length - Math.abs(offset);
+
+                    return (
+                        <div
+                            key={i}
+                            style={{
+                                position: 'absolute',
+                                width: '70%',
+                                height: '100%',
+                                left: '50%',
+                                transform,
+                                transformOrigin: 'center center',
+                                opacity: isActive ? 1 : 0.85,
+                                filter: `blur(${isActive ? 0 : 0.5}px)`,
+                                zIndex,
+                                transition:
+                                    'transform 420ms cubic-bezier(.2,.7,.2,1), opacity 280ms ease, filter 280ms ease',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                willChange: 'transform',
+                            }}
+                            onClick={() => handleSlideClick(i)}
+                            aria-hidden={!isActive}
+                        >
+                            {/* 카드 */}
+                            <div className="relative w-full h-[92%] rounded-2xl border border-white/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
+                                {/* 액티브 글로우 */}
+                                <div
+                                    className={`absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300 ${
+                                        isActive ? 'opacity-100' : 'opacity-0'
+                                    }`}
+                                    style={{
+                                        boxShadow:
+                                            'inset 0 0 0 1px rgba(255,255,255,0.16), 0 0 28px 6px rgba(56,189,248,0.16)',
+                                    }}
+                                />
+
+                                {/* 대각선 리본 */}
+                                {step.badge && (
+                                    <div className="absolute -right-12 top-4 rotate-45 z-20">
+                                        <div className="px-6 py-1 text-[10px] font-bold tracking-wider uppercase bg-white/90 text-black rounded shadow">
+                                            {step.badge}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* 콘텐츠: 12그리드 (컴팩트) */}
+                                <div className="relative z-10 h-full grid grid-cols-12 gap-3 md:gap-4 p-3 md:p-4">
+                                    {/* LEFT */}
+                                    <div className="col-span-12 md:col-span-5 flex flex-col justify-center">
+                                        <div className="flex items-start gap-3 md:gap-4">
+                                            {/* 아이콘 */}
+                                            <div className="relative shrink-0">
+                                                <div
+                                                    className="p-3 rounded-xl ring-1 ring-white/20"
+                                                    style={{
+                                                        backgroundColor:
+                                                            (step as any).iconBgColor || 'rgba(255,255,255,0.08)',
+                                                    }}
+                                                >
+                                                    {step.icon}
+                                                </div>
+                                                <div
+                                                    className="absolute inset-0 -z-10 rounded-2xl"
+                                                    style={{
+                                                        boxShadow: `0 0 0 8px ${step.accent || 'rgba(56,189,248,0.12)'}`,
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className="min-w-0">
+                                                <h3 className="font-extrabold text-lg md:text-xl leading-tight truncate">
+                                                    {step.title}
+                                                </h3>
+                                                <p className="mt-1 text-xs md:text-sm text-white/75 leading-snug overflow-hidden text-ellipsis">
+                                                    {step.desc}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* 진행 바 */}
+                                        {typeof step.progress === 'number' && (
+                                            <div className="mt-3">
+                                                <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                                                    <div
+                                                        className="h-full rounded-full transition-all"
+                                                        style={{
+                                                            width: `${Math.max(0, Math.min(100, step.progress!))}%`,
+                                                            background:
+                                                                'linear-gradient(90deg, rgba(56,189,248,0.9), rgba(167,139,250,0.9))',
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="mt-0.5 text-[10px] text-white/60">
+                                                    {Math.round(step.progress!)}%
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="col-span-12 md:col-span-7 flex flex-col justify-center">
+                                        <div className="relative w-full rounded-lg overflow-hidden border border-white/15 bg-white/5 h-[120px] md:h-[140px]">
+                                            {step.media ? (
+                                                <div className="w-full h-full">{step.media}</div>
+                                            ) : step.mediaUrl ? (
+                                                <img
+                                                    src={step.mediaUrl}
+                                                    alt=""
+                                                    className="w-full h-full object-cover"
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full relative">
+                                                    <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.04)_0_8px,transparent_8px_16px)]" />
+                                                    <div className="absolute inset-0 grid place-items-center">
+                                                        <div className="px-2.5 py-0.5 rounded-full border border-white/15 bg-white/10 text-[10px] text-white/75">
+                                                            Preview
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div className="absolute left-2 top-2 px-1.5 py-0.5 rounded text-[10px] bg-black/40 border border-white/10">
+                                                {step.title}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* 페이지네이션 */}
+            <div className="mt-2 flex items-center justify-center gap-2.5">
+                {allSteps.map((s, index) => (
+                    <button
+                        key={index}
+                        onClick={() => handleSlideClick(index)}
+                        className={`relative group h-2.5 w-2.5 rounded-full p-0 transition-all ${
+                            currentIndex === index ? 'bg-white scale-110' : 'bg-white/40 hover:bg-white/70'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                        aria-current={currentIndex === index}
+                        title={(s as Step & StepExtra).title || `Step ${index + 1}`}
+                    >
+            <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap px-1.5 py-0.5 rounded-md text-[10px] bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+              {(s as Step & StepExtra).title}
+            </span>
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };
