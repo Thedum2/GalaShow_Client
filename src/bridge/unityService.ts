@@ -1,16 +1,22 @@
-﻿import {DEFAULT_TIMEOUT_MS, makeEnvelope, parseUnityMessage, UnityMessage,} from "./unityConfig";
+import {DEFAULT_TIMEOUT_MS, makeEnvelope, parseUnityMessage, UnityMessage,} from "./unityConfig";
 import {MainHandler} from "./handler/MainHandler";
-import {UnityTransport} from "@/types/bridge";
+import {Direction, UnityTransport} from "@/types/bridge";
 
 class UnityBridgeService {
     private transport: UnityTransport | null = null;
     private unsubscribe: (() => void) | null = null;
+    private subscribers = new Set<(msg: UnityMessage, direction: Direction) => void>();
 
     private pending = new Map<string, {
         resolve: (data: any) => void;
         reject: (err: any) => void;
         timer: any;
     }>();
+
+    subscribe(callback: (msg: UnityMessage, direction: Direction) => void): () => void {
+        this.subscribers.add(callback);
+        return () => this.subscribers.delete(callback);
+    }
 
     init(transport: UnityTransport) {
         if (this.transport) return;
@@ -22,6 +28,7 @@ class UnityBridgeService {
     dispose() {
         this.pending.forEach(p => clearTimeout(p.timer));
         this.pending.clear();
+        this.subscribers.clear();
         if (this.unsubscribe) this.unsubscribe();
         this.unsubscribe = null;
         this.transport = null;
@@ -30,6 +37,7 @@ class UnityBridgeService {
 
     sendReq<TReq = any, TAck = any>(route: string, data: TReq, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<TAck> {
         const env = makeEnvelope("R2U", "REQ", route, data);
+        this.subscribers.forEach(cb => cb(env, "R2U"));
         return new Promise<TAck>((resolve, reject) => {
             if (!this.transport) return reject(new Error("Unity transport not ready"));
 
@@ -54,12 +62,14 @@ class UnityBridgeService {
             data,
             timestamp: Date.now().toString(),
         };
+        this.subscribers.forEach(cb => cb(env, "R2U"));
         if (!this.transport) throw new Error("Unity transport not ready");
         this.transport.send(JSON.stringify(env));
     }
 
     sendNty<T = any>(route: string, data: T) {
         const env = makeEnvelope("R2U", "NTY", route, data);
+        this.subscribers.forEach(cb => cb(env, "R2U"));
         if (!this.transport) throw new Error("Unity transport not ready");
         this.transport.send(JSON.stringify(env));
     }
@@ -71,7 +81,9 @@ class UnityBridgeService {
             console.error("[bridge] onUnityMessage invalid message:", raw);
             return;
         }
-        
+
+        this.subscribers.forEach(cb => cb(payload, "U2R"));
+
         try {
             if (payload.type === "ACK") {
                 const p = this.pending.get(payload.id);

@@ -19,7 +19,7 @@ export default function SamplePage() {
             </button>
 
             <div className="mt-4">
-                {showMessage ? <div className="min-h-screen bg-gray-100 p-4 space-y-4">
+                {showMessage ? <div className="min-h-screen bg-gray-100 p-4 flex flex-col gap-4">
                     <div className="bg-white rounded-lg shadow p-4">
                         <UnityPlayer
                             unityProvider={unityProvider}
@@ -27,7 +27,7 @@ export default function SamplePage() {
                             loadingProgression={loadingProgression}
                         />
                     </div>
-                    <MessageInterfaceSample/>
+                    <MessageInterfaceSample className="flex-1"/>
                 </div> : <ApiPlaygroundSample/>}
             </div>
         </div>

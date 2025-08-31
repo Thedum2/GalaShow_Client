@@ -16,7 +16,7 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                                                      loadingProgression,
                                                      className = ""
                                                  }) => {
-    const dimensions = () => ({width: "1700px", height: "500px"});
+    const dimensions = () => ({width: "1700px", height: "400px"});
     const size = dimensions();
 
     //==================================

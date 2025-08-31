@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import {
     AlertCircle,
     ArrowLeft,
@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { SampleApi } from "@/bridge/handler/SampleHandler";
 import {Direction, LocalStatus, UnityMsg, UnityMsgType} from "@/types/bridge";
+import {unityService} from "@/bridge/unityService";
+import {UnityMessage} from "@/bridge/unityConfig";
 
 const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = "" }) => {
     const [messages, setMessages] = useState<UnityMsg[]>([]);
@@ -117,20 +119,17 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
     };
 
     useEffect(() => {
-        const handler = (e: MessageEvent) => {
-            const p = e.data;
-            if (!p || (!p.route && !p.type)) return;
+        const unsubscribe = unityService.subscribe((p: UnityMessage) => {
             const msg: UnityMsg = {
-                type: p.type as UnityMsgType,
-                route: String(p.route ?? ""),
-                data: p.data ?? {},
-                direction: (p.direction as Direction) || "U2R",
-                status: p.type === "ACK" || p.type === "NTY" ? "success" : undefined,
+                type: p.type,
+                route: p.route,
+                data: p.data,
+                direction: "U2R", // Messages from unityService are always from Unity
+                status: p.type === "ACK" || p.type === "NTY" ? (!p.ok ? "error" : "success") : undefined,
             };
             setMessages((prev) => [...prev, msg]);
-        };
-        window.addEventListener("message", handler);
-        return () => window.removeEventListener("message", handler);
+        });
+        return unsubscribe;
     }, []);
 
     const filtered = useMemo(() => {
@@ -172,7 +171,7 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
     };
 
     return (
-        <div className={`bg-white rounded-lg shadow ${className}`}>
+        <div className={`bg-white rounded-lg shadow flex flex-col h-full ${className}`}>
             <div className="p-4 border-b bg-gray-50 rounded-t-lg flex items-center justify-between">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Settings size={20} />
@@ -198,8 +197,8 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
                 </div>
             </div>
 
-            <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-4">
+            <div className="flex-1 p-4 flex flex-col lg:flex-row gap-6 overflow-hidden">
+                <div className="lg:w-1/2 space-y-4 overflow-y-auto">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Unity Route 선택</label>
                         <select
@@ -255,7 +254,7 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
                     </div>
                 </div>
 
-                <div>
+                <div className="lg:w-1/2 flex flex-col overflow-hidden">
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-4">
                         <div className="text-center">
                             <div className="text-2xl font-bold text-gray-900">{total}</div>
@@ -319,7 +318,7 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
                         </div>
                     </div>
 
-                    <div className="max-h-96 overflow-y-auto border rounded">
+                    <div className="flex-1 overflow-y-auto border rounded">
                         {filtered.length === 0 ? (
                             <div className="p-8 text-center text-gray-500">
                                 <MessageSquare size={48} className="mx-auto mb-4 opacity-50" />

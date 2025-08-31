@@ -1,4 +1,4 @@
-﻿import type { BridgeHandler } from "./MainHandler";
+import type { BridgeHandler } from "./MainHandler";
 import { unityService } from "../unityService";
 import { UIBus } from "../unityConfig";
 
@@ -13,15 +13,10 @@ export const SampleApi = {
 
 export const SampleHandler: BridgeHandler = {
     route: "SampleHandler",
+
     async onRequest(action, data) {
-        if (typeof window !== "undefined") {
-            window.postMessage({ type: "REQ", route: `SampleHandler_${action}`, data, direction: "U2R" }, "*");
-        }
         if (action === "CalculateMultiply") {
             const result = data.a * data.b;
-            if (typeof window !== "undefined") {
-                window.postMessage({ type: "ACK", route: `SampleHandler_${action}`, data: { result }, direction: "U2R" }, "*");
-            }
             return { result };
         }
     },
@@ -29,13 +24,7 @@ export const SampleHandler: BridgeHandler = {
         if (action === "ChangeBorderColor") {
             UIBus.changeBorderColor(data.color);
         }
-        if (typeof window !== "undefined") {
-            window.postMessage({ type: "NTY", route: `SampleHandler_${action}`, data, direction: "U2R" }, "*");
-        }
     },
     onAck(action, data) {
-        if (typeof window !== "undefined") {
-            window.postMessage({ type: "ACK", route: `SampleHandler_${action}`, data, direction: "U2R" }, "*");
-        }
     },
 };
