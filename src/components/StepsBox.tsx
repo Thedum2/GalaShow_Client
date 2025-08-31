@@ -64,7 +64,7 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
             className="relative w-full max-w-[1447px] h-[300px] mx-auto bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col p-6"
             style={{
                 boxShadow:
-                    '0 0 20px 3px rgba(100, 180, 255, 0.2), 0 0 8px 1px rgba(100, 180, 255, 0.1) inset',
+                    '0 0 40px 8px rgba(100, 180, 255, 0.3), 0 0 12px 2px rgba(100, 180, 255, 0.15) inset',
             }}
         >
             <div className="flex items-center justify-between mb-2 ml-4">
@@ -127,7 +127,7 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
                                     }`}
                                     style={{
                                         boxShadow:
-                                            'inset 0 0 0 1px rgba(255,255,255,0.16), 0 0 28px 6px rgba(56,189,248,0.16)',
+                                            'inset 0 0 0 1px rgba(255,255,255,0.16), 0 0 36px 8px rgba(56,189,248,0.2)',
                                     }}
                                 />
 

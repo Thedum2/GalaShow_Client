@@ -168,7 +168,7 @@ export default function Welcome() {
                 </div>
 
                 {/* 4. Policy Area - Absolutely Positioned */}
-                <footer className="absolute bottom-8 left-1/2 -translate-x-1/2 flex-shrink-0 flex flex-wrap items-center justify-center gap-4 text-s text-white/50 py-2">
+                <footer className="absolute bottom-5 left-1/2 -translate-x-1/2 flex-shrink-0 flex flex-wrap items-center justify-center gap-4 text-s text-white/50 py-2">
                     {policyLinks && (
                         <>
                             <button onClick={() => openPdfViewer("서비스 약관",policyLinks.termsOfService)} className="bg-transparent text-purple-400 hover:text-white transition-colors">서비스 약관</button>

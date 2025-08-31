@@ -25,7 +25,7 @@ export default function AppLayout() {
                 bgSrc={background?.url}
                 bgType={background?.type}
                 bgPosition="center"
-                overlayOpacity={0.6}
+                overlayOpacity={0.7}
             />
             <FitStage
                 mode="contain"
