@@ -1,7 +1,7 @@
 import {httpClient} from "@/api";
 import {PolicyLinks} from "@/api/model/response/policy/PolicyLinks";
 
-export const PoliciesApi = {
+    export const PoliciesApi = {
     get(): Promise<PolicyLinks> {
         return httpClient.get<PolicyLinks>("/policies", PolicyLinks.fromJSON);
     }

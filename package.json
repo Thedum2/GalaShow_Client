@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "clean": "if exist node_modules rmdir /s /q node_modules && if exist package-lock.json del package-lock.json && if exist dist rmdir /s /q dist && if exist .vite rmdir /s /q .vite && npm cache clean --force",
+    "dev:c": "npm run clean && npm install && npm run dev",
     "build:dev": "vite build --mode development",
     "build:prod": "vite build --mode production",
     "lint": "eslint .",
@@ -13,8 +15,10 @@
   "dependencies": {
     "axios": "^1.11.0",
     "lucide-react": "^0.541.0",
+    "pdfjs-dist": "^5.3.93",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-pdf": "^10.1.0",
     "react-router-dom": "^7.8.2",
     "react-unity-webgl": "^9.9.0",
     "uuid": "^11.1.0"

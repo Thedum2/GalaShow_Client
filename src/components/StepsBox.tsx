@@ -1,18 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Step } from '@/types/components';
-
-interface StepsBoxProps {
-    title: string;
-    stepSets: Step[][];
-}
-
-type StepExtra = {
-    mediaUrl?: string;
-    media?: React.ReactNode;
-    badge?: string;
-    progress?: number;
-    accent?: string;
-};
+import {Step, StepExtra, StepsBoxProps} from '@/types/components';
 
 const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,7 +52,7 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
 
     if (!allSteps || allSteps.length === 0) {
         return (
-            <div className="w-full max-w-[1447px] h-[300px] mx-auto p-6 bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center">
+            <div className="w-full max-w-[1447px] h-[300px] mx-auto bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center">
                 <h2 className="text-2xl font-bold text-center mb-4">{title}</h2>
                 <p>No steps to display.</p>
             </div>
@@ -74,20 +61,17 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
 
     return (
         <div
-            className="relative w-full max-w-[1447px] h-[300px] mx-auto bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col p-3 md:p-4"
+            className="relative w-full max-w-[1447px] h-[300px] mx-auto bg-white/5 backdrop-blur-sm rounded-2xl flex flex-col p-6"
             style={{
                 boxShadow:
                     '0 0 20px 3px rgba(100, 180, 255, 0.2), 0 0 8px 1px rgba(100, 180, 255, 0.1) inset',
             }}
         >
-            <div className="flex items-center justify-between mb-2">
-                <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
-                <span className="text-xs md:text-sm text-white/60">
-          {currentIndex + 1} / {allSteps.length}
-        </span>
+            <div className="flex items-center justify-between mb-2 ml-4">
+                <h2 className="md:text-2xl font-bold">{title}</h2>
+                <span className="text-xs md:text-sm text-white/60">{currentIndex + 1} / {allSteps.length}</span>
             </div>
 
-            {/* 배경 패턴 */}
             <div className="pointer-events-none absolute inset-0 -z-10 opacity-20">
                 <div className="w-full h-full bg-[radial-gradient(ellipse_at_top,rgba(56,189,248,0.2),transparent_60%),radial-gradient(ellipse_at_bottom,rgba(167,139,250,0.15),transparent_60%)]" />
             </div>
@@ -118,9 +102,9 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
                             key={i}
                             style={{
                                 position: 'absolute',
-                                width: '70%',
+                                width: '80%',
                                 height: '100%',
-                                left: '50%',
+                                left: '45%',
                                 transform,
                                 transformOrigin: 'center center',
                                 opacity: isActive ? 1 : 0.85,
@@ -136,9 +120,7 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
                             onClick={() => handleSlideClick(i)}
                             aria-hidden={!isActive}
                         >
-                            {/* 카드 */}
-                            <div className="relative w-full h-[92%] rounded-2xl border border-white/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
-                                {/* 액티브 글로우 */}
+                            <div className="p-1 relative w-full h-[92%] rounded-2xl border border-white/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
                                 <div
                                     className={`absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300 ${
                                         isActive ? 'opacity-100' : 'opacity-0'
@@ -149,27 +131,14 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
                                     }}
                                 />
 
-                                {/* 대각선 리본 */}
-                                {step.badge && (
-                                    <div className="absolute -right-12 top-4 rotate-45 z-20">
-                                        <div className="px-6 py-1 text-[10px] font-bold tracking-wider uppercase bg-white/90 text-black rounded shadow">
-                                            {step.badge}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* 콘텐츠: 12그리드 (컴팩트) */}
                                 <div className="relative z-10 h-full grid grid-cols-12 gap-3 md:gap-4 p-3 md:p-4">
-                                    {/* LEFT */}
-                                    <div className="col-span-12 md:col-span-5 flex flex-col justify-center">
+                                    <div className="col-span-12 md:col-span-7 flex flex-col justify-center">
                                         <div className="flex items-start gap-3 md:gap-4">
-                                            {/* 아이콘 */}
                                             <div className="relative shrink-0">
                                                 <div
                                                     className="p-3 rounded-xl ring-1 ring-white/20"
                                                     style={{
-                                                        backgroundColor:
-                                                            (step as any).iconBgColor || 'rgba(255,255,255,0.08)',
+                                                        backgroundColor:(step as any).iconBgColor || 'rgba(255,255,255,0.08)',
                                                     }}
                                                 >
                                                     {step.icon}
@@ -183,16 +152,15 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
                                             </div>
 
                                             <div className="min-w-0">
-                                                <h3 className="font-extrabold text-lg md:text-xl leading-tight truncate">
+                                                <h3 className="font-extrabold text-2xl leading-tight truncate">
                                                     {step.title}
                                                 </h3>
-                                                <p className="mt-1 text-xs md:text-sm text-white/75 leading-snug overflow-hidden text-ellipsis">
+                                                <p className="mt-1 text-xl text-white/75 leading-snug overflow-hidden text-ellipsis">
                                                     {step.desc}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        {/* 진행 바 */}
                                         {typeof step.progress === 'number' && (
                                             <div className="mt-3">
                                                 <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
@@ -205,14 +173,14 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
                                                         }}
                                                     />
                                                 </div>
-                                                <div className="mt-0.5 text-[10px] text-white/60">
+                                                <div className="mt-0.5 text-xl text-white/60">
                                                     {Math.round(step.progress!)}%
                                                 </div>
                                             </div>
                                         )}
                                     </div>
 
-                                    <div className="col-span-12 md:col-span-7 flex flex-col justify-center">
+                                    <div className="col-span-12 md:col-span-5 flex flex-col justify-center">
                                         <div className="relative w-full rounded-lg overflow-hidden border border-white/15 bg-white/5 h-[120px] md:h-[140px]">
                                             {step.media ? (
                                                 <div className="w-full h-full">{step.media}</div>

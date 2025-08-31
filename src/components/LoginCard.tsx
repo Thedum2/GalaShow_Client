@@ -35,8 +35,8 @@ export default function LoginCard({
     if (!isHovering || !cardRef.current) return {};
     const { width, height } = cardRef.current.getBoundingClientRect();
     const { x, y } = mousePosition;
-    const rotateX = (y / height - 0.5) * -15; // Tilt up/down
-    const rotateY = (x / width - 0.5) * 15;  // Tilt left/right
+    const rotateX = (y / height - 0.5) * -15;
+    const rotateY = (x / width - 0.5) * 15;
     return {
       transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`,
       transition: 'transform 0.1s ease-out',
@@ -47,7 +47,7 @@ export default function LoginCard({
     if (!isHovering || !glow) return { background: 'none' };
     const { x, y } = mousePosition;
     return {
-      backgroundImage: `radial-gradient(circle at ${x}px ${y}px, ${glow}20, transparent 40%)`,
+      backgroundImage: `radial-gradient(circle at ${x}px ${y}px, ${glow}80, transparent 20%)`,
     };
   };
 

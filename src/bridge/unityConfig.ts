@@ -82,11 +82,9 @@ let _changeBorderColorCallback: (color: string) => void = () => {
 };
 
 export const UIBus = {
-    // React 컴포넌트가 자신의 상태 변경 함수를 등록하는 곳
     onBorderColorChange: (callback: (color: string) => void) => {
         _changeBorderColorCallback = callback;
     },
-    // 핸들러 등 다른 곳에서 색상 변경을 요청하는 곳
     changeBorderColor: (color: string) => {
         _changeBorderColorCallback(color);
     }

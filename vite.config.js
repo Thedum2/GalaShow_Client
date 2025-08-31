@@ -11,6 +11,7 @@ export default defineConfig({
         outDir: 'build/react',
     },
     plugins: [
+                react(),
         svgr({
             svgrOptions: {
                 icon: true,
@@ -18,7 +19,6 @@ export default defineConfig({
             },
             include: '**/*.svg',
         }),
-        react(),
         viteStaticCopy({
             targets: [
                 {

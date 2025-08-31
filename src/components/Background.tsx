@@ -2,11 +2,9 @@ import React from 'react'
 import type { BackgroundProps } from '@/types/common'
 import { BackgroundType } from '@/types/common'
 
-// bgType이 명시적으로 제공되지 않은 경우, 파일 확장자를 통해 타입을 추론합니다.
 const getSourceType = (src: string): BackgroundType | 'unknown' => {
     const extension = src.split('.').pop()?.toLowerCase().split('?')[0];
     if (!extension) {
-        // 확장자가 없는 URL(Pexels 등)을 위한 예외 처리
         if (src.includes('pexels.com/video')) return 'video';
         return 'unknown';
     }
@@ -41,7 +39,7 @@ export default function Background({
             case 'video':
                 return (
                     <video
-                        key={bgSrc} // 소스가 바뀔 때마다 비디오를 다시 렌더링하기 위함
+                        key={bgSrc}
                         src={bgSrc}
                         autoPlay
                         loop

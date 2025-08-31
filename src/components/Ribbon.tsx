@@ -1,5 +1,4 @@
-﻿// Ribbon.tsx (뷰포트 기준으로 끝까지 뻗는 버전)
-import { useMemo } from 'react'
+﻿import { useMemo } from 'react'
 import type { RibbonProps } from '@/types/components'
 
 export default function Ribbon({

@@ -3,6 +3,12 @@ import LoginCard from "@/components/LoginCard";
 import Icon from "@/components/icons/Icon";
 import StepsBox from "@/components/StepsBox";
 import RibbonOverlay from "@/components/RibbonOverlay";
+import React, {useEffect, useState} from "react";
+import {BannersApi, PoliciesApi, SnsLinksApi} from "@/api";
+import {Banner} from "@/api/model/response/banner/Banner";
+import {PolicyLinks} from "@/api/model/response/policy/PolicyLinks";
+import {SnsLink} from "@/api/model/response/sns/SnsLink";
+import PdfViewer from "@/components/PdfViewer";
 
 const stepSets = [
     [
@@ -11,7 +17,6 @@ const stepSets = [
             title: "매 라운드 선택지 중 하나를 고르세요",
             desc: "방장(스트리머)의 선택을 맞추세요!",
             iconBgColor: "#0545B1",
-            badge: 'NEW',
             mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
@@ -21,7 +26,6 @@ const stepSets = [
             title: "선택에 따라 생존자가 결정됩니다",
             desc: "다수결, 소수결 또는 특별 규칙!",
             iconBgColor: "#03C75A",
-            badge: 'NEW',
             mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
@@ -31,7 +35,6 @@ const stepSets = [
             title: "마지막까지 살아남으면 승리!",
             desc: "너가 이겼다....",
             iconBgColor: "#EAB308",
-            badge: 'NEW',
             mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
@@ -43,7 +46,6 @@ const stepSets = [
             title: "새로운 게임 모드",
             desc: "전혀 다른 방식의 게임을 즐겨보세요.",
             iconBgColor: "#0545B1",
-            badge: 'NEW',
             mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
@@ -53,7 +55,6 @@ const stepSets = [
             title: "채팅으로 참여하기",
             desc: "채팅으로 직접 게임에 참여할 수 있습니다.",
             iconBgColor: "#03C75A",
-            badge: 'NEW',
             mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
@@ -63,7 +64,6 @@ const stepSets = [
             title: "팬들을 위한 특별 라운드",
             desc: "스트리머와 팬이 함께 만드는 특별한 순간!",
             iconBgColor: "#707070",
-            badge: 'NEW',
             mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
@@ -72,16 +72,51 @@ const stepSets = [
 ];
 
 export default function Welcome() {
+    const [banners, setBanners] = useState<Banner[]>([]);
+    const [policyLinks, setPolicyLinks] = useState<PolicyLinks | null>(null);
+    const [snsLinks, setSnsLinks] = useState<SnsLink[]>([]);
+    const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+    const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
+    const [pdfTitle, setPdfTitle] = useState("");
+
+    useEffect(() => {
+        BannersApi.get().then(setBanners).catch(console.error);
+        PoliciesApi.get().then(setPolicyLinks).catch(console.error);
+        SnsLinksApi.get().then(setSnsLinks).catch(console.error);
+    }, []);
+
+    const openPdfViewer = (title:string ,url: string) => {
+        if (!url) {
+            console.error('PDF URL is invalid:', url);
+            return;
+        }
+        setPdfTitle(title);
+        setPdfUrl(url);
+        setIsPdfViewerOpen(true);
+    };
+
+    const closePdfViewer = () => {
+        setIsPdfViewerOpen(false);
+        setPdfUrl(null);
+    };
+
+    const getRandomValue = (min: number, max: number) => Math.random() * (max - min) + min;
+
     return (
         <div className="relative flex flex-col w-full h-full text-white overflow-hidden">
+            {isPdfViewerOpen && pdfUrl && <PdfViewer title={pdfTitle} url={pdfUrl} onClose={closePdfViewer} />}
+
             {/* Background Ribbons */}
-            <RibbonOverlay
-                text={"방송 중 속마음었던 순간은? 방송 장비 중 가장 불만스러운 점은방송 중 속마음이 들린다면? 가장 충격적이었던 순간은? 방송 장비 중 가장 불만스러운 점은방송 중 속마음이 들린다면? 가장 충격적이었던 순간은? 방송 장비 중 가장 불만스러운 점은방송 중 속마음이 들린다면? 가장 충격적이었던 순간은? 방송 장비 중 가장 불만스러운 점은방송 중 속마음이 들린다면? 가장 충격적이었던 순간은? 방송 장비 중 가장 불만스러운 점은? "}
-                rotate={-12}
-                top={"8%"}
-                speedSec={10}
-                theme={"dark"}
-            />
+            {banners.slice(0, 5).map((banner, index) => (
+                <RibbonOverlay
+                    key={banner.id}
+                    text={banner.message}
+                    rotate={getRandomValue(-15, 15)}
+                    top={`${getRandomValue(5, 85)}%`}
+                    speedSec={getRandomValue(15, 30)}
+                    theme={index % 2 === 0 ? 'dark' : 'light'}
+                />
+            ))}
 
             {/* Main Content Area */}
             <div className="relative z-10 flex flex-col flex-grow w-full h-full p-2 sm:p-4 md:p-8">
@@ -133,12 +168,24 @@ export default function Welcome() {
                 </div>
 
                 {/* 4. Policy Area - Absolutely Positioned */}
-                <footer className="absolute bottom-8 left-1/2 -translate-x-1/2 flex-shrink-0 flex flex-wrap items-center justify-center gap-4 text-xs text-white/50 py-2">
-                    <a className="hover:text-white/80 transition-colors" href="#">서비스 약관</a>
-                    <span>·</span>
-                    <a className="hover:text-white/80 transition-colors" href="#">개인정보 처리방침</a>
-                    <span>·</span>
+                <footer className="absolute bottom-8 left-1/2 -translate-x-1/2 flex-shrink-0 flex flex-wrap items-center justify-center gap-4 text-s text-white/50 py-2">
+                    {policyLinks && (
+                        <>
+                            <button onClick={() => openPdfViewer("서비스 약관",policyLinks.termsOfService)} className="bg-transparent text-purple-400 hover:text-white transition-colors">서비스 약관</button>
+                            <span>·</span>
+                            <button onClick={() => openPdfViewer("개인정보 처리방침",policyLinks.privacyPolicy)} className="bg-transparent text-purple-400 hover:text-white transition-colors">개인정보 처리방침</button>
+                            <span>·</span>
+                        </>
+                    )}
                     <span className="opacity-80">© 2025 갈라쇼</span>
+                    {snsLinks.length > 0 && <span className="mx-1">·</span>}
+                    <div className="flex items-center gap-3">
+                        {snsLinks.map(link => (
+                            <a key={link.title} href={link.url} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                                <img src={link.icon_url} alt={link.title} className="w-5 h-5" />
+                            </a>
+                        ))}
+                    </div>
                 </footer>
             </div>
         </div>

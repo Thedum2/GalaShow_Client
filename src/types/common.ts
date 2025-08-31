@@ -13,6 +13,12 @@ export interface Tokens {
     refreshToken?: string | null;
 }
 
+export interface PdfViewerProps {
+    url: string;
+    onClose: () => void;
+    title?: string;
+}
+
 export interface BackgroundProps {
     bgSrc?: string
     bgAlt?: string

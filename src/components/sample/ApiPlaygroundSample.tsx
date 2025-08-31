@@ -49,7 +49,6 @@ export default function ApiPlaygroundSample() {
         }
     }
 
-    // Actions
     const onLogin = () =>
         run("login", async () => {
             const s = await AuthApi.login(new LoginRequest(loginId, password));

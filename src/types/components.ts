@@ -7,10 +7,6 @@ export interface Step {
     iconBgColor?: string;
 }
 
-export interface StepsBoxProps {
-    steps: Step[];
-}
-
 export interface LoginCardProps {
   title: string;
   color: string;
@@ -32,3 +28,14 @@ export interface RibbonProps {
     theme?: "light" | "dark";
 }
 
+export interface StepsBoxProps {
+    title: string;
+    stepSets: Step[][];
+}
+
+export interface StepExtra{
+    mediaUrl?: string;
+    media?: React.ReactNode;
+    progress?: number;
+    accent?: string;
+}
