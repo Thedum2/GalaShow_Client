@@ -29,7 +29,7 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
     const [typeFilter, setTypeFilter] = useState<"all" | UnityMsgType>("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-    useRef(0);
+    const msgIdCounter = useRef(0);
     const routeOptions = [
         "SampleHandler_ChangeSphereColor",
         "SampleHandler_CalculateAdd",
@@ -55,7 +55,12 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
     const parseJsonSafely = (raw: string) => {
         const s = raw.trim();
         if (!s) return {};
-        return JSON.parse(s);
+        try {
+            return JSON.parse(s);
+        } catch (e) {
+            console.error("Failed to parse JSON:", e);
+            return {};
+        }
     };
 
     const sendNTY = () => {
@@ -68,44 +73,46 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
             alert('JSON에 { "color": "#FF006B" } 형태로 넣어주세요.');
             return;
         }
-        try {
-            SampleApi.changeSphereColor((data as any).color);
-            setMessages((prev) => [...prev, { type: "NTY", route: customRoute, data, direction: "R2U", status: "success" }]);
-        } catch {
-            setMessages((prev) => [...prev, { type: "NTY", route: customRoute, data, direction: "R2U", status: "error" }]);
-            alert("NTY 전송 실패");
-        }
+        SampleApi.changeSphereColor((data as any).color);
     };
 
     const sendREQ = async () => {
         if (!customRoute) return;
         const data = parseJsonSafely(customData);
         setIsSending(true);
-        const newIndex = messages.length;
-        setMessages((prev) => [...prev, { type: "REQ", route: customRoute, data, direction: "R2U", status: "pending" }]);
+
+        const msg: UnityMsg = {
+            id: msgIdCounter.current++,
+            type: "REQ",
+            route: customRoute,
+            data,
+            direction: "R2U",
+            status: "pending"
+        };
+        setMessages((prev) => [...prev, msg]);
+
         const setStatus = (s: LocalStatus) =>
-            setMessages((prev) => {
-                const next = prev.slice();
-                if (next[newIndex]) next[newIndex] = { ...next[newIndex], status: s };
-                return next;
-            });
+            setMessages((prev) => prev.map(m => m.id === msg.id ? {...m, status: s} : m));
+
         try {
             if (customRoute === "SampleHandler_CalculateAdd") {
                 const { a, b } = (data as any) ?? {};
-                if (typeof a !== "number" || typeof b !== "number") throw new Error();
-                SampleApi.calculateAdd(
-                    a,
-                    b,
-                    () => setStatus("success"),
-                    () => setStatus("error")
-                );
+                if (typeof a !== "number" || typeof b !== "number") {
+                    console.error("Invalid data for CalculateAdd", data);
+                    setStatus("error");
+                } else {
+                    await SampleApi.calculateAdd(a, b);
+                    setStatus("success");
+                }
             } else if (customRoute === "SampleHandler_ChangeSphereColor") {
-                sendNTY();
+                sendNTY(); // This is actually a NTY, so we can mark it as a success immediately.
+                setStatus("success");
             } else {
                 alert("샘플에서는 지정된 라우트만 지원합니다.");
                 setStatus("error");
             }
-        } catch {
+        } catch(e) {
+            console.error("Error during REQ send:", e);
             setStatus("error");
         } finally {
             setIsSending(false);
@@ -119,17 +126,17 @@ const MessageInterfaceSample: React.FC<{ className?: string }> = ({ className = 
     };
 
     useEffect(() => {
-        const unsubscribe = unityService.subscribe((p: UnityMessage) => {
+        return unityService.subscribe((p: UnityMessage, direction: Direction) => {
             const msg: UnityMsg = {
+                id: msgIdCounter.current++,
                 type: p.type,
                 route: p.route,
                 data: p.data,
-                direction: "U2R", // Messages from unityService are always from Unity
+                direction: direction,
                 status: p.type === "ACK" || p.type === "NTY" ? (!p.ok ? "error" : "success") : undefined,
             };
             setMessages((prev) => [...prev, msg]);
         });
-        return unsubscribe;
     }, []);
 
     const filtered = useMemo(() => {

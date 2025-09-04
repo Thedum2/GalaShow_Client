@@ -6,8 +6,8 @@ export const SampleApi = {
     changeSphereColor(color: string) {
         return unityService.sendNty("SampleHandler_ChangeSphereColor", { color });
     },
-    calculateAdd(a: number, b: number, onAck: (ack: { result: number }) => void, onError?: (err: any) => void) {
-        unityService.sendReq("SampleHandler_CalculateAdd", { a, b }).then(onAck).catch(onError ?? (() => {}));
+    calculateAdd(a: number, b: number) {
+        return unityService.sendReq("SampleHandler_CalculateAdd", { a, b });
     },
 };
 
@@ -26,5 +26,6 @@ export const SampleHandler: BridgeHandler = {
         }
     },
     onAck(action, data) {
+        // No-op for now
     },
 };

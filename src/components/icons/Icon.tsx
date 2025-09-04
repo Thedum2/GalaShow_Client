@@ -66,7 +66,6 @@ export function Icon({
 
     const exists = mode === 'eager' ? !!EAGER_REG[name] : !!LAZY_REG[name]
     if (!exists) {
-        if (import.meta.env.DEV) console.warn(`[Icon] SVG not found: "${name}"`)
         return <FallbackBox size={size} color={color} className={className} />
     }
 
