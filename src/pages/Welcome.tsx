@@ -182,7 +182,7 @@ export default function Welcome() {
                     <div className="flex items-center gap-3">
                         {snsLinks.map(link => (
                             <a key={link.title} href={link.url} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                                <img src={link.icon_url} alt={link.title} className="w-5 h-5" />
+                                <img src={link.iconUrl} alt={link.title} className="w-5 h-5" />
                             </a>
                         ))}
                     </div>
