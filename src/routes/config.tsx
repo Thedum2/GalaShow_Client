@@ -5,16 +5,18 @@ import ErrorBoundary from "@/pages/error/ErrorBoundary";
 import NotFoundPage from "@/pages/error/NotFoundPage";
 import {PATHS} from "@/routes/paths";
 
-const SamplePage = lazy(() => import("@/components/sample/SamplePage"));
+const SimulationSamplePage = lazy(() => import("@/components/sample/SimulationSamplePage"));
 const WelcomePage = lazy(() => import("@/pages/Welcome"));
+
 
 export const routes: RouteObject[] = [
     {
-        element: <AppLayout/>, errorElement: <ErrorBoundary/>,
+        element: <AppLayout/>,
+        errorElement: <ErrorBoundary/>,
         children: [
-            {path: PATHS.sample, element: <Suspense fallback={<div>Loading…</div>}><SamplePage/></Suspense>},
-            {index:true,path: PATHS.welcome, element: <Suspense fallback={<div>Loading…</div>}><WelcomePage/></Suspense>},
+            {index: true, path: PATHS.welcome, element: <Suspense fallback={<div>Loading…</div>}><WelcomePage/></Suspense>},
+            {path: PATHS.simulation_sample,    element: <Suspense fallback={<div>Loading…</div>}><SimulationSamplePage/></Suspense>},
             {path: "*", element: <NotFoundPage/>},
         ]
-    }
+    },
 ];

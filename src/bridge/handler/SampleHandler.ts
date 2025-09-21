@@ -1,6 +1,5 @@
 import type { BridgeHandler } from "./MainHandler";
 import { unityService } from "../unityService";
-import { UIBus } from "../unityConfig";
 
 export const SampleApi = {
     changeSphereColor(color: string) {
@@ -16,13 +15,10 @@ export const SampleHandler: BridgeHandler = {
 
     async onRequest(action, data) {
         if (action === "CalculateMultiply") {
-            const result = data.a * data.b;
-            return { result };
         }
     },
     onNotify(action, data) {
         if (action === "ChangeBorderColor") {
-            UIBus.changeBorderColor(data.color);
         }
     },
     onAck(action, data) {

@@ -1,5 +1,5 @@
 export const PATHS = {
     root: "/",
     welcome: "/",
-    sample: "/sample",
+    simulation_sample: "/simulation_sample",
 } as const;

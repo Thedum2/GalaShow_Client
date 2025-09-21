@@ -74,19 +74,3 @@ export function makeEnvelope<T>(
         timestamp: Date.now().toString(),
     };
 }
-
-
-//====================================================
-
-let _changeBorderColorCallback: (color: string) => void = () => {
-};
-
-export const UIBus = {
-    onBorderColorChange: (callback: (color: string) => void) => {
-        _changeBorderColorCallback = callback;
-    },
-    changeBorderColor: (color: string) => {
-        _changeBorderColorCallback(color);
-    }
-};
-
