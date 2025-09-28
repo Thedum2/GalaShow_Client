@@ -33,6 +33,7 @@ export default function Lobby() {
     const [survivorCount, setSurvivorCount] = useState(3);
     const [roundCount, setRoundCount] = useState(3);
     const [selectedTime, setSelectedTime] = useState(40);
+    const [activeButtonLabel, setActiveButtonLabel] = useState<string>("참가 허용");
 
     const filteredParticipants = useMemo(() => {
         const trimmed = searchKeyword.trim().toLowerCase();
@@ -134,9 +135,24 @@ export default function Lobby() {
                             onRefresh={handleRefreshParticipants}
                             onRemove={handleRemoveParticipant}
                             actionButtons={[
-                                { label: "참가 허용", variant: "primary" },
-                                { label: "신청 중단", variant: "warning" },
-                                { label: "참가 종료", variant: "danger" },
+                                {
+                                    label: "참가 허용",
+                                    variant: "primary",
+                                    onClick: () => setActiveButtonLabel("참가 허용"),
+                                    active: activeButtonLabel === "참가 허용",
+                                },
+                                {
+                                    label: "신청 중단",
+                                    variant: "warning",
+                                    onClick: () => setActiveButtonLabel("신청 중단"),
+                                    active: activeButtonLabel === "신청 중단",
+                                },
+                                {
+                                    label: "참가 종료",
+                                    variant: "danger",
+                                    onClick: () => setActiveButtonLabel("참가 종료"),
+                                    active: activeButtonLabel === "참가 종료",
+                                },
                             ]}
                         />
                     </div>

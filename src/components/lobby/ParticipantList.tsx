@@ -88,12 +88,12 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                                 const joinedAgo = formatJoinedAgo(new Date());
                                 return (
                                     <div key={p.id}
-                                         className="relative flex h-[65px] items-center gap-3 rounded-lg bg-gray-800 p-2">
+                                         className="relative flex h-[65px] items-center gap-3 rounded-lg bg-gray-800 p-2 border-[1px] border-white">
                                         <img src={p.avatarUrl} alt={p.name}
                                              className="h-10 w-10 rounded-full object-cover"/>
                                         <div className="flex flex-col justify-center min-w-0">
                                             <span className="text-xl font-semibold text-white truncate">{p.name}</span>
-                                            <span className="text-sm text-gray-400 truncate">
+                                            <span className="text-xs text-gray-400 truncate">
                             <span className="inline-flex items-center gap-1">
                             <span className="inline-block h-2 w-2 rounded-full bg-green-500"/>
                                 {joinedAgo}
@@ -128,14 +128,14 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                         const variant = btn.variant ?? "primary";
                         const activeClass = ACTION_BUTTON_STYLES[variant];
                         const inactiveClass = "bg-gray-700/60 text-gray-300 hover:bg-gray-600";
-                        const isActive = activeIndex >= 0 ? idx === activeIndex : !!btn.active; // 복수 true면 첫 번째만 색상
+                        const isActive = activeIndex >= 0 ? idx === activeIndex : !!btn.active;
                         return (
                             <button
                                 key={btn.label}
                                 type="button"
                                 onClick={btn.onClick}
                                 aria-pressed={isActive}
-                                className={`rounded-lg py-2 px-4 text-sm font-bold transition-colors ${
+                                className={`rounded-lg py-2 px-4 text-sm font-bold transition-colors hover:scale-[1.02] active:scale-95 ${
                                     isActive ? `text-white ${activeClass}` : inactiveClass
                                 }`}
                             >
