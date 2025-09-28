@@ -45,7 +45,7 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
 
     return (
         <div
-            className={`bg-black border-2 border-yellow-500 rounded-xl h-full min-h-0 p-4 flex flex-col gap-4 ${className}`}>
+            className={`bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-4 flex flex-col gap-4 ${className}`}>
             {/* 헤더 */}
             <div className="flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-3">

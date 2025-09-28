@@ -15,7 +15,7 @@ export default function StartGameButton({ className = "", onClick }: StartGameBu
                 className={[
                     "border-2 border-yellow-500 rounded-xl",
                     "group relative w-full h-20 rounded-[14px] overflow-hidden",
-                    "bg-black text-white",
+                    "bg-black bg-opacity-25 text-white",
                     "flex items-center justify-center gap-4",
                     "transition-all duration-300 ease-out",
                     "hover:scale-[1.02] active:scale-95",

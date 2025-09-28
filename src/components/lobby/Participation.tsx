@@ -1,5 +1,5 @@
 ﻿import React from "react";
-import {Megaphone, MessageCircle, Target, ChevronDown, Trophy} from "lucide-react";
+import {Megaphone, MessageCircle, Target, ChevronDown} from "lucide-react";
 import {ParticipationProps} from "@/types/components";
 
 const Participation: React.FC<ParticipationProps> = ({
@@ -12,7 +12,6 @@ const Participation: React.FC<ParticipationProps> = ({
                                                          onMaxOptionChange,
                                                          totalCount,
                                                          totalCountCaption,
-                                                         className = "",
                                                      }) => {
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         onMaxOptionChange?.(event.target.value);
@@ -21,7 +20,7 @@ const Participation: React.FC<ParticipationProps> = ({
     return (
         <div
             className={[
-                "bg-black border-2 border-yellow-500 rounded-xl h-full min-h-0 p-5",
+                "bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-5",
                 "flex flex-col gap-3",
                 "shadow-[0_0_15px_rgba(234,179,8,0.4)]",
                 "focus-within:ring-2 focus-within:ring-yellow-500 outline-none",
