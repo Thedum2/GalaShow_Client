@@ -16,10 +16,8 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, title = '문서 뷰
 
   const viewerContent = (
     <>
-      {/* Background Overlay */}
       <div className="fixed inset-0 z-50 bg-black bg-opacity-75" />
 
-      {/* Content */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="relative w-[95vw] max-w-4xl h-[90vh] bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="sticky top-0 z-10 flex justify-between items-center p-4 bg-gray-100 border-b">

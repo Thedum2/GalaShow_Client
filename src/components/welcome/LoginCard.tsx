@@ -67,22 +67,18 @@ export default function LoginCard({
         gap-0
       `}
     >
-      {/* Glow Effect */}
       <div className="absolute inset-0 z-0" style={getGlowStyle()} />
 
-      {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow h-full">
-        {/* Section 1: Logo (Ratio 2) */}
+
         <div className="grow-[2] basis-0 flex justify-center items-center overflow-hidden p-4">
           {logo}
         </div>
 
-        {/* Section 2: Text (Ratio 1) */}
         <div className="grow basis-0 flex flex-col justify-center items-center text-center overflow-hidden p-4">
           <h3 className="text-3xl font-bold text-white tracking-tight truncate">{title}</h3>
         </div>
 
-        {/* Section 3: Button (Ratio 1) */}
         <div className="grow basis-0 flex justify-center items-center p-4">
           <button
             onClick={disabled ? undefined : onClick}

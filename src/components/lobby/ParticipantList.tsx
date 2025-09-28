@@ -46,7 +46,7 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
     return (
         <div
             className={`bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-4 flex flex-col gap-4 ${className}`}>
-            {/* 헤더 */}
+
             <div className="flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-3">
                     <div
@@ -80,7 +80,6 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                 </div>
             </div>
 
-            {/* 리스트 */}
             <div className="flex-grow min-h-0 overflow-hidden">
                 <div className="h-full overflow-y-auto pr-2">
                     {participants.length > 0 ? (

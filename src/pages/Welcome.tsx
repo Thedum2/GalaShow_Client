@@ -109,7 +109,6 @@ export default function Welcome() {
         <div className="relative flex flex-col w-full h-full text-white overflow-hidden">
             {isPdfViewerOpen && pdfUrl && <PdfViewer title={pdfTitle} url={pdfUrl} onClose={closePdfViewer} />}
 
-            {/* Background Ribbons */}
             {banners.slice(0, 5).map((banner, index) => (
                 <RibbonOverlay
                     key={banner.id}
@@ -121,18 +120,14 @@ export default function Welcome() {
                 />
             ))}
 
-            {/* Main Content Area */}
             <div className="relative z-10 flex flex-col flex-grow w-full h-full p-2 sm:p-4 md:p-8">
 
-                {/* Flex container for vertical distribution */}
                 <div className="flex flex-col flex-grow justify-center h-full">
 
-                    {/* 1. Logo Area */}
                     <div className="grow-[2] basis-0 flex justify-center items-center overflow-hidden">
                         <Icon name="logo" size={260} mode="eager"/>
                     </div>
 
-                    {/* 2. Login Cards Area */}
                     <div className="grow-[2] basis-0 flex flex-col justify-center items-center overflow-hidden">
                         <div className="flex flex-row justify-center items-center gap-[50px]">
                             <LoginCard
@@ -167,13 +162,11 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    {/* 3. StepsBox Area */}
                     <div className="grow-[3] basis-0 flex justify-center items-center overflow-hidden">
                         <StepsBox title="플레이 방법" stepSets={stepSets}/>
                     </div>
                 </div>
 
-                {/* 4. Policy Area - Absolutely Positioned */}
                 <footer className="absolute bottom-5 left-1/2 -translate-x-1/2 flex-shrink-0 flex flex-wrap items-center justify-center gap-4 text-s text-white/50 py-2">
                     {policyLinks && (
                         <>

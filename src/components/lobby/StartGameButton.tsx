@@ -24,7 +24,6 @@ export default function StartGameButton({ className = "", onClick }: StartGameBu
                     "hover:shadow-[0_0_40px_rgba(250,204,21,0.25)]",
                 ].join(" ")}
             >
-                {/* 중앙 컨텐츠 */}
                 <Star
                     className="text-yellow-400 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110"
                     fill="currentColor"
@@ -35,7 +34,6 @@ export default function StartGameButton({ className = "", onClick }: StartGameBu
                     fill="currentColor"
                 />
 
-                {/* 샤인 스윕(빛 쓸고 지나감) */}
                 <span
                     className={[
                         "pointer-events-none absolute inset-y-0",
@@ -46,7 +44,6 @@ export default function StartGameButton({ className = "", onClick }: StartGameBu
                     ].join(" ")}
                 />
 
-                {/* 라디얼 글로우(미세한 중심광) */}
                 <span
                     className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     style={{
@@ -55,7 +52,6 @@ export default function StartGameButton({ className = "", onClick }: StartGameBu
                     }}
                 />
 
-                {/* 스파클 파티클(빠바밤 느낌) */}
                 <span
                     className={[
                         "pointer-events-none absolute w-2 h-2 rounded-full bg-yellow-300",

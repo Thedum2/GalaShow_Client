@@ -214,7 +214,6 @@ const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
                 })}
             </div>
 
-            {/* 페이지네이션 */}
             <div className="mt-2 flex items-center justify-center gap-2.5">
                 {allSteps.map((s, index) => (
                     <button
