@@ -1,4 +1,5 @@
 ﻿import React from 'react';
+import {VictoryOptionId} from "@/components/lobby/VictoryConditions";
 
 export interface Step {
     icon: React.ReactElement;
@@ -38,4 +39,129 @@ export interface StepExtra{
     media?: React.ReactNode;
     progress?: number;
     accent?: string;
+}
+
+export interface HostInformationProps {
+    logoText?: string;
+    streamerTag: string;
+    viewerCountLabel: string;
+    hostName: string;
+    description: string;
+    ratingLabel: string;
+    imageUrl? :string
+    isLive?: boolean;
+    className?: string;
+}
+
+
+export interface ParticipantListItem {
+    id: string;
+    name: string;
+    avatarUrl: string;
+    detail?: string;
+    badgeClassName?: string;
+    joinedAt?: string | number | Date;
+}
+
+type ActionVariant = "primary" | "warning" | "danger";
+
+export interface ParticipantListAction {
+    label: string;
+    onClick?: () => void;
+    variant?: ActionVariant;
+    active?: boolean;
+}
+
+export interface ParticipantListProps {
+    title: string;
+    currentCount: number;
+    capacity: number;
+    participants: ParticipantListItem[];
+    searchPlaceholder?: string;
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
+    onRefresh?: () => void;
+    onRemove?: (participantId: string) => void;
+    actionButtons?: ParticipantListAction[];
+    className?: string;
+}
+
+export interface ParticipantListItem {
+    id: string;
+    name: string;
+    avatarUrl: string;
+    detail?: string;
+    badgeLabel?: string;
+    badgeClassName?: string;
+    joinedAt?: string | number | Date;
+}
+
+export interface ParticipantListAction {
+    label: string;
+    onClick?: () => void;
+    variant?: "primary" | "warning" | "danger";
+    active?: boolean;
+}
+
+export const ACTION_BUTTON_STYLES = {
+    primary: "bg-green-600 hover:bg-green-700",
+    warning: "bg-yellow-600 hover:bg-yellow-700",
+    danger: "bg-red-600 hover:bg-red-700",
+} as const;
+
+export interface ParticipationInstructions {
+    prefix: string;
+    highlight: string;
+    suffix: string;
+}
+
+export interface ParticipationOption {
+    label: string;
+    value: string;
+}
+
+export type HeightVal = number | string;
+
+export interface ParticipationProps {
+    title: string;
+    instructions: ParticipationInstructions;
+    helperText: string;
+    maxLabel: string;
+    maxOptions: ParticipationOption[];
+    selectedMaxOption: string;
+    onMaxOptionChange?: (value: string) => void;
+    totalCount: number;
+    totalCountCaption: string;
+    className?: string;
+}
+
+export interface SelectionTimeProps {
+    title: string;
+    descriptionPrefix: string;
+    descriptionSuffix: string;
+    availableTimes?: number[];
+    selectedTime: number;
+    onSelectTime: (time: number) => void;
+    timeUnit?: string;
+    className?: string;
+}
+
+export const DEFAULT_TIME_OPTIONS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+
+export type StartGameButtonProps = {
+    className?: string;
+    onClick?: () => void;
+};
+
+export interface VictoryConditionsProps {
+    selectedOption: VictoryOptionId;
+    onSelectOption: (option: VictoryOptionId) => void;
+    survivorCount: number;
+    onSurvivorCountChange?: (count: number) => void;
+    roundCount: number;
+    onRoundCountChange?: (count: number) => void;
+    minSurvivorCount?: number;
+    maxSurvivorCount?: number;
+    minRoundCount?: number;
+    className?: string;
 }

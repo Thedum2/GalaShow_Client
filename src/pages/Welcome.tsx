@@ -1,7 +1,7 @@
 import {HelpCircle, Users, Star, Gamepad2, Mic, Heart} from "lucide-react";
-import LoginCard from "@/components/LoginCard";
+import LoginCard from "@/components/welcome/LoginCard";
 import Icon from "@/components/icons/Icon";
-import StepsBox from "@/components/StepsBox";
+import StepsBox from "@/components/welcome/StepsBox";
 import RibbonOverlay from "@/components/RibbonOverlay";
 import React, {useEffect, useState} from "react";
 import {BannersApi, PoliciesApi, SnsLinksApi} from "@/api";
@@ -9,6 +9,8 @@ import {Banner} from "@/api/model/response/banner/Banner";
 import {PolicyLinks} from "@/api/model/response/policy/PolicyLinks";
 import {SnsLink} from "@/api/model/response/sns/SnsLink";
 import PdfViewer from "@/components/PdfViewer";
+import { useNavigate } from 'react-router-dom';
+
 
 const stepSets = [
     [
@@ -78,6 +80,7 @@ export default function Welcome() {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
     const [pdfTitle, setPdfTitle] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         BannersApi.get().then(setBanners).catch(console.error);
@@ -137,7 +140,9 @@ export default function Welcome() {
                                 color="#0545B1"
                                 buttonText="SOOP 로그인"
                                 buttonIcon={<Icon name="soopmini" size={28} mode="eager"/>}
-                                onClick={() => console.log("SOOP 로그인")}
+                                onClick={() =>
+                                    navigate('/lobby')
+                            }
                                 glow="#3b82f6"
                                 logo={<Icon name="soop" size={250} mode="eager"/>}
                             />
@@ -146,7 +151,8 @@ export default function Welcome() {
                                 color="#03C75A"
                                 buttonText="네이버 로그인"
                                 buttonIcon={<Icon name="naver" size={16} mode="eager"/>}
-                                onClick={() => console.log("NAVER 로그인")}
+                                onClick={() =>
+                                    navigate('/lobby')}
                                 glow="#22c55e"
                                 logo={<Icon name="chzzk" size={250} mode="eager"/>}
                             />
