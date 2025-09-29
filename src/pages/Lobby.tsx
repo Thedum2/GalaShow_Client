@@ -1,14 +1,15 @@
 ﻿import React, { useMemo, useState } from "react";
-import GenericBox from "../../components/lobby/GenericBox";
-import Participation from "../../components/lobby/Participation";
-import HostInformation from "../../components/lobby/HostInformation";
-import VictoryConditions, { VictoryOptionId } from "../../components/lobby/VictoryConditions";
-import SelectionTime from "../../components/lobby/SelectionTime";
+import GenericBox from "../components/lobby/GenericBox";
+import Participation from "../components/lobby/Participation";
+import HostInformation from "../components/lobby/HostInformation";
+import VictoryConditions, { VictoryOptionId } from "../components/lobby/VictoryConditions";
+import SelectionTime from "../components/lobby/SelectionTime";
 import StartGameButton from "@/components/lobby/StartGameButton";
 import {Icon} from "@/components/icons";
 import {ParticipantListItem} from "@/types/components";
 import ParticipantList from "@/components/lobby/ParticipantList";
 import {makeRandomName} from "@/components/sample/randomName";
+import { useNavigate } from 'react-router-dom';
 
 const createInitialParticipants = (): ParticipantListItem[] =>
     Array.from({ length: 28 }, (_, index) => {
@@ -34,6 +35,7 @@ export default function Lobby() {
     const [roundCount, setRoundCount] = useState(3);
     const [selectedTime, setSelectedTime] = useState(40);
     const [activeButtonLabel, setActiveButtonLabel] = useState<string>("참가 허용");
+    const navigate = useNavigate();
 
     const filteredParticipants = useMemo(() => {
         const trimmed = searchKeyword.trim().toLowerCase();
@@ -119,7 +121,7 @@ export default function Lobby() {
                                 hostName="아야츠노 유니"
                                 description="동해물과 백두산이 마르고 닳도록! 하느님이 보우하사 우리나라 만세!"
                                 ratingLabel="평균 시청 유지율 85%"
-                                imageUrl= "https://nng-phinf.pstatic.net/MjAyNTAzMzFfMjQw/MDAxNzQzNDMwNTM4OTg4.Bam6imHvAZLBWT0GHFprz94iS5CaGFmVI9RoXktnY-4g.AkwRyhY_RhSGzEiBXTvs4pEyo7KxI4GmUd151O8cVcYg.PNG/%EC%9C%A0%EB%8B%883.png?type=f120_120_na"
+                                imageUrl= "https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj"
                             />
                         </div>
                     </div>
@@ -186,7 +188,7 @@ export default function Lobby() {
                     <div className="basis-0 min-h-0 grow-[0.5] overflow-hidden p-2">
                             <StartGameButton
                                 onClick={() => {
-                                    console.log("게임 시작!");
+                                    navigate('/Loading');
                                 }}
                             />
                     </div>

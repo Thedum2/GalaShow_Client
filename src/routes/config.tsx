@@ -7,7 +7,7 @@ import {PATHS} from "@/routes/paths";
 
 const SimulationSamplePage = lazy(() => import("@/components/sample/SimulationSamplePage"));
 const WelcomePage = lazy(() => import("@/pages/Welcome"));
-const LobbyPage = lazy(() => import("@/pages/Lobby/Lobby"));
+const LobbyPage = lazy(() => import("@/pages/Lobby"));
 const SelectPage = lazy(() => import("@/pages/Select"));
 const LoadingPage = lazy(() => import("@/pages/Loading"));
 const ResultPage = lazy(() => import("@/pages/Result"));
