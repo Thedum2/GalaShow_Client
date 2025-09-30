@@ -4,9 +4,11 @@ import FitStage from "@/util/FitStage";
 import Background from "@/components/Background";
 import { BackgroundApi } from "@/api";
 import { BackgroundAsset } from "@/api/model/response/background/BackgroundAsset";
+import { backgroundService } from "@/services/backgroundService";
 
 export default function AppLayout() {
     const [background, setBackground] = useState<BackgroundAsset | null>(null);
+    const [isBackgroundVisible, setIsBackgroundVisible] = useState(backgroundService.getState());
 
     useEffect(() => {
         BackgroundApi.get()
@@ -19,14 +21,21 @@ export default function AppLayout() {
             .catch(console.error);
     }, []);
 
+    useEffect(() => {
+        const unsubscribe = backgroundService.subscribe(setIsBackgroundVisible);
+        return () => unsubscribe();
+    }, []);
+
     return (
         <>
-            <Background
-                bgSrc={background?.url}
-                bgType={background?.type}
-                bgPosition="center"
-                overlayOpacity={0.7}
-            />
+            {isBackgroundVisible && (
+                <Background
+                    bgSrc={background?.url}
+                    bgType={background?.type}
+                    bgPosition="center"
+                    overlayOpacity={0.7}
+                />
+            )}
             <FitStage
                 mode="contain"
             >
