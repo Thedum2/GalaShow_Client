@@ -1,6 +1,7 @@
 ﻿import React, {useEffect, useState} from "react";
 import {Icon} from "@/components/icons";
 import {backgroundService} from "@/services/backgroundService";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 export default function Loading() {
     const [progress, setProgress] = useState(0);
@@ -11,7 +12,7 @@ export default function Loading() {
         backgroundService.hide();
         const id = setInterval(() => {
             setProgress((p) => (p >= 100 ? 100 : p + 2));
-        }, 200);
+        }, 100);
         return () => {
             clearInterval(id);
         };
@@ -38,10 +39,17 @@ export default function Loading() {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-4 w-[560px] max-w-[80vw]">
-                        <div className="h-3 w-full rounded-full bg-white/20 border border-white/50 overflow-hidden">
-                            <div
-                                className="h-full bg-white transition-[width] duration-150 ease-out"
-                                style={{width: `${progress}%`}}
+                        <div className="w-full">
+                            <ProgressBar
+                                completed={progress}
+                                bgColor="white"
+                                baseBgColor="rgba(255, 255, 255, 0.2)"
+                                height="12px"
+                                isLabelVisible={false}
+                                transitionDuration="0.1s"
+                                transitionTimingFunction="linear"
+                                borderRadius="9999px"
+                                animateOnRender={true}
                             />
                         </div>
                         <span className="text-xl text-white/80 w-10 text-right">{progress}%</span>
