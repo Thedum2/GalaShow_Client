@@ -156,7 +156,7 @@ export default function Welcome() {
                                 color="#707070"
                                 buttonText="준비중입니다"
                                 disabled
-                                glow="#6b7280"
+                                glow="#3f3f46"
                                 logo={<Icon name="user" size={90} mode="eager"/>}
                             />
                         </div>

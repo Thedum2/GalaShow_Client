@@ -16,10 +16,8 @@ export default function LoginCard({
   const [mousePosition, setMousePosition] = useState({ x: -1, y: -1 });
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect();
-      setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-    }
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
   const handleMouseEnter = () => {
@@ -35,11 +33,11 @@ export default function LoginCard({
     if (!isHovering || !cardRef.current) return {};
     const { width, height } = cardRef.current.getBoundingClientRect();
     const { x, y } = mousePosition;
-    const rotateX = (y / height - 0.5) * -15;
-    const rotateY = (x / width - 0.5) * 15;
+    const rotateX = (y / height - 0.5) * -10;
+    const rotateY = (x / width - 0.5) * 10;
     return {
-      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`,
-      transition: 'transform 0.1s ease-out',
+      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+      transition: 'transform 0.2s ease-out',
     };
   };
 
@@ -47,7 +45,7 @@ export default function LoginCard({
     if (!isHovering || !glow) return { background: 'none' };
     const { x, y } = mousePosition;
     return {
-      backgroundImage: `radial-gradient(circle at ${x}px ${y}px, ${glow}80, transparent 20%)`,
+      backgroundImage: `radial-gradient(circle at ${x}px ${y}px, ${glow}80, transparent 40%)`,
     };
   };
 
@@ -62,8 +60,8 @@ export default function LoginCard({
         relative group rounded-2xl bg-gradient-to-b from-neutral-900/70 to-neutral-900/40
         border border-white/10 backdrop-blur-md shadow-lg
         w-[449px] h-[275px] flex flex-col overflow-hidden
-        transition-all duration-300
-        ${disabled ? "opacity-80" : "hover:shadow-2xl"}
+        transition-transform duration-200
+        ${disabled ? "opacity-80" : "hover:shadow-2xl hover:scale-105"}
         gap-0
       `}
     >

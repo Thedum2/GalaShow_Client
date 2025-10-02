@@ -1,3 +1,14 @@
-﻿export default function Select() {
-    return <div>Select</div>;
+﻿import {useUnity} from "@/bridge/useUnity";
+import UnityPlayer from "@/bridge/UnityPlayer";
+
+export default function select() {
+    const {unityProvider, isLoaded, loadingProgression} = useUnity();
+
+    return (
+        <UnityPlayer
+            unityProvider={unityProvider}
+            isLoaded={isLoaded}
+            loadingProgression={loadingProgression}
+        />
+    );
 }

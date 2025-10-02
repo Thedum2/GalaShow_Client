@@ -2,21 +2,35 @@
 import {Icon} from "@/components/icons";
 import {backgroundService} from "@/services/backgroundService";
 import ProgressBar from "@ramonak/react-progress-bar";
+import { useNavigate } from 'react-router-dom';
+import {PATHS} from "@/routes/paths";
 
 export default function Loading() {
     const [progress, setProgress] = useState(0);
     const avatarUrl = 'https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj';
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         backgroundService.hide();
         const id = setInterval(() => {
-            setProgress((p) => (p >= 100 ? 100 : p + 2));
-        }, 100);
+            setProgress((p) => {
+                if (p >= 100) {
+                    clearInterval(id);
+                    return 100;
+                }
+                return p + 1;
+            });
+        }, 50);
         return () => {
             clearInterval(id);
         };
     }, []);
+
+    useEffect(() => {
+        if (progress >= 100) {
+            navigate(PATHS.select);
+        }
+    }, [progress, navigate]);
 
     return (
         <div className="h-full w-full text-white flex items-center justify-center">
@@ -31,7 +45,7 @@ export default function Loading() {
                         />
                     </div>
 
-                    <div className="text-9xl font-black select-none">×</div>
+                    <div className="text-9xl font-black select-none text-red-500">×</div>
 
                     <div className="flex items-center gap-4">
                         <Icon name="logo" size={175} mode="eager"/>
@@ -41,18 +55,19 @@ export default function Loading() {
                     <div className="flex items-center gap-4 w-[560px] max-w-[80vw]">
                         <div className="w-full">
                             <ProgressBar
-                                completed={progress}
-                                bgColor="white"
-                                baseBgColor="rgba(255, 255, 255, 0.2)"
-                                height="12px"
+                                className={"border-2 border-gray-200 rounded-full"}
+                                completed={Math.min(progress, 100)}
+                                bgColor="rgb(0 0 0)"
+                                baseBgColor='rgb(229 231 235)'
+                                height="15px"
                                 isLabelVisible={false}
-                                transitionDuration="0.1s"
+                                transitionDuration="0.05s"
                                 transitionTimingFunction="linear"
                                 borderRadius="9999px"
                                 animateOnRender={true}
                             />
                         </div>
-                        <span className="text-xl text-white/80 w-10 text-right">{progress}%</span>
+                        <span className="text-xl text-white/80 w-10 text-right">{Math.min(progress, 100)}%</span>
                     </div>
                     <div className="text-xl text-white/80 w-full text-center">
                 <span>
