@@ -10,8 +10,7 @@ export default function LoginCard({
   onClick,
   disabled,
   logo,
-  glow,
-}: LoginCardProps) {
+                                  }: LoginCardProps) {
   return (
     <Tilt
         className="background-stripes parallax-effect-glare-scale"

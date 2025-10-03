@@ -10,6 +10,7 @@ import {ParticipantListItem} from "@/types/components";
 import ParticipantList from "@/components/lobby/ParticipantList";
 import {makeRandomName} from "@/components/sample/randomName";
 import { useNavigate } from 'react-router-dom';
+import {PATHS} from "@/routes/paths";
 
 const createInitialParticipants = (): ParticipantListItem[] =>
     Array.from({ length: 28 }, (_, index) => {
@@ -188,7 +189,7 @@ export default function Lobby() {
                     <div className="basis-0 min-h-0 grow-[0.5] overflow-hidden p-2">
                             <StartGameButton
                                 onClick={() => {
-                                    navigate('/Loading');
+                                    navigate(PATHS.loading);
                                 }}
                             />
                     </div>

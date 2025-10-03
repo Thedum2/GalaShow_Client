@@ -10,6 +10,7 @@ import {PolicyLinks} from "@/api/model/response/policy/PolicyLinks";
 import {SnsLink} from "@/api/model/response/sns/SnsLink";
 import PdfViewer from "@/components/PdfViewer";
 import { useNavigate } from 'react-router-dom';
+import {PATHS} from "@/routes/paths";
 
 
 const stepSets = [
@@ -136,7 +137,7 @@ export default function Welcome() {
                                 buttonText="SOOP 로그인"
                                 buttonIcon={<Icon name="soopmini" size={28} mode="eager"/>}
                                 onClick={() =>
-                                    navigate('/lobby')
+                                    navigate(PATHS.lobby)
                             }
                                 glow="#3b82f6"
                                 logo={<Icon name="soop" size={250} mode="eager"/>}
@@ -147,7 +148,7 @@ export default function Welcome() {
                                 buttonText="네이버 로그인"
                                 buttonIcon={<Icon name="naver" size={16} mode="eager"/>}
                                 onClick={() =>
-                                    navigate('/lobby')}
+                                    navigate(PATHS.lobby)}
                                 glow="#22c55e"
                                 logo={<Icon name="chzzk" size={250} mode="eager"/>}
                             />
