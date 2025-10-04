@@ -17,7 +17,7 @@
     "axios": "^1.11.0",
     "lucide-react": "^0.541.0",
     "pdfjs-dist": "^5.3.93",
-    "polychat-bridge": "^0.1.0",
+    "polychat-bridge": "^0.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-parallax-tilt": "^1.7.309",
@@ -39,7 +39,7 @@
     "globals": "^16.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
-    "vite": "^7.0.4",
+    "vite": "7.1.5",
     "vite-plugin-static-copy": "^3.1.1",
     "vite-plugin-svgr": "^4.3.0"
   }

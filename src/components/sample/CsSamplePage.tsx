@@ -1,7 +1,7 @@
 ﻿import Icon from "@/components/icons";
 import StartGameButton from "@/components/lobby/StartGameButton";
 import React from "react";
-import {hello} from "polychat-bridge";
+import {hello, world} from "polychat-bridge";
 
 export default function CsSamplePage() {
     return (
@@ -14,7 +14,7 @@ export default function CsSamplePage() {
                 backgroundColor="#FFDE59"
                 textColor="#000000"
                 onClick={() => {
-                    alert(hello('Cs_Sample'));
+                    alert(hello()+' '+world());
                 }}
             />
         </div>
