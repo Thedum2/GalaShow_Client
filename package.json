@@ -17,6 +17,7 @@
     "axios": "^1.11.0",
     "lucide-react": "^0.541.0",
     "pdfjs-dist": "^5.3.93",
+    "polychat-bridge": "^0.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-parallax-tilt": "^1.7.309",
