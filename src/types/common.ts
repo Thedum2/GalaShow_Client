@@ -2,6 +2,8 @@
 
 export type FitMode = 'contain' | 'cover' | 'width' | 'height' | 'contain-bleed';
 
+
+
 export interface FitStageProps {
     mode?: FitMode;
     bleedRatio?: number;

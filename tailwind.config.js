@@ -7,6 +7,11 @@ export default {
     ],
     theme: {
         extend: {
+            colors: {
+                soop: '#0545B1',
+                chzzk: '#03C75A',
+                youtube: '#FF0000',
+            },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
             },

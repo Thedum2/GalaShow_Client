@@ -10,13 +10,18 @@ export interface Step {
 
 export interface LoginCardProps {
   title: string;
+  subtext?: string;
   color: string;
+  titleColor?: string;
+  subtextColor?: string;
   buttonText: string;
   buttonIcon?: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
   logo?: React.ReactNode;
   glow?: string;
+  borderWidth?: number | string;
+  borderColor?: string;
 }
 
 export interface RibbonProps {
@@ -149,6 +154,10 @@ export interface SelectionTimeProps {
 export const DEFAULT_TIME_OPTIONS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
 export type StartGameButtonProps = {
+    text?: string;
+    icon?: React.ReactNode;
+    backgroundColor?: string;
+    textColor?: string;
     className?: string;
     onClick?: () => void;
 };

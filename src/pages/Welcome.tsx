@@ -11,12 +11,13 @@ import {SnsLink} from "@/api/model/response/sns/SnsLink";
 import PdfViewer from "@/components/PdfViewer";
 import { useNavigate } from 'react-router-dom';
 import {PATHS} from "@/routes/paths";
+import StartGameButton from "@/components/lobby/StartGameButton";
 
 
 const stepSets = [
     [
         {
-            icon: <HelpCircle className="h-[72px] w-[72px] p-4"/>,
+            icon: <HelpCircle className="h-[100px] w-[100px] p-4"/>,
             title: "매 라운드 선택지 중 하나를 고르세요",
             desc: "방장(스트리머)의 선택을 맞추세요!",
             iconBgColor: "#0545B1",
@@ -25,7 +26,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Users className="h-[72px] w-[72px] p-4"/>,
+            icon: <Users className="h-[100px] w-[100px] p-4"/>,
             title: "선택에 따라 생존자가 결정됩니다",
             desc: "다수결, 소수결 또는 특별 규칙!",
             iconBgColor: "#03C75A",
@@ -34,7 +35,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Star className="h-[72px] w-[72px] p-4"/>,
+            icon: <Star className="h-[100px] w-[100px] p-4"/>,
             title: "마지막까지 살아남으면 승리!",
             desc: "너가 이겼다....",
             iconBgColor: "#EAB308",
@@ -45,7 +46,7 @@ const stepSets = [
     ],
     [
         {
-            icon: <Gamepad2 className="h-[72px] w-[72px] p-4"/>,
+            icon: <Gamepad2 className="h-[100px] w-[100px] p-4"/>,
             title: "새로운 게임 모드",
             desc: "전혀 다른 방식의 게임을 즐겨보세요.",
             iconBgColor: "#0545B1",
@@ -54,7 +55,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Mic className="h-[72px] w-[72px] p-4"/>,
+            icon: <Mic className="h-[100px] w-[100px] p-4"/>,
             title: "채팅으로 참여하기",
             desc: "채팅으로 직접 게임에 참여할 수 있습니다.",
             iconBgColor: "#03C75A",
@@ -63,7 +64,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Heart className="h-[72px] w-[72px] p-4"/>,
+            icon: <Heart className="h-[100px] w-[100px] p-4"/>,
             title: "팬들을 위한 특별 라운드",
             desc: "스트리머와 팬이 함께 만드는 특별한 순간!",
             iconBgColor: "#707070",
@@ -129,10 +130,12 @@ export default function Welcome() {
                         <Icon name="logo" size={260} mode="eager"/>
                     </div>
 
-                    <div className="grow-[2] basis-0 flex flex-col justify-center items-center overflow-hidden">
+                    <div className="grow-[3] basis-0 flex flex-col justify-center items-center overflow-hidden">
                         <div className="flex flex-row justify-center items-center gap-[50px]">
                             <LoginCard
                                 title="스트리머라면?"
+                                subtext="SOOP 계정으로 연동"
+                                subtextColor="#6E6E6E"
                                 color="#0545B1"
                                 buttonText="SOOP 로그인"
                                 buttonIcon={<Icon name="soopmini" size={28} mode="eager"/>}
@@ -140,35 +143,61 @@ export default function Welcome() {
                                     navigate(PATHS.lobby)
                             }
                                 glow="#3b82f6"
-                                logo={<Icon name="soop" size={250} mode="eager"/>}
+                                logo={<Icon name="soop" size={230} mode="eager"/>}
                             />
                             <LoginCard
                                 title="스트리머라면?"
+                                subtext="NAVER 계정으로 연동"
+                                subtextColor="#6E6E6E"
                                 color="#03C75A"
                                 buttonText="네이버 로그인"
                                 buttonIcon={<Icon name="naver" size={16} mode="eager"/>}
                                 onClick={() =>
                                     navigate(PATHS.lobby)}
                                 glow="#22c55e"
-                                logo={<Icon name="chzzk" size={250} mode="eager"/>}
+                                logo={<Icon name="chzzk" size={230} mode="eager"/>}
                             />
                             <LoginCard
-                                title="친구들이랑 하려면?"
+                                title="크리에이터라면?"
+                                subtext="GOOGLE 계정으로 연동"
+                                subtextColor="#6E6E6E"
                                 color="#707070"
                                 buttonText="준비중입니다"
-                                disabled
+                                onClick={() =>
+                                    navigate(PATHS.lobby)}
                                 glow="#3f3f46"
-                                logo={<Icon name="user" size={90} mode="eager"/>}
+                                logo={<Icon name="youtube" size={90} mode="eager"/>}
                             />
                         </div>
                     </div>
 
-                    <div className="grow-[3] basis-0 flex justify-center items-center overflow-hidden">
+                    <div className="grow-[2] basis-0 flex justify-center items-center overflow-hidden ">
                         <StepsBox title="플레이 방법" stepSets={stepSets}/>
+                    </div>
+
+                    <div className="overflow-hidden flex justify-center items-center gap-4 p-2">
+                        <StartGameButton
+                            text="초기화"
+                            icon={<Icon name="reset" size={35} mode="eager"/>}
+                            backgroundColor="#000000"
+                            textColor="#F3F4F6"
+                            onClick={() => {
+                                console.log("Reset button clicked");
+                            }}
+                        />
+                        <StartGameButton
+                            text="N개의 계정으로 시작하기"
+                            icon={<Icon name="bookmark" size={35} mode="eager"/>}
+                            backgroundColor="#FFDE59"
+                            textColor="#000000"
+                            onClick={() => {
+                                console.log("Start with N accounts button clicked");
+                            }}
+                        />
                     </div>
                 </div>
 
-                <footer className="absolute bottom-5 left-1/2 -translate-x-1/2 flex-shrink-0 flex flex-wrap items-center justify-center gap-4 text-s text-white/50 py-2">
+                <footer className="flex flex-wrap items-center justify-center gap-4 text-s text-white/50 py-0 mt-5">
                     {policyLinks && (
                         <>
                             <button onClick={() => openPdfViewer("서비스 약관",policyLinks.termsOfService)} className="bg-transparent text-purple-400 hover:text-white transition-colors">서비스 약관</button>

@@ -1,17 +1,30 @@
-﻿import React from "react";
+import React from "react";
 import { Star } from "lucide-react";
-import {StartGameButtonProps} from "@/types/components";
+import { StartGameButtonProps } from "@/types/components";
 
-export default function StartGameButton({ className = "", onClick }: StartGameButtonProps) {
+export default function StartGameButton({
+    className = "",
+    onClick,
+    text = "게임 시작!",
+    icon = <Star
+        className="text-yellow-400 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110"
+        fill="currentColor"
+    />,
+    backgroundColor,
+    textColor
+}: StartGameButtonProps) {
+    
+    const buttonStyle: React.CSSProperties = {};
+    if (backgroundColor) buttonStyle.backgroundColor = backgroundColor;
+    if (textColor) buttonStyle.color = textColor;
+
     return (
-        <div
-            className={className
-            }
-        >
+        <div className={className}>
             <button
                 type="button"
-                aria-label="게임 시작"
+                aria-label={text}
                 onClick={onClick}
+                style={buttonStyle}
                 className={[
                     "border-2 border-yellow-500 rounded-xl",
                     "group relative w-full h-20 rounded-[14px] overflow-hidden",
@@ -24,15 +37,8 @@ export default function StartGameButton({ className = "", onClick }: StartGameBu
                     "hover:shadow-[0_0_40px_rgba(250,204,21,0.25)]",
                 ].join(" ")}
             >
-                <Star
-                    className="text-yellow-400 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110"
-                    fill="currentColor"
-                />
-                <span className="text-2xl font-extrabold tracking-wide">게임 시작!</span>
-                <Star
-                    className="text-yellow-400 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
-                    fill="currentColor"
-                />
+                {icon}
+                <span className="text-2xl font-extrabold tracking-wide">{text}</span>
 
                 <span
                     className={[
