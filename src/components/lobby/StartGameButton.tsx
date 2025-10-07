@@ -11,7 +11,8 @@ export default function StartGameButton({
         fill="currentColor"
     />,
     backgroundColor,
-    textColor
+    textColor,
+    disabled
 }: StartGameButtonProps) {
     
     const buttonStyle: React.CSSProperties = {};
@@ -22,11 +23,12 @@ export default function StartGameButton({
         <div className={className}>
             <button
                 type="button"
+                disabled={disabled}
                 aria-label={text}
                 onClick={onClick}
                 style={buttonStyle}
                 className={[
-                    "border-2 border-yellow-500 rounded-xl",
+                    "border-2 border-yellow-500 rounded-xl disabled:border-gray-500",
                     "group relative w-full h-20 rounded-[14px] overflow-hidden",
                     "bg-black text-white",
                     "flex items-center justify-center gap-4",
@@ -35,6 +37,7 @@ export default function StartGameButton({
                     "outline-none focus-visible:ring-2 focus-visible:ring-yellow-400/60",
                     "focus-visible:ring-offset-2 focus-visible:ring-offset-black",
                     "hover:shadow-[0_0_40px_rgba(250,204,21,0.25)]",
+                    "disabled:opacity-50 disabled:cursor-not-allowed",
                 ].join(" ")}
             >
                 {icon}

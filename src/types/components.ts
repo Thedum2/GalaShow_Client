@@ -24,6 +24,25 @@ export interface LoginCardProps {
   borderColor?: string;
 }
 
+export interface LoginedCardProps {
+    title: string;
+    colorForConnected?: string;
+    colorForDisConnect?: string;
+    titleColor?: string;
+    buttonTextForConnected?: string;
+    buttonTextForDisConnect?: string;
+    buttonIconForConnected?: React.ReactNode;
+    buttonIconForDisConnect?: React.ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    logo?: React.ReactNode;
+    loginedIcon?: React.ReactNode;
+    glow?: string;
+    borderWidth?: number | string;
+    borderColor?: string;
+  }
+  
+
 export interface RibbonProps {
     text: string;
     rotate?: number;
@@ -160,6 +179,7 @@ export type StartGameButtonProps = {
     textColor?: string;
     className?: string;
     onClick?: () => void;
+    disabled?: boolean;
 };
 
 export interface VictoryConditionsProps {
