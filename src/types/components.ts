@@ -170,6 +170,16 @@ export interface SelectionTimeProps {
     className?: string;
 }
 
+export interface ParticipationSelectionProps {
+    title: string;
+    items: {
+        id: string;
+        name: string;
+        avatarUrl: string;
+    }[];
+    className?: string;
+}
+
 export const DEFAULT_TIME_OPTIONS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
 export type StartGameButtonProps = {
