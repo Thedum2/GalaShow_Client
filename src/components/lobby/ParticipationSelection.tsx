@@ -14,8 +14,8 @@ const ParticipationSelection: React.FC<ParticipationSelectionProps> = ({
 
     <div className="grid grid-cols-4 gap-2 grid-rows-2 h-full">
         {items.map((item) => (
-            <div key={item.id} className="bg-gray-800 rounded-lg p-2 h-full relative">
-                <img src={item.avatarUrl} alt={item.name} className="" />
+            <div key={item.id} className="bg-gray-800 rounded-lg p-2 h-full relative flex flex-col items-center justify-center">
+                <img src={item.avatarUrl} alt={item.name} className="self-center" />
                 <div className="text-white absolute bottom-1 right-1">{item.name}</div>
             </div>
         ))}
