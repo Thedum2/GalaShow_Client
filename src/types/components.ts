@@ -176,6 +176,7 @@ export interface ParticipationSelectionProps {
         id: string;
         name: string;
         avatarUrl: string;
+        bgColor: string;
     }[];
     className?: string;
 }

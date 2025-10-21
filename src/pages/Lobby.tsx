@@ -74,6 +74,10 @@ export default function Lobby() {
 
     const totalCapacity = Number(maxParticipantTier);
 
+    const handleSelectParticipant = (participantId: string) => {
+        console.log(participantId);
+    };
+
     return (
         <div className="flex h-full w-full flex-col gap-[10px] overflow-hidden p-[15px] text-white">
             <div className="h-[50px] flex items-center justify-end gap-[10px]">
@@ -188,7 +192,12 @@ export default function Lobby() {
                         /> */}
                         <ParticipationSelection
                             className="h-full"
-                            items={participants.slice(0, 8)}
+                            items={participants.slice(0, 8).map((participant) => ({
+                                id: participant.id,
+                                name: participant.name,
+                                avatarUrl: participant.avatarUrl,
+                                bgColor: participant.badgeClassName ?? "",
+                            })) as { id: string; name: string; avatarUrl: string; bgColor: string }[]}
                             title="시청자 선택(다수 선택 가능)"
                         />
 
