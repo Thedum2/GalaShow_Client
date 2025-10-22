@@ -2,16 +2,21 @@
 import GenericBox from "../components/lobby/GenericBox";
 import Participation from "../components/lobby/Participation";
 import HostInformation from "../components/lobby/HostInformation";
-import VictoryConditions, { VictoryOptionId } from "../components/lobby/VictoryConditions";
+import VictoryConditions, {
+    VictoryOptionId,
+} from "../components/lobby/VictoryConditions";
 import SelectionTime from "../components/lobby/SelectionTime";
 import StartGameButton from "@/components/lobby/StartGameButton";
-import {Icon} from "@/components/icons";
-import {ParticipantListItem} from "@/types/components";
+import { Icon } from "@/components/icons";
+import { ParticipantListItem } from "@/types/components";
 import ParticipantList from "@/components/lobby/ParticipantList";
-import {makeRandomName} from "@/components/sample/randomName";
-import { useNavigate } from 'react-router-dom';
-import {PATHS} from "@/routes/paths";
+import { makeRandomName } from "@/components/sample/randomName";
+import { useNavigate } from "react-router-dom";
+import { PATHS } from "@/routes/paths";
 import ParticipationSelection from "@/components/lobby/ParticipationSelection";
+import BasicModal from "@/components/modals/BasicModal";
+// import { useToast } from "@/hooks/useToast";
+// import { ToastContainer } from "@/components/modals/Toast";
 
 const createInitialParticipants = (): ParticipantListItem[] =>
     Array.from({ length: 28 }, (_, index) => {
@@ -24,21 +29,34 @@ const createInitialParticipants = (): ParticipantListItem[] =>
             avatarUrl: `https://i.pravatar.cc/40?u=lobby-user-${id}`,
             detail: isBench ? "대기 중" : "방송 참여 중",
             badgeLabel: isBench ? "대기" : "참여중",
-            badgeClassName: isBench ? "bg-purple-500/20 text-purple-200" : "bg-green-500/20 text-green-400",
+            badgeClassName: isBench
+                ? "bg-purple-500/20 text-purple-200"
+                : "bg-green-500/20 text-green-400",
         };
     });
 
 export default function Lobby() {
-    const [participants, setParticipants] = useState<ParticipantListItem[]>(() => createInitialParticipants());
+    const [participants, setParticipants] = useState<ParticipantListItem[]>(() =>
+        createInitialParticipants()
+    );
     const [searchKeyword, setSearchKeyword] = useState("");
     const [maxParticipantTier, setMaxParticipantTier] = useState("100");
-    const [selectedVictoryOption, setSelectedVictoryOption] = useState<VictoryOptionId>("lastOne");
+    const [selectedVictoryOption, setSelectedVictoryOption] =
+        useState<VictoryOptionId>("lastOne");
     const [survivorCount, setSurvivorCount] = useState(3);
     const [roundCount, setRoundCount] = useState(3);
     const [selectedTime, setSelectedTime] = useState(40);
-    const [activeButtonLabel, setActiveButtonLabel] = useState<string>("참가 허용");
+    const [activeButtonLabel, setActiveButtonLabel] =
+        useState<string>("참가 허용");
     const navigate = useNavigate();
+    // const { toasts, removeToast, success, error, warning, info } = useToast();
 
+    // const handleClick = () => {
+    //     success("성공적으로 저장되었습니다!", 3000);
+    //     error("오류가 발생했습니다.", 3000);
+    //     warning("경고 메시지입니다.", 3000);
+    //     info("정보 메시지입니다.", 3000);
+    // };
     const filteredParticipants = useMemo(() => {
         const trimmed = searchKeyword.trim().toLowerCase();
         if (!trimmed) {
@@ -47,13 +65,16 @@ export default function Lobby() {
 
         return participants.filter((participant) => {
             const nameMatch = participant.name.toLowerCase().includes(trimmed);
-            const detailMatch = participant.detail?.toLowerCase().includes(trimmed) ?? false;
+            const detailMatch =
+                participant.detail?.toLowerCase().includes(trimmed) ?? false;
             return nameMatch || detailMatch;
         });
     }, [participants, searchKeyword]);
 
     const handleRemoveParticipant = (participantId: string) => {
-        setParticipants((prev) => prev.filter((participant) => participant.id !== participantId));
+        setParticipants((prev) =>
+            prev.filter((participant) => participant.id !== participantId)
+        );
     };
 
     const handleRefreshParticipants = () => {
@@ -82,7 +103,10 @@ export default function Lobby() {
         <div className="flex h-full w-full flex-col gap-[10px] overflow-hidden p-[15px] text-white">
             <div className="h-[50px] flex items-center justify-end gap-[10px]">
                 <Icon name="chzzk_mini" className="h-[40px] w-[40px] text-yellow-500" />
-                <Icon name="chzzk_mini" className="h-[40px] w-[40px] text-y0ellow-500" />
+                <Icon
+                    name="chzzk_mini"
+                    className="h-[40px] w-[40px] text-y0ellow-500"
+                />
                 <button
                     type="button"
                     className={`rounded-lg py-2 px-10 font-semibold transition-all duration-200 bg-gray-700 text-white hover:bg-gray-400`}
@@ -106,7 +130,7 @@ export default function Lobby() {
                                 title="참여 신청하기"
                                 instructions={{
                                     prefix: "채팅창에 ",
-                                    highlight: "\" 참여 \"",
+                                    highlight: '" 참여 "',
                                     suffix: "를 입력해 주세요.",
                                 }}
                                 helperText="스트리머가 참가 신청을 받고 있을 때만 자동으로 등록돼요."
@@ -127,7 +151,7 @@ export default function Lobby() {
                                 hostName="아야츠노 유니"
                                 description="동해물과 백두산이 마르고 닳도록! 하느님이 보우하사 우리나라 만세!"
                                 ratingLabel="평균 시청 유지율 85%"
-                                imageUrl= "https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj"
+                                imageUrl="https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj"
                             />
                         </div>
                     </div>
@@ -192,22 +216,28 @@ export default function Lobby() {
                         /> */}
                         <ParticipationSelection
                             className="h-full"
-                            items={participants.slice(0, 8).map((participant) => ({
-                                id: participant.id,
-                                name: participant.name,
-                                avatarUrl: participant.avatarUrl,
-                                bgColor: participant.badgeClassName ?? "",
-                            })) as { id: string; name: string; avatarUrl: string; bgColor: string }[]}
+                            items={
+                                participants.slice(0, 8).map((participant) => ({
+                                    id: participant.id,
+                                    name: participant.name,
+                                    avatarUrl: participant.avatarUrl,
+                                    bgColor: participant.badgeClassName ?? "",
+                                })) as {
+                                    id: string;
+                                    name: string;
+                                    avatarUrl: string;
+                                    bgColor: string;
+                                }[]
+                            }
                             title="시청자 선택(다수 선택 가능)"
                         />
-
                     </div>
                     <div className="basis-0 min-h-0 grow-[0.5] overflow-hidden p-2">
-                            <StartGameButton
-                                onClick={() => {
-                                    navigate(PATHS.loading);
-                                }}
-                            />
+                        <StartGameButton
+                            onClick={() => {
+                                navigate(PATHS.loading);
+                            }}
+                        />
                     </div>
                 </div>
 
@@ -217,6 +247,9 @@ export default function Lobby() {
                     </GenericBox>
                 </div>
             </div>
+
+            {/* <ToastContainer toasts={toasts} onClose={removeToast} />
+            <button onClick={handleClick}>Toast 보기</button> */}
         </div>
     );
 }
