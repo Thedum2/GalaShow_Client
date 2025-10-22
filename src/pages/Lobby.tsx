@@ -11,6 +11,7 @@ import ParticipantList from "@/components/lobby/ParticipantList";
 import {makeRandomName} from "@/components/sample/randomName";
 import { useNavigate } from 'react-router-dom';
 import {PATHS} from "@/routes/paths";
+import ParticipationSelection from "@/components/lobby/ParticipationSelection";
 
 const createInitialParticipants = (): ParticipantListItem[] =>
     Array.from({ length: 28 }, (_, index) => {
@@ -72,6 +73,10 @@ export default function Lobby() {
     };
 
     const totalCapacity = Number(maxParticipantTier);
+
+    const handleSelectParticipant = (participantId: string) => {
+        console.log(participantId);
+    };
 
     return (
         <div className="flex h-full w-full flex-col gap-[10px] overflow-hidden p-[15px] text-white">
@@ -177,14 +182,25 @@ export default function Lobby() {
                         />
                     </div>
                     <div className="basis-0 min-h-0 grow-[1.5] overflow-hidden">
-                        <SelectionTime
+                        {/* <SelectionTime
                             className="h-full"
                             title="선택 시간 조정"
                             descriptionPrefix={selectionTimeDescription.prefix}
                             descriptionSuffix={selectionTimeDescription.suffix}
                             selectedTime={selectedTime}
                             onSelectTime={setSelectedTime}
+                        /> */}
+                        <ParticipationSelection
+                            className="h-full"
+                            items={participants.slice(0, 8).map((participant) => ({
+                                id: participant.id,
+                                name: participant.name,
+                                avatarUrl: participant.avatarUrl,
+                                bgColor: participant.badgeClassName ?? "",
+                            })) as { id: string; name: string; avatarUrl: string; bgColor: string }[]}
+                            title="시청자 선택(다수 선택 가능)"
                         />
+
                     </div>
                     <div className="basis-0 min-h-0 grow-[0.5] overflow-hidden p-2">
                             <StartGameButton
