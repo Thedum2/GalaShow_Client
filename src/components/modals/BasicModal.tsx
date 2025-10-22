@@ -9,6 +9,7 @@ interface BasicModalProps {
     title: string;
     subtitle?: string;
     picture?: string;
+    svg?: React.ReactNode;
     buttons?: Button | Button[];
     onClose?: () => void;
     isOpen: boolean;
@@ -18,6 +19,7 @@ export default function BasicModal({
     title,
     subtitle,
     picture,
+    svg,
     buttons = { text: "확인" },
     onClose,
     isOpen,
@@ -74,6 +76,11 @@ export default function BasicModal({
                         onClick={onClose}
                         className="absolute top-4 right-4 cursor-pointer"
                     />
+                )}
+                {svg && (
+                   <div className="w-20 h-20 rounded-full mb-4 mt-4 flex items-center justify-center bg-yellow-200 mx-auto">
+                    {svg}
+                   </div>
                 )}
                 {picture && (
                     <img
@@ -145,3 +152,20 @@ export default function BasicModal({
     isOpen={tru
     onClose={() => { console.log("닫기"); }}
 /> */}
+{/* <BasicModal
+                title="Your order has been placed!"
+                buttons={[
+                    {
+                        text: "Thanks!",
+                        onClick: () => {
+                            console.log("수락하기");
+                        },
+                        variant: "primary",
+                    },
+                ]}
+                isOpen={true}
+                svg={<Icon name="celebrate" size={50} className="text-yellow-500" />}
+                onClose={() => {
+                    console.log("닫기");
+                }}
+            /> */}
