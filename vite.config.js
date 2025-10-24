@@ -32,6 +32,14 @@ export default defineConfig({
         alias: {
             // eslint-disable-next-line no-undef
             "@": path.resolve(__dirname, "./src"),
+            events: 'events',
+        },
+    },
+    optimizeDeps: {
+        esbuildOptions: {
+            define: {
+                global: 'globalThis',
+            },
         },
     },
 });

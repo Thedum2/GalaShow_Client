@@ -6,8 +6,7 @@ import NotFoundPage from "@/pages/error/NotFoundPage";
 import {PATHS} from "@/routes/paths";
 
 {/* ====SAMPLE PAGE==== */}
-const SimulationSamplePage = lazy(() => import("@/components/sample/SimulationSamplePage"));
-const CsSamplePage = lazy(() => import("@/components/sample/CsSamplePage"));
+const PolyChatSamplePage = lazy(() => import("@/components/sample/PolyChatSamplePage"));
 
 {/* ====MAIN PAGE==== */}
 const WelcomePage = lazy(() => import("@/pages/Welcome"));
@@ -29,8 +28,7 @@ export const routes: RouteObject[] = [
             {path: PATHS.loading, element: <Suspense fallback={<div>Loading…</div>}><LoadingPage/></Suspense>},
             {path: PATHS.result, element: <Suspense fallback={<div>Loading…</div>}><ResultPage/></Suspense>},
             {path: PATHS.winner, element: <Suspense fallback={<div>Loading…</div>}><WinnerPage/></Suspense>},
-            {path: PATHS.simulation_sample, element: <Suspense fallback={<div>Loading…</div>}><SimulationSamplePage/></Suspense>},
-            {path: PATHS.cs_sample, element: <Suspense fallback={<div>Loading…</div>}><CsSamplePage/></Suspense>},
+            {path: PATHS.polychat_sample, element: <Suspense fallback={<div>Loading…</div>}><PolyChatSamplePage/></Suspense>},
             {path: "*", element: <NotFoundPage/>},
         ]
     },

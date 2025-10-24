@@ -6,6 +6,5 @@ export const PATHS = {
     loading: "/loading",
     result: "/result",
     winner: "/winner",
-    simulation_sample: "/simulation_sample",
-    cs_sample: "/cs_sample",
+    polychat_sample: "/polychat_sample",
 } as const;
