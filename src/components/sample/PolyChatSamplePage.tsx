@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import './PolyChatSamplePage.css';
 import { ChzzkAdapter, SoopAdapter, YouTubeAdapter, ChatMessage, PolyChat, BroadcasterInfo, IChatAdapter } from 'polychat-bridge';
+import {API_BASE_URL} from "@/api/config";
 
 type Platform = 'chzzk' | 'soop' | 'youtube';
 
@@ -257,7 +258,7 @@ function PolyChatSamplePage() {
                     clientId: config.clientId,
                     clientSecret: config.clientSecret || '',
                     redirectUri: config.redirectUri,
-                    apiBaseUrl: '/api/chzzk',
+                    apiBaseUrl: `${API_BASE_URL}/chzzk`,
                 });
             } else if (platform === 'youtube') {
                 // YouTube requires redirectUri
