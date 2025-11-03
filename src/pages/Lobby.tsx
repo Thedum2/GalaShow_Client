@@ -1,22 +1,16 @@
 ﻿import React, { useMemo, useState } from "react";
-import GenericBox from "../components/lobby/GenericBox";
 import Participation from "../components/lobby/Participation";
 import HostInformation from "../components/lobby/HostInformation";
 import VictoryConditions, {
     VictoryOptionId,
 } from "../components/lobby/VictoryConditions";
-import SelectionTime from "../components/lobby/SelectionTime";
 import StartGameButton from "@/components/lobby/StartGameButton";
 import { Icon } from "@/components/icons";
 import { ParticipantListItem } from "@/types/components";
 import ParticipantList from "@/components/lobby/ParticipantList";
-import { makeRandomName } from "@/components/sample/randomName";
 import { useNavigate } from "react-router-dom";
 import { PATHS } from "@/routes/paths";
 import ParticipationSelection from "@/components/lobby/ParticipationSelection";
-import BasicModal from "@/components/modals/BasicModal";
-// import { useToast } from "@/hooks/useToast";
-// import { ToastContainer } from "@/components/modals/Toast";
 
 const createInitialParticipants = (): ParticipantListItem[] =>
     Array.from({ length: 28 }, (_, index) => {
@@ -25,7 +19,7 @@ const createInitialParticipants = (): ParticipantListItem[] =>
 
         return {
             id: `participant-${id}`,
-            name: makeRandomName(" "),
+            name: "두두광산",
             avatarUrl: `https://i.pravatar.cc/40?u=lobby-user-${id}`,
             detail: isBench ? "대기 중" : "방송 참여 중",
             badgeLabel: isBench ? "대기" : "참여중",
@@ -100,7 +94,7 @@ export default function Lobby() {
     };
 
     return (
-        <div className="flex h-full w-full flex-col gap-[10px] overflow-hidden p-[15px] text-white">
+        <div className="flex h-full w-full flex-col gap-[10px] overflow-hidden p-8 text-white">
             <div className="h-[50px] flex items-center justify-end gap-[10px]">
                 <Icon name="chzzk_mini" className="h-[40px] w-[40px] text-yellow-500" />
                 <Icon
@@ -122,7 +116,7 @@ export default function Lobby() {
             </div>
 
             <div className="flex flex-1 min-h-0 gap-[35px] overflow-hidden">
-                <div className="flex basis-0 min-h-0 grow-[4] flex-col gap-[35px] overflow-hidden">
+                <div className="flex grow-[4] flex-col gap-[35px] overflow-hidden">
                     <div className="flex basis-0 min-h-0 grow-[3] flex-col gap-[35px] overflow-hidden md:flex-row">
                         <div className="basis-0 min-h-0 grow-[1.3]">
                             <Participation
@@ -190,7 +184,7 @@ export default function Lobby() {
                     </div>
                 </div>
 
-                <div className="flex basis-0 min-h-0 grow-[3] flex-col gap-[35px] overflow-hidden">
+                <div className="flex grow-[3] flex-col gap-[35px] overflow-hidden">
                     <div className="basis-0 min-h-0 grow-[3] overflow-hidden">
                         <VictoryConditions
                             className="h-full"
@@ -241,15 +235,9 @@ export default function Lobby() {
                     </div>
                 </div>
 
-                <div className="basis-0 min-h-0 grow overflow-hidden">
-                    <GenericBox className="overflow-hidden bg-transparent p-0">
-                        7
-                    </GenericBox>
+                <div className="w-[320px] h-full flex-shrink-0 border-4 border-purple-500">
                 </div>
             </div>
-
-            {/* <ToastContainer toasts={toasts} onClose={removeToast} />
-            <button onClick={handleClick}>Toast 보기</button> */}
         </div>
     );
 }

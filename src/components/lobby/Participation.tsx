@@ -59,11 +59,11 @@ const Participation: React.FC<ParticipationProps> = ({
                     <label className="font-semibold text-white text-xl">{maxLabel}</label>
                 </div>
 
-                <div className="relative w-[220px]">
+                <div className="relative w-[220px] h-full flex items-center">
                     <select
                         value={selectedMaxOption}
                         onChange={handleSelectChange}
-                        className="w-full appearance-none rounded-lg border text-lg border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        className="w-full appearance-none rounded-lg border text-lg border-gray-700 bg-gray-800 px-2 py-1 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     >
                         {maxOptions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -71,8 +71,7 @@ const Participation: React.FC<ParticipationProps> = ({
                             </option>
                         ))}
                     </select>
-                    <ChevronDown
-                        className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white-400"/>
+                    <ChevronDown className="pointer-events-none absolute right-3 h-5 w-5 text-gray-400"/>
                 </div>
             </div>
 

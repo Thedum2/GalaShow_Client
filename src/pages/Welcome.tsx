@@ -129,129 +129,139 @@ export default function Welcome() {
 
             <div className="relative z-10 flex flex-col flex-grow w-full h-full p-2 sm:p-4 md:p-8">
 
-                <div className="flex flex-col flex-grow justify-center h-full">
+                <div className="flex flex-row gap-4 flex-grow h-full">
 
-                    <div className="grow-[2] basis-0 flex justify-center items-center overflow-hidden">
-                        <Icon name="logo" size={260} mode="eager" />
-                    </div>
+                    {/* CONTENT AREA*/}
+                    <div className="flex flex-col flex-grow justify-center h-full">
 
-                    <div className="grow-[3] basis-0 flex flex-col justify-center items-center overflow-hidden">
-                        <div className="flex flex-row justify-center items-center gap-[50px]">
-                            {
-                                isSoopLogined ? (
-                                    <LoginedCard
-                                        borderWidth="8px"
-                                        borderColor="#0545B1"
-                                        title="네네코 마시로"
-                                        loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
-                                        onClick={() =>
-                                            // navigate(PATHS.lobby)
-                                            setIsSoopLogined(true)
-                                        }
-                                        glow="#3b82f6"
-                                        logo={<Icon name="soop" size={188} mode="eager" />}
-                                    />
-                                ) : (
-                                    <LoginCard
-                                        title="스트리머라면?"
-                                        subtext="SOOP 계정으로 연동"
-                                        subtextColor="#6E6E6E"
-                                        color="#0545B1"
-                                        buttonText="SOOP 로그인"
-                                        buttonIcon={<Icon name="soopmini" size={28} mode="eager" />}
-                                        onClick={() =>
-                                            // navigate(PATHS.lobby)
-                                            setIsSoopLogined(true)
-                                        }
-                                        glow="#3b82f6"
-                                        logo={<Icon name="soop" size={230} mode="eager" />}
-                                    />
-                                )
-                            }
-                            {
-                                isNaverLogined ? (
-                                    <LoginedCard
-                                        borderWidth="8px"
-                                        borderColor="#03C75A"
-                                        title="네네코 마시로"
-                                        loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
-                                        onClick={() =>
-                                            // navigate(PATHS.lobby)
-                                            setIsNaverLogined(true)
-                                        }
-                                        glow="#3b82f6"
-                                        logo={<Icon name="chzzk" size={188} mode="eager" />}
-                                    />
-                                ) : (
-                                    <LoginCard
-                                        title="스트리머라면?"
-                                        subtext="NAVER 계정으로 연동"
-                                        subtextColor="#6E6E6E"
-                                        color="#03C75A"
-                                        buttonText="네이버 로그인"
-                                        buttonIcon={<Icon name="naver" size={16} mode="eager" />}
-                                        onClick={() =>
-                                            // navigate(PATHS.lobby)
-                                            setIsNaverLogined(true)
-                                        }
-                                        glow="#22c55e"
-                                        logo={<Icon name="chzzk" size={230} mode="eager" />}
-                                    />
-                                )
-                            }
-                            {
-                                isGoogleLogined ? (
-                                    <LoginedCard
-                                        borderWidth="8px"
-                                        borderColor="#FF0000"
-                                        title="네네코 마시로"
-                                        logo={<Icon name="youtube" size={90} mode="eager" />}
-                                        loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
-                                    />
-                                ) : (
-                                    <LoginCard
-                                        title="크리에이터라면?"
-                                        subtext="GOOGLE 계정으로 연동"
-                                        subtextColor="#6E6E6E"
-                                        color="#707070"
-                                        buttonText="준비중입니다"
-                                        onClick={() =>
-                                            // navigate(PATHS.lobby)
-                                            setIsGoogleLogined(true)
-                                        }
-                                        glow="#3f3f46"
-                                        logo={<Icon name="youtube" size={90} mode="eager" />}
-                                    />
-                                )
-                            }
+                        <div className="grow-[2] basis-0 flex justify-center items-center overflow-hidden">
+                            <Icon name="logo" size={260} mode="eager" />
+                        </div>
+
+                        <div className="grow-[3] basis-0 flex flex-col justify-center items-center overflow-hidden">
+                            <div className="flex flex-row justify-center items-center gap-[50px]">
+                                {
+                                    isSoopLogined ? (
+                                        <LoginedCard
+                                            borderWidth="8px"
+                                            borderColor="#0545B1"
+                                            title="네네코 마시로"
+                                            loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
+                                            onClick={() =>
+                                                // navigate(PATHS.lobby)
+                                                setIsSoopLogined(true)
+                                            }
+                                            glow="#3b82f6"
+                                            logo={<Icon name="soop" size={188} mode="eager" />}
+                                        />
+                                    ) : (
+                                        <LoginCard
+                                            title="스트리머라면?"
+                                            subtext="SOOP 계정으로 연동"
+                                            subtextColor="#6E6E6E"
+                                            color="#0545B1"
+                                            buttonText="SOOP 로그인"
+                                            buttonIcon={<Icon name="soopmini" size={28} mode="eager" />}
+                                            onClick={() =>
+                                                // navigate(PATHS.lobby)
+                                                setIsSoopLogined(true)
+                                            }
+                                            glow="#3b82f6"
+                                            logo={<Icon name="soop" size={230} mode="eager" />}
+                                        />
+                                    )
+                                }
+                                {
+                                    isNaverLogined ? (
+                                        <LoginedCard
+                                            borderWidth="8px"
+                                            borderColor="#03C75A"
+                                            title="네네코 마시로"
+                                            loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
+                                            onClick={() =>
+                                                // navigate(PATHS.lobby)
+                                                setIsNaverLogined(true)
+                                            }
+                                            glow="#3b82f6"
+                                            logo={<Icon name="chzzk" size={188} mode="eager" />}
+                                        />
+                                    ) : (
+                                        <LoginCard
+                                            title="스트리머라면?"
+                                            subtext="NAVER 계정으로 연동"
+                                            subtextColor="#6E6E6E"
+                                            color="#03C75A"
+                                            buttonText="네이버 로그인"
+                                            buttonIcon={<Icon name="naver" size={16} mode="eager" />}
+                                            onClick={() =>
+                                                // navigate(PATHS.lobby)
+                                                setIsNaverLogined(true)
+                                            }
+                                            glow="#22c55e"
+                                            logo={<Icon name="chzzk" size={230} mode="eager" />}
+                                        />
+                                    )
+                                }
+                                {
+                                    isGoogleLogined ? (
+                                        <LoginedCard
+                                            borderWidth="8px"
+                                            borderColor="#FF0000"
+                                            title="네네코 마시로"
+                                            logo={<Icon name="youtube" size={90} mode="eager" />}
+                                            loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
+                                        />
+                                    ) : (
+                                        <LoginCard
+                                            title="크리에이터라면?"
+                                            subtext="GOOGLE 계정으로 연동"
+                                            subtextColor="#6E6E6E"
+                                            color="#707070"
+                                            buttonText="준비중입니다"
+                                            onClick={() =>
+                                                // navigate(PATHS.lobby)
+                                                setIsGoogleLogined(true)
+                                            }
+                                            glow="#3f3f46"
+                                            logo={<Icon name="youtube" size={90} mode="eager" />}
+                                        />
+                                    )
+                                }
+                            </div>
+                        </div>
+
+                        <div className="grow-[2] basis-0 flex justify-center items-center overflow-hidden ">
+                            <StepsBox title="플레이 방법" stepSets={stepSets} />
+                        </div>
+
+                        <div className="overflow-hidden flex justify-center items-center gap-4 p-2">
+                            <StartGameButton
+                                text="초기화"
+                                icon={<Icon name="reset" size={35} mode="eager" />}
+                                backgroundColor="#000000"
+                                textColor="#F3F4F6"
+                                onClick={() => {
+                                    console.log("Reset button clicked");
+                                }}
+                            />
+                            <StartGameButton
+                                text="N개의 계정으로 시작하기"
+                                disabled={!isSoopLogined && !isNaverLogined && !isGoogleLogined}
+                                icon={<Icon name="bookmark" size={35} mode="eager" />}
+                                backgroundColor="#FFDE59"
+                                textColor="#000000"
+                                onClick={() => {
+                                    console.log("Start with N accounts button clicked");
+                                }}
+                            />
                         </div>
                     </div>
 
-                    <div className="grow-[2] basis-0 flex justify-center items-center overflow-hidden ">
-                        <StepsBox title="플레이 방법" stepSets={stepSets} />
+                    {/* STREAMING BOX AREA*/}
+                    <div className="w-[320px] h-full flex-shrink-0 border-4 border-purple-500 justify-center content-center items-center text-center text-2xl font-bold">
+                        THIS IS STREAMING BOX
                     </div>
 
-                    <div className="overflow-hidden flex justify-center items-center gap-4 p-2">
-                        <StartGameButton
-                            text="초기화"
-                            icon={<Icon name="reset" size={35} mode="eager" />}
-                            backgroundColor="#000000"
-                            textColor="#F3F4F6"
-                            onClick={() => {
-                                console.log("Reset button clicked");
-                            }}
-                        />
-                        <StartGameButton
-                            text="N개의 계정으로 시작하기"
-                            disabled={!isSoopLogined && !isNaverLogined && !isGoogleLogined}
-                            icon={<Icon name="bookmark" size={35} mode="eager" />}
-                            backgroundColor="#FFDE59"
-                            textColor="#000000"
-                            onClick={() => {
-                                console.log("Start with N accounts button clicked");
-                            }}
-                        />
-                    </div>
                 </div>
 
                 <footer className="flex flex-wrap items-center justify-center gap-4 text-s text-white/50 py-0 mt-5">
