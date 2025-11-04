@@ -1,5 +1,5 @@
 import React from "react";
-import { Users, Clock, Trophy } from "lucide-react";
+import Icon from "@/components/icons/Icon";
 import { VictoryConditionsProps } from "@/types/components";
 
 export type VictoryOptionId = "lastOne" | "smallGroup" | "rounds";
@@ -86,7 +86,7 @@ const InputSection: React.FC<InputSectionProps> = ({
         return (
             <div className={`flex flex-wrap items-center gap-3 rounded-xl bg-black/30 p-3 ${styling.inputBorder}`}>
                 <div className={`flex items-center gap-2 text-sm ${styling.inputText}`}>
-                    <Users className="h-6 w-6" />
+                    <Icon name="Users" type="lucide" size={24} />
                     <span className="text-base">생존자 수</span>
                 </div>
                 <input
@@ -109,7 +109,7 @@ const InputSection: React.FC<InputSectionProps> = ({
         return (
             <div className={`flex flex-wrap items-center gap-3 rounded-xl bg-black/30 p-3 ${styling.inputBorder}`}>
                 <div className={`flex items-center gap-2 text-base ${styling.inputText}`}>
-                    <Clock className="h-6 w-6" />
+                    <Icon name="Clock" type="lucide" size={24} />
                     <span className="text-base">라운드 수</span>
                 </div>
                 <input
@@ -205,7 +205,7 @@ const VictoryConditions: React.FC<VictoryConditionsProps> = ({
         <div className={`bg-slate-900 border-2 border-yellow-500 rounded-xl w-full h-full min-h-0 p-6 flex flex-col gap-5 shadow-[0_0_20px_rgba(234,179,8,0.25)] overflow-hidden ${className}`}>
             <div className="flex items-start gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-yellow-500/40 bg-yellow-500/15">
-                    <Trophy className="h-5 w-5 text-yellow-300" />
+                    <Icon name="Trophy" type="lucide" size={20} color="#fde047" />
                 </div>
                 <div>
                     <h3 className="text-2xl font-bold text-white">우승 조건 설정</h3>

@@ -1,5 +1,5 @@
 ﻿import React from "react";
-import {Megaphone, MessageCircle, Target, ChevronDown} from "lucide-react";
+import Icon from "@/components/icons/Icon";
 import {ParticipationProps} from "@/types/components";
 
 const Participation: React.FC<ParticipationProps> = ({
@@ -31,7 +31,7 @@ const Participation: React.FC<ParticipationProps> = ({
             <div className="shrink-0 h-[40px] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div className="flex h-11 w-11 items-center justify-center rounded-full border border-yellow-500/40 bg-yellow-500/15">
-                        <Megaphone className="h-5 w-5 text-yellow-300" />
+                        <Icon name="Megaphone" type="lucide" size={20} color="#fde047" />
                     </div>
                     <h2 className="text-2xl font-bold text-white">{title}</h2>
                 </div>
@@ -39,7 +39,7 @@ const Participation: React.FC<ParticipationProps> = ({
 
             <div
                 className="shrink-0 h-[75px] flex items-center gap-2 rounded-lg bg-gradient-to-r from-green-600 to-yellow-600 text-white px-3">
-                <MessageCircle className="h-5 w-5"/>
+                <Icon name="MessageCircle" type="lucide" size={20} />
                 <span className="font-semibold text-xl">
           {instructions.prefix}
                     <span className="rounded-3xl bg-purple-600 px-3 py-1 text-2xl font-semibold text-white mx-1">
@@ -55,7 +55,7 @@ const Participation: React.FC<ParticipationProps> = ({
 
             <div className="shrink-0 h-[55px] flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-white"/>
+                    <Icon name="Target" type="lucide" size={20} color="white" />
                     <label className="font-semibold text-white text-xl">{maxLabel}</label>
                 </div>
 
@@ -71,7 +71,7 @@ const Participation: React.FC<ParticipationProps> = ({
                             </option>
                         ))}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 h-5 w-5 text-gray-400"/>
+                    <Icon name="ChevronDown" type="lucide" size={20} color="#9ca3af" className="pointer-events-none absolute right-3" />
                 </div>
             </div>
 

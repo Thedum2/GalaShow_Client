@@ -1,12 +1,15 @@
 import React from "react";
-import { Star } from "lucide-react";
+import Icon from "@/components/icons/Icon";
 import { StartGameButtonProps } from "@/types/components";
 
 export default function StartGameButton({
     className = "",
     onClick,
     text = "게임 시작!",
-    icon = <Star
+    icon = <Icon
+        name="Star"
+        type="lucide"
+        size={24}
         className="text-yellow-400 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110"
         fill="currentColor"
     />,

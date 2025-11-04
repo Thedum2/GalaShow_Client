@@ -1,5 +1,5 @@
 ﻿import React from "react";
-import { Clock } from "lucide-react";
+import Icon from "@/components/icons/Icon";
 import {DEFAULT_TIME_OPTIONS, SelectionTimeProps} from "@/types/components";
 const SelectionTime: React.FC<SelectionTimeProps> = ({
     title,
@@ -13,7 +13,7 @@ const SelectionTime: React.FC<SelectionTimeProps> = ({
 }) => (
     <div className={`bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-4 flex flex-col justify-center gap-4 shadow-[0_0_15px_rgba(234,179,8,0.3)] overflow-hidden ${className}`}>
         <div className="flex items-center gap-2">
-            <Clock className="h-6 w-6 text-yellow-500" />
+            <Icon name="Clock" type="lucide" size={24} color="#eab308" />
             <h3 className="text-xl font-bold text-white">{title}</h3>
         </div>
 

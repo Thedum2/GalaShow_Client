@@ -20,7 +20,6 @@ const createInitialParticipants = (): ParticipantListItem[] =>
         return {
             id: `participant-${id}`,
             name: "두두광산",
-            avatarUrl: `https://i.pravatar.cc/40?u=lobby-user-${id}`,
             detail: isBench ? "대기 중" : "방송 참여 중",
             badgeLabel: isBench ? "대기" : "참여중",
             badgeClassName: isBench
@@ -96,11 +95,8 @@ export default function Lobby() {
     return (
         <div className="flex h-full w-full flex-col gap-[10px] overflow-hidden p-8 text-white">
             <div className="h-[50px] flex items-center justify-end gap-[10px]">
-                <Icon name="chzzk_mini" className="h-[40px] w-[40px] text-yellow-500" />
-                <Icon
-                    name="chzzk_mini"
-                    className="h-[40px] w-[40px] text-y0ellow-500"
-                />
+                <Icon name="reset" size={30} />
+                <Icon name="Volume2" size={35} type="lucide"/>
                 <button
                     type="button"
                     className={`rounded-lg py-2 px-10 font-semibold transition-all duration-200 bg-gray-700 text-white hover:bg-gray-400`}

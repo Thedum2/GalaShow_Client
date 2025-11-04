@@ -1,4 +1,3 @@
-import { HelpCircle, Users, Star, Gamepad2, Mic, Heart } from "lucide-react";
 import LoginCard from "@/components/welcome/LoginCard";
 import Icon from "@/components/icons/Icon";
 import StepsBox from "@/components/welcome/StepsBox";
@@ -18,7 +17,7 @@ import LoginedCard from "@/components/welcome/LoginedCard";
 const stepSets = [
     [
         {
-            icon: <HelpCircle className="h-[100px] w-[100px] p-4" />,
+            icon: <Icon name="HelpCircle" type="lucide" size={100} className="p-4" />,
             title: "매 라운드 선택지 중 하나를 고르세요",
             desc: "방장(스트리머)의 선택을 맞추세요!",
             iconBgColor: "#0545B1",
@@ -27,7 +26,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Users className="h-[100px] w-[100px] p-4" />,
+            icon: <Icon name="Users" type="lucide" size={100} className="p-4" />,
             title: "선택에 따라 생존자가 결정됩니다",
             desc: "다수결, 소수결 또는 특별 규칙!",
             iconBgColor: "#03C75A",
@@ -36,7 +35,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Star className="h-[100px] w-[100px] p-4" />,
+            icon: <Icon name="Star" type="lucide" size={100} className="p-4" />,
             title: "마지막까지 살아남으면 승리!",
             desc: "너가 이겼다....",
             iconBgColor: "#EAB308",
@@ -47,7 +46,7 @@ const stepSets = [
     ],
     [
         {
-            icon: <Gamepad2 className="h-[100px] w-[100px] p-4" />,
+            icon: <Icon name="Gamepad2" type="lucide" size={100} className="p-4" />,
             title: "새로운 게임 모드",
             desc: "전혀 다른 방식의 게임을 즐겨보세요.",
             iconBgColor: "#0545B1",
@@ -56,7 +55,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Mic className="h-[100px] w-[100px] p-4" />,
+            icon: <Icon name="Mic" type="lucide" size={100} className="p-4" />,
             title: "채팅으로 참여하기",
             desc: "채팅으로 직접 게임에 참여할 수 있습니다.",
             iconBgColor: "#03C75A",
@@ -65,7 +64,7 @@ const stepSets = [
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Heart className="h-[100px] w-[100px] p-4" />,
+            icon: <Icon name="Heart" type="lucide" size={100} className="p-4" />,
             title: "팬들을 위한 특별 라운드",
             desc: "스트리머와 팬이 함께 만드는 특별한 순간!",
             iconBgColor: "#707070",
@@ -237,7 +236,7 @@ export default function Welcome() {
                         <div className="overflow-hidden flex justify-center items-center gap-4 p-2">
                             <StartGameButton
                                 text="초기화"
-                                icon={<Icon name="reset" size={35} mode="eager" />}
+                                icon={<Icon name="reset" size={35} mode="eager"/>}
                                 backgroundColor="#000000"
                                 textColor="#F3F4F6"
                                 onClick={() => {
@@ -251,7 +250,7 @@ export default function Welcome() {
                                 backgroundColor="#FFDE59"
                                 textColor="#000000"
                                 onClick={() => {
-                                    console.log("Start with N accounts button clicked");
+                                    navigate(PATHS.lobby)
                                 }}
                             />
                         </div>

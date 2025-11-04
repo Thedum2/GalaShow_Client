@@ -1,6 +1,39 @@
-﻿import React, {useState} from "react";
-import {Search, RefreshCw, X, UserStar} from "lucide-react";
+﻿import React, {useState, useMemo} from "react";
+import Icon from "@/components/icons/Icon";
 import {ACTION_BUTTON_STYLES, ParticipantListProps} from "@/types/components";
+
+type AvatarType = 'chzzk' | 'soop' | 'youtube';
+
+interface AvatarConfig {
+    iconName: string;
+    bgColor: string;
+    iconSize: number;
+}
+
+const AVATAR_CONFIGS: Record<AvatarType, AvatarConfig> = {
+    chzzk: {
+        iconName: 'chzzk_mini',
+        bgColor: '#000000',
+        iconSize: 25,
+    },
+    soop: {
+        iconName: 'soopmini',
+        bgColor: '#0545B1',
+        iconSize: 23,
+    },
+    youtube: {
+        iconName: 'youtube',
+        bgColor: '#FFFFFF',
+        iconSize: 24,
+    },
+};
+
+function getRandomAvatarType(id: string): AvatarType {
+    // ID를 기반으로 일관된 랜덤 타입 반환 (같은 ID는 항상 같은 타입)
+    const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const types: AvatarType[] = ['chzzk', 'soop', 'youtube'];
+    return types[hash % types.length];
+}
 
 function formatJoinedAgo(joinedAt?: string | number | Date) {
     if (!joinedAt) return null;
@@ -45,13 +78,13 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
 
     return (
         <div
-            className={`bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-4 flex flex-col gap-4 ${className}`}>
+            className={`bg-black bg-opacity-50 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-4 flex flex-col gap-4 ${className}`}>
 
             <div className="flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-3">
                     <div
                         className="flex h-11 w-11 items-center justify-center rounded-full border border-yellow-500/40 bg-yellow-500/15">
-                        <UserStar className="h-5 w-5 text-yellow-300"/>
+                        <Icon name="UserStar" type="lucide" size={20} color="#fde047" />
                     </div>
                     <h3 className="text-2xl font-bold">{title}</h3>
                     <span className="bg-purple-600 text-white text-lg font-semibold px-5 py-1 rounded-full">
@@ -60,8 +93,13 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="relative">
-                        <Search
-                            className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"/>
+                        <Icon
+                            name="Search"
+                            type="lucide"
+                            size={16}
+                            color="#9ca3af"
+                            className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2"
+                        />
                         <input
                             type="text"
                             value={effectiveSearchValue}
@@ -75,7 +113,7 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                         onClick={onRefresh}
                         className="rounded-full p-1.5 text-white transition-colors hover:bg-gray-700"
                     >
-                        <RefreshCw className="h-4 w-4"/>
+                        <Icon name="RefreshCw" type="lucide" size={16} />
                     </button>
                 </div>
             </div>
@@ -86,11 +124,22 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3">
                             {participants.map((p) => {
                                 const joinedAgo = formatJoinedAgo(new Date());
+                                const avatarType = getRandomAvatarType(p.id);
+                                const avatarConfig = AVATAR_CONFIGS[avatarType];
+
                                 return (
                                     <div key={p.id}
-                                         className="relative flex h-[65px] items-center gap-3 rounded-lg bg-gray-800 p-2 border-[1px] border-white">
-                                        <img src={p.avatarUrl} alt={p.name}
-                                             className="h-10 w-10 rounded-full object-cover"/>
+                                         className="relative flex h-[65px] items-center gap-3 rounded-lg bg-gray-900 p-2 border-[1px] border-white">
+                                        <div
+                                            className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0"
+                                            style={{ backgroundColor: avatarConfig.bgColor }}
+                                        >
+                                            <Icon
+                                                name={avatarConfig.iconName}
+                                                size={avatarConfig.iconSize}
+                                                mode="eager"
+                                            />
+                                        </div>
                                         <div className="flex flex-col justify-center min-w-0">
                                             <span className="text-xl font-semibold text-white truncate">{p.name}</span>
                                             <span className="text-xs text-gray-400 truncate">
@@ -107,7 +156,7 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                                             aria-label="제거"
                                             title="제거"
                                         >
-                                            <X className="h-4 w-4 p-0" />
+                                            <Icon name="X" type="lucide" size={16} />
                                         </button>
                                     </div>
                                 );

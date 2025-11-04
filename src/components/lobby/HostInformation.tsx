@@ -1,6 +1,5 @@
 ﻿import React from "react";
-import { Eye, PawPrint } from "lucide-react";
-import {Icon} from "@/components/icons";
+import Icon from "@/components/icons/Icon";
 import {HostInformationProps} from "@/types/components";
 
 const HostInformation: React.FC<HostInformationProps> = ({
@@ -16,10 +15,10 @@ const HostInformation: React.FC<HostInformationProps> = ({
     return (
         <div className={`bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-3 flex flex-col items-center justify-between gap-1 shadow-[0_0_15px_rgba(234,179,8,0.3)] overflow-hidden ${className}`}>
             <div className="flex w-full items-center justify-between">
-                <Icon name="chzzk_mini" className="h-14 w-14 text-yellow-500" />
+                <Icon name="chzzk_mini" size={45}/>
                 <span className="text-2xl text-white font-extrabold">{streamerTag}</span>
                 <div className="flex items-center gap-1 text-gray-300">
-                    <Eye className="h-5 w-5" />
+                    <Icon name="Eye" type="lucide" size={20} />
                     <span className="text-sm font-semibold">{viewerCountLabel}</span>
                 </div>
             </div>

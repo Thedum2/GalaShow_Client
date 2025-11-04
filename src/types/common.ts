@@ -37,6 +37,8 @@ export type IconProps = {
     title?: string;
     className?: string;
     mode?: 'lazy' | 'eager';
+    type?: 'custom' | 'lucide';
+    strokeWidth?: number;
 } & Omit<React.SVGProps<SVGSVGElement>, 'width' | 'height' | 'color' | 'title'>;
 
 

@@ -113,7 +113,6 @@ export interface ParticipantListProps {
 export interface ParticipantListItem {
     id: string;
     name: string;
-    avatarUrl: string;
     detail?: string;
     badgeLabel?: string;
     badgeClassName?: string;

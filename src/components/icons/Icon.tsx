@@ -1,5 +1,6 @@
 ﻿import * as React from 'react'
 import {IconProps} from "@/types/common";
+import * as LucideIcons from 'lucide-react';
 
 type SVGRComponent = React.ComponentType<React.SVGProps<SVGSVGElement> & { title?: string }>
 
@@ -57,13 +58,35 @@ export function Icon({
                          name,
                          size = '1em',
                          color = 'currentColor',
-                         title,
                          className,
                          mode = 'lazy',
+                         type = 'custom',
+                         strokeWidth = 2,
                          style,
                          ...rest
                      }: IconProps) {
 
+    // lucide-react 아이콘 처리
+    if (type === 'lucide') {
+        const LucideIcon = (LucideIcons as any)[name];
+        if (!LucideIcon) {
+            console.warn(`Lucide icon "${name}" not found`);
+            return <FallbackBox size={size} color={color} className={className} />
+        }
+        return (
+            <LucideIcon
+                size={size}
+                color={color}
+                strokeWidth={strokeWidth}
+                className={className}
+                role="img"
+                style={style}
+                {...rest}
+            />
+        )
+    }
+
+    // 커스텀 SVG 처리
     const exists = mode === 'eager' ? !!EAGER_REG[name] : !!LAZY_REG[name]
     if (!exists) {
         return <FallbackBox size={size} color={color} className={className} />
@@ -76,8 +99,6 @@ export function Icon({
                 width={size}
                 height={size}
                 className={className}
-                title={title}
-                aria-hidden={title ? undefined : true}
                 role="img"
                 style={{ color, ...style }}
                 {...rest}
@@ -92,8 +113,6 @@ export function Icon({
                 width={size}
                 height={size}
                 className={className}
-                title={title}
-                aria-hidden={title ? undefined : true}
                 role="img"
                 style={{ color, ...style }}
                 {...rest}
