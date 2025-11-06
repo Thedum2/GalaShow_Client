@@ -6,7 +6,7 @@ import VictoryConditions, {
 } from "../components/lobby/VictoryConditions";
 import StartGameButton from "@/components/lobby/StartGameButton";
 import { Icon } from "@/components/icons";
-import { ParticipantListItem } from "@/types/components";
+import { ParticipantListItem, ParticipationSelectionItem } from "@/types/components";
 import ParticipantList from "@/components/lobby/ParticipantList";
 import { useNavigate } from "react-router-dom";
 import { PATHS } from "@/routes/paths";
@@ -28,9 +28,36 @@ const createInitialParticipants = (): ParticipantListItem[] =>
         };
     });
 
+const createInitialSelectionItems = (): ParticipationSelectionItem[] => {
+    const sampleNames = [
+        "김철수", "이영희", "박민수", "최지은",
+        "정현우", "강서연", "윤도현", "송하늘"
+    ];
+
+    const sampleAvatars = [
+        "https://media.tenor.com/-QjqtEhN9soAAAAM/legend-of-zelda-botw.gif",
+        "https://images.steamusercontent.com/ugc/449611652050198394/003B0F458420C44A75D10CBDC94A9C0B964C06F7/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
+        "https://media1.tenor.com/m/eS71mKN_7GAAAAAd/neneko-mashiro-mashiro-neneko.gif",
+        "https://giffiles.alphacoders.com/221/221856.gif",
+        "https://img.wattpad.com/b0790cd22ac1469ba55c1d381db39e3aa6256bc0/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f776174747061642d6d656469612d736572766963652f53746f7279496d6167652f67424134734a70384b6346414d413d3d2d3732303133333835322e313539356439353266336565343133633432373138363035313432382e676966",
+        "https://wallpapers-clan.com/wp-content/uploads/2024/08/konosuba-smiling-megumin-gif-desktop-wallpaper-preview.gif",
+        "https://giffiles.alphacoders.com/200/200252.gif",
+        "https://giffiles.alphacoders.com/200/200002.gif",
+    ];
+
+    return Array.from({ length: 8 }, (_, index) => ({
+        id: `selection-${index + 1}`,
+        name: sampleNames[index],
+        avatarUrl: sampleAvatars[index] || "",
+    }));
+};
+
 export default function Lobby() {
     const [participants, setParticipants] = useState<ParticipantListItem[]>(() =>
         createInitialParticipants()
+    );
+    const [selectionItems, setSelectionItems] = useState(() =>
+        createInitialSelectionItems()
     );
     const [searchKeyword, setSearchKeyword] = useState("");
     const [maxParticipantTier, setMaxParticipantTier] = useState("100");
@@ -42,14 +69,7 @@ export default function Lobby() {
     const [activeButtonLabel, setActiveButtonLabel] =
         useState<string>("참가 허용");
     const navigate = useNavigate();
-    // const { toasts, removeToast, success, error, warning, info } = useToast();
 
-    // const handleClick = () => {
-    //     success("성공적으로 저장되었습니다!", 3000);
-    //     error("오류가 발생했습니다.", 3000);
-    //     warning("경고 메시지입니다.", 3000);
-    //     info("정보 메시지입니다.", 3000);
-    // };
     const filteredParticipants = useMemo(() => {
         const trimmed = searchKeyword.trim().toLowerCase();
         if (!trimmed) {
@@ -196,30 +216,10 @@ export default function Lobby() {
                         />
                     </div>
                     <div className="basis-0 min-h-0 grow-[1.5] overflow-hidden">
-                        {/* <SelectionTime
-                            className="h-full"
-                            title="선택 시간 조정"
-                            descriptionPrefix={selectionTimeDescription.prefix}
-                            descriptionSuffix={selectionTimeDescription.suffix}
-                            selectedTime={selectedTime}
-                            onSelectTime={setSelectedTime}
-                        /> */}
                         <ParticipationSelection
                             className="h-full"
-                            items={
-                                participants.slice(0, 8).map((participant) => ({
-                                    id: participant.id,
-                                    name: participant.name,
-                                    avatarUrl: participant.avatarUrl,
-                                    bgColor: participant.badgeClassName ?? "",
-                                })) as {
-                                    id: string;
-                                    name: string;
-                                    avatarUrl: string;
-                                    bgColor: string;
-                                }[]
-                            }
-                            title="시청자 선택(다수 선택 가능)"
+                            items={selectionItems}
+                            title="시청자 아바타 선택(다수 선택 가능)"
                         />
                     </div>
                     <div className="basis-0 min-h-0 grow-[0.5] overflow-hidden p-2">

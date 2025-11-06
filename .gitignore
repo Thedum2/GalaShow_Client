@@ -7,7 +7,7 @@
 Pods/
 
 
-.claude
+.claude/
 
 ## env
 .env.development

@@ -1,36 +1,28 @@
 import React, { useState } from "react";
-import { Icon } from "@/components/icons";
 import {
-    DEFAULT_TIME_OPTIONS,
     ParticipationSelectionProps,
-    SelectionTimeProps,
+    ParticipationSelectionItem,
+
 } from "@/types/components";
 const ParticipationSelection: React.FC<ParticipationSelectionProps> = ({
     title,
     items,
     className = "",
 }: ParticipationSelectionProps) => {
-    const [selectedItems, setSelectedItems] = useState<
-        { id: string; name: string; avatarUrl: string; bgColor: string }[]
-    >([]);
+    const [selectedItems, setSelectedItems] = useState<ParticipationSelectionItem[]>([]);
 
     const handleSelectItem = (itemId: string) => {
         setSelectedItems((prev) => {
             const isAlreadySelected = prev.some((item) => item.id === itemId);
-            
+
             if (isAlreadySelected) {
                 return prev.filter((item) => item.id !== itemId);
             } else {
                 const item = items.find((item) => item.id === itemId);
-                return [
-                    ...prev,
-                    {
-                        id: itemId,
-                        name: item?.name ?? "",
-                        avatarUrl: item?.avatarUrl ?? "",
-                        bgColor: item?.bgColor ?? "",
-                    },
-                ];
+                if (item) {
+                    return [...prev, item];
+                }
+                return prev;
             }
         });
     };
@@ -48,12 +40,19 @@ const ParticipationSelection: React.FC<ParticipationSelectionProps> = ({
                 {items.map((item) => (
                     <div
                         key={item.id}
-                        className={`${selectedItems.find((selectedItem) => selectedItem.id === item.id) ? "border-2 border-yellow-500" : ""
-                            } rounded-lg p-2 h-full relative flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 ${item.bgColor}`}
+                        className={`${selectedItems.find((selectedItem) => selectedItem.id === item.id) ? "border-4 border-blue-500" : ""
+                            } rounded-lg h-full relative cursor-pointer transition-all duration-200 hover:scale-105 overflow-hidden`}
                         onClick={() => handleSelectItem(item.id)}
                     >
-                        <img src={item.avatarUrl} alt={item.name} className="self-center" />
-                        <div className="text-white absolute bottom-1 right-1">
+                        {/* 배경 이미지 - 중앙 정렬, 꽉 채우기, 잘리지 않게 */}
+                        <div
+                            className="absolute inset-0 bg-center bg-cover bg-no-repeat"
+                            style={{ backgroundImage: `url(${item.avatarUrl})` }}
+                        />
+                        {/* 검은색 오버레이 */}
+                        <div className="absolute inset-0 bg-black bg-opacity-40" />
+                        {/* 우측 하단 텍스트 */}
+                        <div className="absolute bottom-2 right-2 text-white text-sm font-semibold drop-shadow-lg">
                             {item.name}
                         </div>
                     </div>

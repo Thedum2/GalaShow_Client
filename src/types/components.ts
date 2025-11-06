@@ -81,18 +81,17 @@ export interface HostInformationProps {
 export interface ParticipantListItem {
     id: string;
     name: string;
-    avatarUrl: string;
+    avatarUrl?: string;
     detail?: string;
+    badgeLabel?: string;
     badgeClassName?: string;
     joinedAt?: string | number | Date;
 }
 
-type ActionVariant = "primary" | "warning" | "danger";
-
 export interface ParticipantListAction {
     label: string;
     onClick?: () => void;
-    variant?: ActionVariant;
+    variant?: "primary" | "warning" | "danger";
     active?: boolean;
 }
 
@@ -108,22 +107,6 @@ export interface ParticipantListProps {
     onRemove?: (participantId: string) => void;
     actionButtons?: ParticipantListAction[];
     className?: string;
-}
-
-export interface ParticipantListItem {
-    id: string;
-    name: string;
-    detail?: string;
-    badgeLabel?: string;
-    badgeClassName?: string;
-    joinedAt?: string | number | Date;
-}
-
-export interface ParticipantListAction {
-    label: string;
-    onClick?: () => void;
-    variant?: "primary" | "warning" | "danger";
-    active?: boolean;
 }
 
 export const ACTION_BUTTON_STYLES = {
@@ -169,14 +152,15 @@ export interface SelectionTimeProps {
     className?: string;
 }
 
+export interface ParticipationSelectionItem {
+    id: string;
+    name: string;
+    avatarUrl: string;
+}
+
 export interface ParticipationSelectionProps {
     title: string;
-    items: {
-        id: string;
-        name: string;
-        avatarUrl: string;
-        bgColor: string;
-    }[];
+    items: ParticipationSelectionItem[];
     className?: string;
 }
 
