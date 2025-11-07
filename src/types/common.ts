@@ -43,3 +43,17 @@ export type IconProps = {
 
 
 export type BackgroundType = "image" | "video";
+
+export type PlatformType = 'chzzk' | 'soop' | 'youtube';
+
+export interface PlatformConfig {
+    iconName: string;
+    bgColor: string;
+    iconSize: number;
+}
+export interface PlatformIconProps {
+    platform: PlatformType;
+    size?: number;
+    className?: string;
+}
+

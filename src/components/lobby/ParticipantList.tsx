@@ -1,39 +1,7 @@
 ﻿import React, {useState, useMemo} from "react";
 import Icon from "@/components/icons/Icon";
 import {ACTION_BUTTON_STYLES, ParticipantListProps} from "@/types/components";
-
-type AvatarType = 'chzzk' | 'soop' | 'youtube';
-
-interface AvatarConfig {
-    iconName: string;
-    bgColor: string;
-    iconSize: number;
-}
-
-const AVATAR_CONFIGS: Record<AvatarType, AvatarConfig> = {
-    chzzk: {
-        iconName: 'chzzk_mini',
-        bgColor: '#000000',
-        iconSize: 25,
-    },
-    soop: {
-        iconName: 'soopmini',
-        bgColor: '#0545B1',
-        iconSize: 23,
-    },
-    youtube: {
-        iconName: 'youtube',
-        bgColor: '#FFFFFF',
-        iconSize: 24,
-    },
-};
-
-function getRandomAvatarType(id: string): AvatarType {
-    // ID를 기반으로 일관된 랜덤 타입 반환 (같은 ID는 항상 같은 타입)
-    const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const types: AvatarType[] = ['chzzk', 'soop', 'youtube'];
-    return types[hash % types.length];
-}
+import { PlatformIcon, getRandomPlatform } from "@/components/common/PlatformIcon";
 
 function formatJoinedAgo(joinedAt?: string | number | Date) {
     if (!joinedAt) return null;
@@ -124,22 +92,12 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3">
                             {participants.map((p) => {
                                 const joinedAgo = formatJoinedAgo(new Date());
-                                const avatarType = getRandomAvatarType(p.id);
-                                const avatarConfig = AVATAR_CONFIGS[avatarType];
+                                const platform = getRandomPlatform(p.id);
 
                                 return (
                                     <div key={p.id}
                                          className="relative flex h-[65px] items-center gap-3 rounded-lg bg-gray-900 p-2 border-[1px] border-white">
-                                        <div
-                                            className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0"
-                                            style={{ backgroundColor: avatarConfig.bgColor }}
-                                        >
-                                            <Icon
-                                                name={avatarConfig.iconName}
-                                                size={avatarConfig.iconSize}
-                                                mode="eager"
-                                            />
-                                        </div>
+                                        <PlatformIcon platform={platform} size={40} />
                                         <div className="flex flex-col justify-center min-w-0">
                                             <span className="text-xl font-semibold text-white truncate">{p.name}</span>
                                             <span className="text-xs text-gray-400 truncate">

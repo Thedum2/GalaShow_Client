@@ -188,3 +188,18 @@ export interface VictoryConditionsProps {
     minRoundCount?: number;
     className?: string;
 }
+
+export interface Participant {
+    id: string;
+    name: string;
+    platform: 'chzzk' | 'soop' | 'youtube';
+}
+
+export interface SurvivorPanelProps {
+    survivorCount: number;
+    participants: Participant[];
+    className?: string;
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
+    searchPlaceholder?: string;
+}
