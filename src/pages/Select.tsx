@@ -1,8 +1,9 @@
 ﻿
-    import { Icon } from '@/components/icons/Icon';
-    import { SurvivorPanel } from '@/components/common/SurvivorPanel';
+import { Icon } from '@/components/icons/Icon';
+import { SurvivorPanel } from '@/components/common/SurvivorPanel';
+import SelectionFooter from '@/components/select/SelectionFooter';
 
-    export default function Select() {
+export default function Select() {
     const avatarUrl = 'https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj';
 
         const participants = [
@@ -48,8 +49,7 @@
                 </div>
 
                 {/* 1-3. 하단 */}
-                <div className="h-[165px] w-full border-2 border-green-500">
-                </div>
+                <SelectionFooter />
             </div>
 
             {/* 2. 우측 영역 */}

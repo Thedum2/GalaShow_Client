@@ -6,4 +6,6 @@ export { BannersApi } from "./modules/BannersApi";
 export { BackgroundApi } from "./modules/BackgroundApi";
 export { PoliciesApi } from "./modules/PoliciesApi";
 export { SnsLinksApi } from "./modules/SnsLinksApi";
+export { MinigameApi } from "./modules/MinigameApi";
+export { ViewerAvatarApi } from "./modules/ViewerAvatarApi";
 export { TokenStorage } from "./utils/TokenStorage";
