@@ -1,7 +1,6 @@
-﻿
-import { Icon } from '@/components/icons/Icon';
-import { SurvivorPanel } from '@/components/common/SurvivorPanel';
+﻿import { SurvivorPanel } from '@/components/common/SurvivorPanel';
 import SelectionFooter from '@/components/select/SelectionFooter';
+import { GameCard } from '@/components/select/GameCard';
 
 export default function Select() {
     const avatarUrl = 'https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj';
@@ -26,7 +25,7 @@ export default function Select() {
             {/* 1. 좌측 영역 */}
             <div className="flex flex-1 flex-col gap-3">
                 {/* 1-1. 상단 */}
-                <div className="h-[165px] w-full border-2 border-red-500 flex items-center justify-between px-8">
+                <div className="h-[165px] w-full flex items-center justify-between px-8">
                     <div className="text-red-500 text-[105px] font-black leading-none text-left whitespace-nowrap" style={{ letterSpacing: '115px' ,marginRight: '-115px'}}>
                         첫번째
                     </div>
@@ -45,7 +44,61 @@ export default function Select() {
                 </div>
 
                 {/* 1-2. 중간 */}
-                <div className="flex-1 w-full border-2 border-blue-500">
+                <div className="flex-1 w-full grid grid-cols-4 gap-4">
+                    <GameCard
+                        title="트롤리 딜레마"
+                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
+                        options={[
+                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
+                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
+                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
+                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
+                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' }
+                        ]}
+                        votePercentage={19}
+                        totalVotes={29}
+                    />
+                    <GameCard
+                        title="트롤리 딜레마"
+                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
+                        options={[
+                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
+                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
+                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
+                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
+                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' }
+                        ]}
+                        votePercentage={19}
+                        totalVotes={29}
+                    />
+                    <GameCard
+                        title="트롤리 딜레마"
+                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
+                        options={[
+                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
+                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
+                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
+                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
+                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' },
+                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
+                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' }
+                        ]}
+                        votePercentage={19}
+                        totalVotes={29}
+                    />
+                    <GameCard
+                        title="트롤리 딜레마"
+                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
+                        options={[
+                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
+                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
+                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
+                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
+                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' }
+                        ]}
+                        votePercentage={19}
+                        totalVotes={29}
+                    />
                 </div>
 
                 {/* 1-3. 하단 */}

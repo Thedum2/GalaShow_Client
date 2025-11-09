@@ -33,7 +33,7 @@ export const SurvivorPanel: React.FC<SurvivorPanelProps> = ({
     }, [participants, effectiveSearchValue]);
 
     return (
-        <div className={`flex-1 min-h-0 w-full flex flex-col gap-3 p-4 border-2 border-yellow-500 ${className}`}>
+        <div className={`flex-1 min-h-0 w-full flex flex-col gap-3 p-4 bg-black/60 ${className} rounded-2xl`}>
             <div className="w-full h-[150px] flex-shrink-0 bg-green-400 rounded-3xl p-6 flex flex-col items-center justify-center gap-1">
                 <div className="text-5xl">🎮</div>
                 <div className="text-black text-6xl font-extrabold leading-none">{survivorCount}</div>
