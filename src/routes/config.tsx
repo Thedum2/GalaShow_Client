@@ -13,6 +13,7 @@ const WelcomePage = lazy(() => import("@/pages/Welcome"));
 const LobbyPage = lazy(() => import("@/pages/Lobby"));
 const SelectPage = lazy(() => import("@/pages/Select"));
 const LoadingPage = lazy(() => import("@/pages/Loading"));
+const TutorialPage = lazy(() => import("@/pages/Tutorial"));
 const ResultPage = lazy(() => import("@/pages/Result"));
 const WinnerPage = lazy(() => import("@/pages/Winner"));
 
@@ -27,6 +28,7 @@ export const routes: RouteObject[] = [
             {path: PATHS.select, element: <Suspense fallback={<div>Loading…</div>}><SelectPage/></Suspense>},
             {path: PATHS.loading, element: <Suspense fallback={<div>Loading…</div>}><LoadingPage/></Suspense>},
             {path: PATHS.result, element: <Suspense fallback={<div>Loading…</div>}><ResultPage/></Suspense>},
+            {path: PATHS.tutorial, element: <Suspense fallback={<div>Loading…</div>}><TutorialPage/></Suspense>},
             {path: PATHS.winner, element: <Suspense fallback={<div>Loading…</div>}><WinnerPage/></Suspense>},
             {path: PATHS.polychat_sample, element: <Suspense fallback={<div>Loading…</div>}><PolyChatSamplePage/></Suspense>},
             {path: "*", element: <NotFoundPage/>},

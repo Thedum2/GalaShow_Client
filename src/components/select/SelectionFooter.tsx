@@ -1,7 +1,12 @@
 import React from "react";
 import {Icon} from "@/components/icons/Icon";
+import {useNavigate} from "react-router-dom";
+import {PATHS} from "@/routes/paths";
 
 const SelectionFooter: React.FC = () => {
+
+    const navigate = useNavigate();
+
     return (
         <div className="h-[170px] w-full flex justify-between bg-black/40 rounded-lg">
             {/* 왼쪽 박스 - 투표 안내 */}
@@ -25,6 +30,7 @@ const SelectionFooter: React.FC = () => {
             {/* 오른쪽 박스 - 버튼들 */}
             <div className="w-[450px] h-full flex flex-col gap-3 px-6 py-3">
                 <button
+                    onClick={()=>{navigate(PATHS.tutorial);}}
                     type="button"
                     className="flex-1 bg-green-700 hover:bg-green-600 text-white rounded-lg font-black text-xl flex items-center justify-center gap-3 transition-all duration-200"
                 >
