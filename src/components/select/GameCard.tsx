@@ -30,11 +30,11 @@ export const GameCard: React.FC<GameCardProps> = ({
             {/* 카드 내용 */}
             <div className="relative flex flex-col h-full">
                 {/* 상단: 아이콘과 제목 */}
-                <div className="flex h-30 items-center bg-gray-400 justify-center py-2">
+                <div className="flex h-30 items-center bg-cyan-600 justify-center py-2">
                     <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvTOXhxA0qyte9tARIwfAiWi5GB0gvWwr3ug&s"
-                        className={"w-16 h-16 rounded-full border-black"}
-                    />
+                        src="https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+                        className={"w-16 h-16 rounded-xl border-black"}
+                        alt={""}/>
                 </div>
                 <div className="h-[180px] bg-black overflow-hidden">
                     <video
