@@ -3,13 +3,16 @@ import {useUnity} from "@/bridge/useUnity";
 import React from "react";
 import GameControls from "@/components/tutorial/GameControls";
 import HowToPlay from "@/components/tutorial/HowToPlay";
+import {useNavigate} from "react-router-dom";
+import { PATHS } from "@/routes/paths";
 
 export default function Tutorial() {
     const {unityProvider, isLoaded, loadingProgression} = useUnity();
+    const navigate = useNavigate();
 
     return (
 
-        <div className="flex h-full w-full pr-10 pl-10 pt-3 pb-3 gap-6">
+        <div className="flex h-full w-full pr-10 pl-10 pt-6 pb-6 gap-6">
             {/* 1. 좌측 영역 */}
             <div className="flex flex-1 flex-col gap-3">
 
@@ -20,7 +23,7 @@ export default function Tutorial() {
                         className={"w-28 h-28 rounded-xl border-black"}
                         alt=""
                     />
-                    <p className={"font-black text-8xl"}>트롤리 딜레마</p>
+                    <p className={"font-black text-8xl text-white"}>트롤리 딜레마</p>
                 </div>
 
 
@@ -51,6 +54,7 @@ export default function Tutorial() {
                             options: ['"2"', '"2번"', '"오른쪽"']
                         }
                     ]}
+                    onRestart={()=>{navigate(PATHS.result)}}
                 />
             </div>
 

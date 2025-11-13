@@ -1,3 +1,5 @@
+import Icon from "@/components/icons/Icon";
+
 export interface ChoiceSection {
     title: string;
     titleColor: "blue" | "red" | "green" | "yellow" | "purple" | "pink";
@@ -49,16 +51,16 @@ export default function GameControls({
             <div className="w-[200px] flex flex-col gap-3">
                 <button
                     onClick={onRestart}
-                    className="flex-1 bg-pink-800 hover:bg-pink-900 text-white rounded-2xl font-bold text-base transition-colors flex items-center justify-center gap-2 shadow-lg"
+                    className="flex-1 bg-pink-800 hover:bg-pink-900 text-white rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2 shadow-lg"
                 >
-                    <span className="text-xl">⟲</span>
+                    <Icon name="RotateCcw" type="lucide" size={25} color="#ffffffff" />
                     <span>다시 연습하기</span>
                 </button>
                 <button
                     onClick={onStart}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold text-base transition-colors flex items-center justify-center gap-2 shadow-lg"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2 shadow-lg"
                 >
-                    <span className="text-xl">▶</span>
+                    <Icon name="LandPlot" type="lucide" size={25} color="#fde047" />
                     <span>시작하기</span>
                 </button>
             </div>

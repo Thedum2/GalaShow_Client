@@ -82,3 +82,55 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* 커스텀 스크롤바 스타일 */
+.scrollbar-green::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-green::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-green::-webkit-scrollbar-thumb {
+  background-color: #45E175;
+  border-radius: 3px;
+}
+
+.scrollbar-green::-webkit-scrollbar-thumb:hover {
+  background-color: #38c764;
+}
+
+.scrollbar-red::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-red::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-red::-webkit-scrollbar-thumb {
+  background-color: #EE0000;
+  border-radius: 3px;
+}
+
+.scrollbar-red::-webkit-scrollbar-thumb:hover {
+  background-color: #cc0000;
+}
+
+.scrollbar-yellow::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-yellow::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-yellow::-webkit-scrollbar-thumb {
+  background-color: #FACC15;
+  border-radius: 3px;
+}
+
+.scrollbar-yellow::-webkit-scrollbar-thumb:hover {
+  background-color: #EAB308;
+}
