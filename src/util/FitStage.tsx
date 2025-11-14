@@ -19,7 +19,7 @@ export default function FitStage({
                 inset: 0,
                 overflow: 'hidden',
                 background: 'transparent',
-                zIndex: 30,
+                zIndex: 20,
             }}
         >
             <div

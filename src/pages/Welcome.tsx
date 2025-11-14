@@ -2,7 +2,7 @@ import LoginCard from "@/components/welcome/LoginCard";
 import Icon from "@/components/icons/Icon";
 import StepsBox from "@/components/welcome/StepsBox";
 import RibbonOverlay from "@/components/RibbonOverlay";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { BannersApi, PoliciesApi, SnsLinksApi } from "@/api";
 import { Banner } from "@/api/model/response/banner/Banner";
 import { PolicyLinks } from "@/api/model/response/policy/PolicyLinks";
@@ -12,6 +12,14 @@ import { useNavigate } from 'react-router-dom';
 import { PATHS } from "@/routes/paths";
 import StartGameButton from "@/components/lobby/StartGameButton";
 import LoginedCard from "@/components/welcome/LoginedCard";
+import OneButtonPopup from "@/components/modals/OneButtonPopup";
+import TwoButtonPopup from "@/components/modals/TwoButtonPopup";
+import ImageTwoButtonPopup from "@/components/modals/ImageTwoButtonPopup";
+import EmojiOneButtonPopup from "@/components/modals/EmojiOneButtonPopup";
+import {
+    ImprovedToastContainer,
+    ImprovedToastType,
+} from "@/components/modals/ImprovedToast";
 
 
 const stepSets = [
@@ -75,6 +83,13 @@ const stepSets = [
     ]
 ];
 
+interface Toast {
+    id: string;
+    type: ImprovedToastType;
+    message: string;
+    duration?: number;
+}
+
 export default function Welcome() {
     const [banners, setBanners] = useState<Banner[]>([]);
     const [policyLinks, setPolicyLinks] = useState<PolicyLinks | null>(null);
@@ -87,11 +102,70 @@ export default function Welcome() {
     const [isGoogleLogined, setIsGoogleLogined] = useState(false);
     const navigate = useNavigate();
 
+    // Popup states
+    const [showOneButton, setShowOneButton] = useState(false);
+    const [showTwoButton, setShowTwoButton] = useState(false);
+    const [showImageTwoButton, setShowImageTwoButton] = useState(false);
+    const [showEmojiOneButton, setShowEmojiOneButton] = useState(false);
+    const [toasts, setToasts] = useState<Toast[]>([]);
+    const [toastTypeIndex, setToastTypeIndex] = useState(0);
+
     useEffect(() => {
         BannersApi.get().then(setBanners).catch(console.error);
         PoliciesApi.get().then(setPolicyLinks).catch(console.error);
         SnsLinksApi.get().then(setSnsLinks).catch(console.error);
     }, []);
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ctrl+Shift+1: 원버튼 팝업
+            if (e.ctrlKey && e.shiftKey && e.key === '!') {
+                e.preventDefault();
+                setShowOneButton(true);
+            }
+            // Ctrl+Shift+2: 투버튼 팝업
+            else if (e.ctrlKey && e.shiftKey && e.key === '@') {
+                e.preventDefault();
+                setShowTwoButton(true);
+            }
+            // Ctrl+Shift+3: 사진 투버튼 팝업
+            else if (e.ctrlKey && e.shiftKey && e.key === '#') {
+                e.preventDefault();
+                setShowImageTwoButton(true);
+            }
+            // Ctrl+Shift+4: 이모지 원버튼 팝업
+            else if (e.ctrlKey && e.shiftKey && e.key === '$') {
+                e.preventDefault();
+                setShowEmojiOneButton(true);
+            }
+            // Ctrl+Shift+5: 토스트 순환
+            else if (e.ctrlKey && e.shiftKey && e.key === '%') {
+                e.preventDefault();
+                const toastTypes: ImprovedToastType[] = ['success', 'error', 'warning', 'info'];
+                const messages = [
+                    'Changes applied successfully!',
+                    'Something went wrong!',
+                    'Please check your input!',
+                    'New update available!'
+                ];
+                addToast(toastTypes[toastTypeIndex], messages[toastTypeIndex]);
+                setToastTypeIndex((prev) => (prev + 1) % toastTypes.length);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [toastTypeIndex]);
+
+    const addToast = (type: ImprovedToastType, message: string) => {
+        const id = Date.now().toString();
+        setToasts((prev) => [...prev, { id, type, message }]);
+    };
+
+    const removeToast = (id: string) => {
+        setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    };
 
     const openPdfViewer = (title: string, url: string) => {
         if (!url) {
@@ -109,20 +183,32 @@ export default function Welcome() {
     };
 
     const getRandomValue = (min: number, max: number) => Math.random() * (max - min) + min;
+
+    // Memoize ribbon properties to prevent re-randomization on re-renders
+    const ribbonConfigs = useMemo(() => {
+        return banners.slice(0, 5).map((banner, index) => ({
+            id: banner.id,
+            message: banner.message,
+            rotate: getRandomValue(-15, 15),
+            top: `${getRandomValue(5, 85)}%`,
+            speedSec: getRandomValue(15, 30),
+            theme: index % 2 === 0 ? 'dark' : 'light' as 'dark' | 'light',
+        }));
+    }, [banners]);
     
 
     return (
         <div className="relative flex flex-col w-full h-full text-white overflow-hidden">
             {isPdfViewerOpen && pdfUrl && <PdfViewer title={pdfTitle} url={pdfUrl} onClose={closePdfViewer} />}
 
-            {banners.slice(0, 5).map((banner, index) => (
+            {ribbonConfigs.map((config) => (
                 <RibbonOverlay
-                    key={banner.id}
-                    text={banner.message}
-                    rotate={getRandomValue(-15, 15)}
-                    top={`${getRandomValue(5, 85)}%`}
-                    speedSec={getRandomValue(15, 30)}
-                    theme={index % 2 === 0 ? 'dark' : 'light'}
+                    key={config.id}
+                    text={config.message}
+                    rotate={config.rotate}
+                    top={config.top}
+                    speedSec={config.speedSec}
+                    theme={config.theme}
                 />
             ))}
 
@@ -283,6 +369,69 @@ export default function Welcome() {
                     </div>
                 </footer>
             </div>
+
+            {/* Popups for testing - keyboard shortcuts */}
+            <OneButtonPopup
+                title="정말 진행 하실건가요?"
+                subtitle="진행하면 되돌릴 수 없습니다"
+                buttonText="확인하기"
+                isOpen={showOneButton}
+                onClose={() => setShowOneButton(false)}
+                onConfirm={() => {
+                    console.log("원버튼 팝업 - 확인");
+                    addToast("success", "확인 버튼이 클릭되었습니다!");
+                }}
+            />
+
+            <TwoButtonPopup
+                title="정말 진행 하실건가요?"
+                subtitle="진행하면 되돌릴 수 없습니다"
+                cancelText="거절하기"
+                confirmText="확인하기"
+                isOpen={showTwoButton}
+                onClose={() => setShowTwoButton(false)}
+                onCancel={() => {
+                    console.log("투버튼 팝업 - 거절");
+                    addToast("info", "거절하기 버튼이 클릭되었습니다!");
+                }}
+                onConfirm={() => {
+                    console.log("투버튼 팝업 - 확인");
+                    addToast("success", "확인하기 버튼이 클릭되었습니다!");
+                }}
+            />
+
+            <ImageTwoButtonPopup
+                title="정말 진행 하실건가요?"
+                subtitle="진행하면 되돌릴 수 없습니다"
+                image="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=500&h=300&fit=crop"
+                cancelText="거절하기"
+                confirmText="확인하기"
+                isOpen={showImageTwoButton}
+                onClose={() => setShowImageTwoButton(false)}
+                onCancel={() => {
+                    console.log("사진 투버튼 팝업 - 거절");
+                    addToast("info", "거절하기 버튼이 클릭되었습니다!");
+                }}
+                onConfirm={() => {
+                    console.log("사진 투버튼 팝업 - 확인");
+                    addToast("success", "확인하기 버튼이 클릭되었습니다!");
+                }}
+            />
+
+            <EmojiOneButtonPopup
+                title="Your order has been placed!"
+                emoji="🎉"
+                buttonText="Thanks!"
+                isOpen={showEmojiOneButton}
+                onClose={() => setShowEmojiOneButton(false)}
+                onConfirm={() => {
+                    console.log("이모지 원버튼 팝업 - 확인");
+                    addToast("success", "주문이 완료되었습니다!");
+                }}
+            />
+
+            {/* Toast Container */}
+            <ImprovedToastContainer toasts={toasts} onClose={removeToast} />
         </div>
     );
 }

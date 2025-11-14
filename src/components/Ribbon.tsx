@@ -23,7 +23,7 @@ export default function Ribbon({
                 left: '50%',
                 transform: `translateX(-50%) rotate(${rotate}deg)`,
                 transformOrigin: 'center',
-                zIndex: 20,
+                zIndex: 10,
                 top,
                 boxShadow:
                     theme === 'light'
