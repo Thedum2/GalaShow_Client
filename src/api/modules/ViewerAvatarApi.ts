@@ -12,13 +12,5 @@ export const ViewerAvatarApi = {
       "/viewer-avatars",
       ViewerAvatar.fromJSON
     );
-  },
-
-  /**
-   * [6-10] 시청자 아바타 목록 수정 (관리자)
-   * PUT /viewer-avatars
-   */
-  update(request: UpdateViewerAvatarsRequest): Promise<void> {
-    return httpClient.put<void>("/viewer-avatars", request, () => undefined);
-  },
+  }
 };

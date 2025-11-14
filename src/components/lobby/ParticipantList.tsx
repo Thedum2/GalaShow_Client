@@ -1,7 +1,34 @@
 ﻿import React, {useState, useMemo} from "react";
 import Icon from "@/components/icons/Icon";
-import {ACTION_BUTTON_STYLES, ParticipantListProps} from "@/types/components";
+import { ParticipantListItem } from "@/types/domain/participant";
 import { PlatformIcon, getRandomPlatform } from "@/components/common/PlatformIcon";
+
+interface ParticipantListAction {
+    label: string;
+    onClick?: () => void;
+    variant?: "primary" | "warning" | "danger";
+    active?: boolean;
+}
+
+interface ParticipantListProps {
+    title: string;
+    currentCount: number;
+    capacity: number;
+    participants: ParticipantListItem[];
+    searchPlaceholder?: string;
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
+    onRefresh?: () => void;
+    onRemove?: (participantId: string) => void;
+    actionButtons?: ParticipantListAction[];
+    className?: string;
+}
+
+const ACTION_BUTTON_STYLES = {
+    primary: "bg-green-600 hover:bg-green-700",
+    warning: "bg-yellow-600 hover:bg-yellow-700",
+    danger: "bg-red-600 hover:bg-red-700",
+} as const;
 
 function formatJoinedAgo(joinedAt?: string | number | Date) {
     if (!joinedAt) return null;

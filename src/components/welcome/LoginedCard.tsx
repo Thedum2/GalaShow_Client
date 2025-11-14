@@ -1,7 +1,25 @@
 import React from "react";
 import Tilt from "react-parallax-tilt";
-import { LoginedCardProps } from "@/types/components";
 import Icon from "@/components/icons/Icon";
+
+interface LoginedCardProps {
+    title: string;
+    colorForConnected?: string;
+    colorForDisConnect?: string;
+    titleColor?: string;
+    buttonTextForConnected?: string;
+    buttonTextForDisConnect?: string;
+    buttonIconForConnected?: React.ReactNode;
+    buttonIconForDisConnect?: React.ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    logo?: React.ReactNode;
+    loginedIcon?: React.ReactNode;
+    glow?: string;
+    borderWidth?: number | string;
+    borderColor?: string;
+}
+
 export default function LoginedCard({
     title = "네네코 마시로",
     colorForConnected ="#979797",

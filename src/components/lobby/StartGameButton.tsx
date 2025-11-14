@@ -1,6 +1,15 @@
 import React from "react";
 import Icon from "@/components/icons/Icon";
-import { StartGameButtonProps } from "@/types/components";
+
+type StartGameButtonProps = {
+    text?: string;
+    icon?: React.ReactNode;
+    backgroundColor?: string;
+    textColor?: string;
+    className?: string;
+    onClick?: () => void;
+    disabled?: boolean;
+};
 
 export default function StartGameButton({
     className = "",

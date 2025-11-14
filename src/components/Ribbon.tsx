@@ -1,5 +1,5 @@
 ﻿import { useMemo } from 'react'
-import type { RibbonProps } from '@/types/components'
+import type { RibbonProps } from '@/types/common'
 
 export default function Ribbon({
                                    text,

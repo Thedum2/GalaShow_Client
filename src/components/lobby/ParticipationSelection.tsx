@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import {
-    ParticipationSelectionProps,
-    ParticipationSelectionItem,
+import { ParticipationSelectionItem } from "@/types/domain/participant";
 
-} from "@/types/components";
+interface ParticipationSelectionProps {
+    title: string;
+    items: ParticipationSelectionItem[];
+    className?: string;
+}
+
 const ParticipationSelection: React.FC<ParticipationSelectionProps> = ({
     title,
     items,

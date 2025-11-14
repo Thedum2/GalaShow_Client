@@ -6,7 +6,7 @@ import VictoryConditions, {
 } from "../components/lobby/VictoryConditions";
 import StartGameButton from "@/components/lobby/StartGameButton";
 import { Icon } from "@/components/icons";
-import { ParticipantListItem, ParticipationSelectionItem } from "@/types/components";
+import { ParticipantListItem, ParticipationSelectionItem } from "@/types/domain/participant";
 import ParticipantList from "@/components/lobby/ParticipantList";
 import { useNavigate } from "react-router-dom";
 import { PATHS } from "@/routes/paths";

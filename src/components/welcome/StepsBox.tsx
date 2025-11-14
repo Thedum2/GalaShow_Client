@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Step, StepExtra, StepsBoxProps } from '@/types/components';
+import { Step, StepExtra } from '@/types/common';
+
+interface StepsBoxProps {
+    title: string;
+    stepSets: Step[][];
+}
 
 const StepsBox: React.FC<StepsBoxProps> = ({ title, stepSets = [] }) => {
     const [currentIndex, setCurrentIndex] = useState(0);

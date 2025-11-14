@@ -1,8 +1,21 @@
 import React from "react";
 import Icon from "@/components/icons/Icon";
-import { VictoryConditionsProps } from "@/types/components";
+import { VictoryOptionId } from "@/types/domain/game";
 
-export type VictoryOptionId = "lastOne" | "smallGroup" | "rounds";
+interface VictoryConditionsProps {
+    selectedOption: VictoryOptionId;
+    onSelectOption: (option: VictoryOptionId) => void;
+    survivorCount: number;
+    onSurvivorCountChange?: (count: number) => void;
+    roundCount: number;
+    onRoundCountChange?: (count: number) => void;
+    minSurvivorCount?: number;
+    maxSurvivorCount?: number;
+    minRoundCount?: number;
+    className?: string;
+}
+
+export type { VictoryOptionId };
 
 // --- Data Configuration for Victory Options ---
 const optionsConfig = [

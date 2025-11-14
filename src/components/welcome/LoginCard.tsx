@@ -1,6 +1,21 @@
 import React from "react";
 import Tilt from "react-parallax-tilt";
-import { LoginCardProps } from "@/types/components";
+
+interface LoginCardProps {
+  title: string;
+  subtext?: string;
+  color: string;
+  titleColor?: string;
+  subtextColor?: string;
+  buttonText: string;
+  buttonIcon?: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  logo?: React.ReactNode;
+  glow?: string;
+  borderWidth?: number | string;
+  borderColor?: string;
+}
 
 export default function LoginCard({
   title,

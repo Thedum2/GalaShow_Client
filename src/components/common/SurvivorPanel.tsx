@@ -1,7 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { PlatformIcon } from './PlatformIcon';
-import {SurvivorPanelProps} from "@/types/components";
+import { Participant } from '@/types/domain/participant';
 import Icon from '@/components/icons/Icon';
+
+interface SurvivorPanelProps {
+    survivorCount: number;
+    participants: Participant[];
+    className?: string;
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
+    searchPlaceholder?: string;
+}
 
 export const SurvivorPanel: React.FC<SurvivorPanelProps> = ({
     survivorCount,

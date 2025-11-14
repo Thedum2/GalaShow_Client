@@ -100,19 +100,4 @@ export const MinigameApi = {
       SurvivalRate.fromJSON
     );
   },
-
-  /**
-   * [6-8] 미니게임 생존률 수정 (관리자)
-   * PUT /minigames/{gameId}/survival-rate
-   */
-  updateSurvivalRate(
-    gameId: number,
-    request: UpdateSurvivalRateRequest
-  ): Promise<SurvivalRate> {
-    return httpClient.put<SurvivalRate>(
-      `/minigames/${gameId}/survival-rate`,
-      request,
-      SurvivalRate.fromJSON
-    );
-  },
 };

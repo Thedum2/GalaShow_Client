@@ -1,6 +1,17 @@
 ﻿import React from "react";
 import Icon from "@/components/icons/Icon";
-import {HostInformationProps} from "@/types/components";
+
+interface HostInformationProps {
+    logoText?: string;
+    streamerTag: string;
+    viewerCountLabel: string;
+    hostName: string;
+    description: string;
+    ratingLabel: string;
+    imageUrl?: string;
+    isLive?: boolean;
+    className?: string;
+}
 
 const HostInformation: React.FC<HostInformationProps> = ({
     streamerTag,

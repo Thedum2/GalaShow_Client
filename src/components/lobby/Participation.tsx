@@ -1,6 +1,19 @@
 ﻿import React from "react";
 import Icon from "@/components/icons/Icon";
-import {ParticipationProps} from "@/types/components";
+import { ParticipationInstructions, ParticipationOption } from "@/types/domain/game";
+
+interface ParticipationProps {
+    title: string;
+    instructions: ParticipationInstructions;
+    helperText: string;
+    maxLabel: string;
+    maxOptions: ParticipationOption[];
+    selectedMaxOption: string;
+    onMaxOptionChange?: (value: string) => void;
+    totalCount: number;
+    totalCountCaption: string;
+    className?: string;
+}
 
 const Participation: React.FC<ParticipationProps> = ({
                                                          title,
