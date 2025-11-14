@@ -1,23 +1,67 @@
-﻿import { SurvivorPanel } from '@/components/common/SurvivorPanel';
+﻿import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { SurvivorPanel } from '@/components/common/SurvivorPanel';
 import SelectionFooter from '@/components/select/SelectionFooter';
 import { GameCard } from '@/components/select/GameCard';
+import { MinigameApi } from '@/api/modules/MinigameApi';
+import { Minigame } from '@/api/model/response/minigame/Minigame';
+import { translateTags } from '@/utils/tagTranslation';
+import { PATHS } from '@/routes/paths';
 
 export default function Select() {
     const avatarUrl = 'https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj';
+    const navigate = useNavigate();
 
-        const participants = [
-            { id: '1', name: '불친절한쉘시고기', platform: 'chzzk' as const },
-            { id: '2', name: '삼광', platform: 'soop' as const },
-            { id: '3', name: '불친절한쉘시고기', platform: 'youtube' as const },
-            { id: '4', name: '대상 혁', platform: 'chzzk' as const },
-            { id: '5', name: '대상 혁', platform: 'soop' as const },
-            { id: '6', name: '가너다라마사아자차카타파하', platform: 'youtube' as const },
-            { id: '7', name: '가니다', platform: 'soop' as const },
-            { id: '8', name: '쀼뀨아', platform: 'soop' as const },
-            { id: '9', name: '치지지지', platform: 'soop' as const },
-            { id: '10', name: '수수수수수', platform: 'soop' as const },
-            { id: '11', name: '유유유유유유마그네릭', platform: 'soop' as const },
-        ];
+    const participants = [
+        { id: '1', name: '불친절한쉘시고기', platform: 'chzzk' as const },
+        { id: '2', name: '삼광', platform: 'soop' as const },
+        { id: '3', name: '불친절한쉘시고기', platform: 'youtube' as const },
+        { id: '4', name: '대상 혁', platform: 'chzzk' as const },
+        { id: '5', name: '대상 혁', platform: 'soop' as const },
+        { id: '6', name: '가너다라마사아자차카타파하', platform: 'youtube' as const },
+        { id: '7', name: '가니다', platform: 'soop' as const },
+        { id: '8', name: '쀼뀨아', platform: 'soop' as const },
+        { id: '9', name: '치지지지', platform: 'soop' as const },
+        { id: '10', name: '수수수수수', platform: 'soop' as const },
+        { id: '11', name: '유유유유유유마그네릭', platform: 'soop' as const },
+    ];
+
+    const [minigames, setMinigames] = useState<Minigame[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
+
+    // 미니게임 목록 로드
+    useEffect(() => {
+        const loadMinigames = async () => {
+            try {
+                setIsLoading(true);
+                const response = await MinigameApi.list();
+                // 순서대로 4개만 가져오기
+                const games = response.items.slice(0, 4);
+                setMinigames(games);
+            } catch (error) {
+                console.error('Failed to load minigames:', error);
+                setMinigames([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadMinigames();
+    }, []);
+
+    // 게임 선택 핸들러
+    const handleSelectGame = (gameId: number) => {
+        setSelectedGameId(gameId);
+    };
+
+    // 게임 시작 핸들러
+    const handleStartGame = () => {
+        if (selectedGameId !== null) {
+            // Tutorial 페이지로 이동 (gameId를 state로 전달)
+            navigate(PATHS.tutorial, { state: { gameId: selectedGameId } });
+        }
+    };
 
         return (
 
@@ -45,64 +89,41 @@ export default function Select() {
 
                 {/* 1-2. 중간 */}
                 <div className="flex-1 w-full grid grid-cols-4 gap-4">
-                    <GameCard
-                        title="트롤리 딜레마"
-                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
-                        options={[
-                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
-                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
-                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
-                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
-                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' }
-                        ]}
-                        votePercentage={19}
-                        totalVotes={29}
-                    />
-                    <GameCard
-                        title="트롤리 딜레마"
-                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
-                        options={[
-                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
-                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
-                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
-                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
-                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' }
-                        ]}
-                        votePercentage={19}
-                        totalVotes={29}
-                    />
-                    <GameCard
-                        title="트롤리 딜레마"
-                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
-                        options={[
-                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
-                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
-                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
-                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
-                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' },
-                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
-                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' }
-                        ]}
-                        votePercentage={19}
-                        totalVotes={29}
-                    />
-                    <GameCard
-                        title="트롤리 딜레마"
-                        description="트롤리 딜레마는 윤리적 사고실험을 재미있는 미니게임으로 재해석했어요! 브레이크가 고장난 기차가 선로를 향함에 달려오고 있는 상황을 상상해봅시다!"
-                        options={[
-                            { label: '30초 이상', bgColor: '#9333ea', textColor: '#ffffff' },
-                            { label: '스트리밍 관전', bgColor: '#db2777', textColor: '#ffffff' },
-                            { label: '배우 어림용', bgColor: '#ca8a04', textColor: '#ffffff' },
-                            { label: '동해물', bgColor: '#16a34a', textColor: '#ffffff' },
-                            { label: '과백두', bgColor: '#0284c7', textColor: '#ffffff' }
-                        ]}
-                        votePercentage={19}
-                        totalVotes={29}
-                    />
+                    {isLoading ? (
+                        <div className="col-span-4 flex items-center justify-center text-white text-2xl">
+                            미니게임 로딩 중...
+                        </div>
+                    ) : minigames.length === 0 ? (
+                        <div className="col-span-4 flex items-center justify-center text-white text-2xl">
+                            미니게임이 없습니다
+                        </div>
+                    ) : (
+                        minigames.map((game) => {
+                            const tags = translateTags(game.tags);
+                            return (
+                                <GameCard
+                                    key={game.id}
+                                    gameId={game.id}
+                                    title={game.name}
+                                    description={game.description}
+                                    logoUrl={game.logoUrl}
+                                    videoUrl={game.videoUrl}
+                                    options={tags}
+                                    votePercentage={0}
+                                    totalVotes={0}
+                                    isSelected={selectedGameId === game.id}
+                                    onSelect={() => handleSelectGame(game.id)}
+                                />
+                            );
+                        })
+                    )}
                 </div>
 
                 {/* 1-3. 하단 */}
-                <SelectionFooter />
+                <SelectionFooter
+                    onStartGame={handleStartGame}
+                    isDisabled={selectedGameId === null}
+                />
             </div>
 
             {/* 2. 우측 영역 */}

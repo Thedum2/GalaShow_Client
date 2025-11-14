@@ -1,7 +1,8 @@
 import type {AxiosInstance, InternalAxiosRequestConfig, AxiosError} from "axios";
 import {TokenStorage} from "../utils/TokenStorage";
-import {REFRESH_ENDPOINT} from "../config";
+import {REFRESH_ENDPOINT, IS_DEV} from "../config";
 import {ApiError} from "../ApiError";
+import {useAuthStore} from "../../stores/auth";
 
 let isRefreshing = false;
 let subscribers: Array<(t: string | null) => void> = [];
@@ -29,7 +30,17 @@ async function refreshToken(instance: AxiosInstance): Promise<string | null> {
 
 export function installAuthInterceptor(instance: AxiosInstance) {
     instance.interceptors.request.use((c: InternalAxiosRequestConfig) => {
-        const at = TokenStorage.getAccessToken();
+        let at: string | null = null;
+
+        // dev 환경에서는 auth store 토큰 우선, 없으면 테스트 토큰 사용
+        if (IS_DEV) {
+            const authToken = useAuthStore.getState().token;
+            at = authToken || "thisistesttoken";
+        } else {
+            // production에서는 TokenStorage 사용
+            at = TokenStorage.getAccessToken();
+        }
+
         if (at) {
             c.headers = c.headers ?? {};
             (c.headers as any).Authorization = `Bearer ${at}`;

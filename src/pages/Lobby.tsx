@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState, useEffect } from "react";
 import Participation from "../components/lobby/Participation";
 import HostInformation from "../components/lobby/HostInformation";
 import VictoryConditions, {
@@ -11,6 +11,7 @@ import ParticipantList from "@/components/lobby/ParticipantList";
 import { useNavigate } from "react-router-dom";
 import { PATHS } from "@/routes/paths";
 import ParticipationSelection from "@/components/lobby/ParticipationSelection";
+import { ViewerAvatarApi } from "@/api/modules/ViewerAvatarApi";
 
 const createInitialParticipants = (): ParticipantListItem[] =>
     Array.from({ length: 28 }, (_, index) => {
@@ -28,37 +29,13 @@ const createInitialParticipants = (): ParticipantListItem[] =>
         };
     });
 
-const createInitialSelectionItems = (): ParticipationSelectionItem[] => {
-    const sampleNames = [
-        "김철수", "이영희", "박민수", "최지은",
-        "정현우", "강서연", "윤도현", "송하늘"
-    ];
-
-    const sampleAvatars = [
-        "https://media.tenor.com/-QjqtEhN9soAAAAM/legend-of-zelda-botw.gif",
-        "https://images.steamusercontent.com/ugc/449611652050198394/003B0F458420C44A75D10CBDC94A9C0B964C06F7/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
-        "https://media1.tenor.com/m/eS71mKN_7GAAAAAd/neneko-mashiro-mashiro-neneko.gif",
-        "https://giffiles.alphacoders.com/221/221856.gif",
-        "https://img.wattpad.com/b0790cd22ac1469ba55c1d381db39e3aa6256bc0/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f776174747061642d6d656469612d736572766963652f53746f7279496d6167652f67424134734a70384b6346414d413d3d2d3732303133333835322e313539356439353266336565343133633432373138363035313432382e676966",
-        "https://wallpapers-clan.com/wp-content/uploads/2024/08/konosuba-smiling-megumin-gif-desktop-wallpaper-preview.gif",
-        "https://giffiles.alphacoders.com/200/200252.gif",
-        "https://giffiles.alphacoders.com/200/200002.gif",
-    ];
-
-    return Array.from({ length: 8 }, (_, index) => ({
-        id: `selection-${index + 1}`,
-        name: sampleNames[index],
-        avatarUrl: sampleAvatars[index] || "",
-    }));
-};
 
 export default function Lobby() {
     const [participants, setParticipants] = useState<ParticipantListItem[]>(() =>
         createInitialParticipants()
     );
-    const [selectionItems, setSelectionItems] = useState(() =>
-        createInitialSelectionItems()
-    );
+    const [selectionItems, setSelectionItems] = useState<ParticipationSelectionItem[]>([]);
+    const [isLoadingAvatars, setIsLoadingAvatars] = useState(true);
     const [searchKeyword, setSearchKeyword] = useState("");
     const [maxParticipantTier, setMaxParticipantTier] = useState("100");
     const [selectedVictoryOption, setSelectedVictoryOption] =
@@ -69,6 +46,38 @@ export default function Lobby() {
     const [activeButtonLabel, setActiveButtonLabel] =
         useState<string>("참가 허용");
     const navigate = useNavigate();
+
+    // ViewerAvatarApi로부터 시청자 아바타 목록 로드
+    useEffect(() => {
+        const loadViewerAvatars = async () => {
+            try {
+                setIsLoadingAvatars(true);
+                const avatars = await ViewerAvatarApi.list();
+
+                // order 순서대로 정렬
+                const sortedAvatars = [...avatars].sort((a, b) => a.order - b.order);
+
+                // ParticipationSelectionItem 형식으로 변환 (최대 8개)
+                const items: ParticipationSelectionItem[] = sortedAvatars
+                    .slice(0, 8)
+                    .map(avatar => ({
+                        id: `avatar-${avatar.id}`,
+                        name: avatar.name,
+                        avatarUrl: avatar.gifUrl,
+                    }));
+
+                setSelectionItems(items);
+            } catch (error) {
+                console.error('Failed to load viewer avatars:', error);
+                // 에러 시 빈 배열 유지
+                setSelectionItems([]);
+            } finally {
+                setIsLoadingAvatars(false);
+            }
+        };
+
+        loadViewerAvatars();
+    }, []);
 
     const filteredParticipants = useMemo(() => {
         const trimmed = searchKeyword.trim().toLowerCase();
@@ -216,11 +225,17 @@ export default function Lobby() {
                         />
                     </div>
                     <div className="basis-0 min-h-0 grow-[1.5] overflow-hidden">
-                        <ParticipationSelection
-                            className="h-full"
-                            items={selectionItems}
-                            title="시청자 아바타 선택(다수 선택 가능)"
-                        />
+                        {isLoadingAvatars ? (
+                            <div className="h-full flex items-center justify-center bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl">
+                                <span className="text-white text-lg">아바타 로딩 중...</span>
+                            </div>
+                        ) : (
+                            <ParticipationSelection
+                                className="h-full"
+                                items={selectionItems}
+                                title="시청자 아바타 선택(다수 선택 가능)"
+                            />
+                        )}
                     </div>
                     <div className="basis-0 min-h-0 grow-[0.5] overflow-hidden p-2">
                         <StartGameButton

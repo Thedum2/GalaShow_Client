@@ -1,4 +1,4 @@
-﻿import { useAuthStore } from "./auth.store";
+﻿import { useAuthStore } from "./auth";
 
 export function resetAllStores() {
     useAuthStore.getState().reset();

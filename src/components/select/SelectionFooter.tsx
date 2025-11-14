@@ -1,12 +1,17 @@
 import React from "react";
 import {Icon} from "@/components/icons/Icon";
-import {useNavigate} from "react-router-dom";
-import {PATHS} from "@/routes/paths";
 
-const SelectionFooter: React.FC = () => {
+interface SelectionFooterProps {
+    onStartGame?: () => void;
+    onRedraw?: () => void;
+    isDisabled?: boolean;
+}
 
-    const navigate = useNavigate();
-
+const SelectionFooter: React.FC<SelectionFooterProps> = ({
+    onStartGame,
+    onRedraw,
+    isDisabled = false,
+}) => {
     return (
         <div className="h-[170px] w-full flex justify-between bg-black/40 rounded-lg">
             {/* 왼쪽 박스 - 투표 안내 */}
@@ -30,15 +35,21 @@ const SelectionFooter: React.FC = () => {
             {/* 오른쪽 박스 - 버튼들 */}
             <div className="w-[450px] h-full flex flex-col gap-3 px-6 py-3">
                 <button
-                    onClick={()=>{navigate(PATHS.tutorial);}}
+                    onClick={onStartGame}
                     type="button"
-                    className="flex-1 bg-green-700 hover:bg-green-600 text-white rounded-lg font-black text-xl flex items-center justify-center gap-3 transition-all duration-200"
+                    disabled={isDisabled}
+                    className={`flex-1 rounded-lg font-black text-xl flex items-center justify-center gap-3 transition-all duration-200 ${
+                        isDisabled
+                            ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                            : 'bg-green-700 hover:bg-green-600 text-white'
+                    }`}
                 >
                     <Icon name="Play" type="lucide" size={28}/>
-                    게임 시작
+                    게임 시작 {isDisabled && '(게임을 선택하세요)'}
                 </button>
 
                 <button
+                    onClick={onRedraw}
                     type="button"
                     className="flex-1 bg-indigo-700 hover:bg-indigo-600 text-white rounded-lg font-black text-xl flex items-center justify-center gap-3 transition-all duration-200"
                 >

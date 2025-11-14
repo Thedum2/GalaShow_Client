@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {Icon} from '@/components/icons/Icon';
+import { MinigameApi } from '@/api/modules/MinigameApi';
+import { SurvivalRate } from '@/api/model/response/minigame/SurvivalRate';
 
 export interface OptionItem {
     label: string;
@@ -8,22 +10,55 @@ export interface OptionItem {
 }
 
 export interface GameCardProps {
+    gameId: number;
     title: string;
     description: string;
+    logoUrl: string;
+    videoUrl: string;
     options?: OptionItem[];
     votePercentage?: number;
     totalVotes?: number;
+    isSelected?: boolean;
+    onSelect?: () => void;
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
+                                                      gameId,
                                                       title,
                                                       description,
+                                                      logoUrl,
+                                                      videoUrl,
                                                       options,
                                                       votePercentage,
                                                       totalVotes,
+                                                      isSelected = false,
+                                                      onSelect,
                                                   }) => {
+    const [survivalRate, setSurvivalRate] = useState<SurvivalRate | null>(null);
+    const [isLoadingSurvival, setIsLoadingSurvival] = useState(true);
+
+    // 생존률 데이터 로드
+    useEffect(() => {
+        const loadSurvivalRate = async () => {
+            try {
+                setIsLoadingSurvival(true);
+                const data = await MinigameApi.getSurvivalRate(gameId);
+                setSurvivalRate(data);
+            } catch (error) {
+                console.error(`Failed to load survival rate for game ${gameId}:`, error);
+                setSurvivalRate(null);
+            } finally {
+                setIsLoadingSurvival(false);
+            }
+        };
+
+        loadSurvivalRate();
+    }, [gameId]);
+
     return (
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{
+        <div className={`relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-200 ${
+            isSelected ? 'ring-4 ring-yellow-500' : ''
+        }`} style={{
             background: 'linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)'
         }}>
 
@@ -32,20 +67,27 @@ export const GameCard: React.FC<GameCardProps> = ({
                 {/* 상단: 아이콘과 제목 */}
                 <div className="flex h-30 items-center bg-cyan-600 justify-center py-2">
                     <img
-                        src="https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
-                        className={"w-16 h-16 rounded-xl border-black"}
-                        alt={""}/>
+                        src={logoUrl}
+                        className={"w-16 h-16 rounded-xl border-black object-cover"}
+                        alt={title}
+                        onError={(e) => {
+                            e.currentTarget.src = "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png";
+                        }}
+                    />
                 </div>
                 <div className="h-[180px] bg-black overflow-hidden">
                     <video
-                        key='https://d1yviy8q74fot9.cloudfront.net/samplevideo2.mp4'
-                        src='https://d1yviy8q74fot9.cloudfront.net/samplevideo2.mp4'
+                        key={videoUrl}
+                        src={videoUrl}
                         className="w-full h-full object-fill"
                         autoPlay
                         loop
                         muted
                         playsInline
                         aria-hidden
+                        onError={(e) => {
+                            e.currentTarget.src = "https://d1yviy8q74fot9.cloudfront.net/samplevideo2.mp4";
+                        }}
                     />
                 </div>
 
@@ -75,42 +117,62 @@ export const GameCard: React.FC<GameCardProps> = ({
                             ))}
                         </div>
                     )}
+                    {/* 투표율 섹션 - 현재 비워둠 */}
                     {votePercentage !== undefined && (
                         <div className="w-full space-y-1.5">
                             <div className="flex items-center gap-1.5">
                                 <div className="w-9 h-9 bg-purple-600 rounded-xl flex items-center justify-center">
                                     <Icon name="Vote" type="lucide" size={26} className="text-white"/>
                                 </div>
-                                <span className="text-white text-2xl font-bold">{votePercentage}%</span>
+                                <span className="text-white text-2xl font-bold">--%</span>
                                 <span className="text-gray-400 text-lg ml-auto">
-                                            {totalVotes}명 투표
-                                        </span>
+                                    투표 준비중
+                                </span>
                             </div>
                             <div className="w-full h-3.5 bg-gray-700 rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-purple-600 rounded-full transition-all duration-300"
-                                    style={{width: `${votePercentage}%`}}
+                                    style={{width: '0%'}}
                                 />
-                            </div>
-                            <div className="text-red-400 text-lg font-semibold">
-                                생존율 34%
-                                <span className="text-gray-400 text-sm ml-2">
-                                            158명 중 53명 생존 예상입니다
-                                        </span>
-                            </div>
-                            <div className="w-full h-2.5 bg-gray-700 rounded-full overflow-hidden">
-                                <div className="w-[34%] h-full bg-red-500 rounded-full"/>
                             </div>
                         </div>
                     )}
+
+                    {/* 생존률 섹션 */}
+                    {isLoadingSurvival ? (
+                        <div className="w-full text-gray-400 text-sm">
+                            생존률 로딩 중...
+                        </div>
+                    ) : survivalRate ? (
+                        <div className="w-full space-y-1">
+                            <div className="text-red-400 text-lg font-semibold">
+                                생존율 {survivalRate.survivalRate}%
+                                <span className="text-gray-400 text-sm ml-2">
+                                    NNN명 중 NN명 생존 예상
+                                </span>
+                            </div>
+                            <div className="w-full h-2.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-red-500 rounded-full transition-all duration-300"
+                                    style={{width: `${survivalRate.survivalRate}%`}}
+                                />
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
 
                 {/* 하단: 선택하기 버튼 */}
                 <div className="mt-4">
                     <button
-                        className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black text-lg py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2">
-                        <Icon name="ChevronDown" type="lucide" size={20}/>
-                        선택하기
+                        onClick={onSelect}
+                        className={`w-full font-black text-lg py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
+                            isSelected
+                                ? 'bg-green-600 hover:bg-green-500 text-white'
+                                : 'bg-yellow-500 hover:bg-yellow-400 text-black'
+                        }`}
+                    >
+                        <Icon name={isSelected ? "Check" : "ChevronDown"} type="lucide" size={20}/>
+                        {isSelected ? '선택됨' : '선택하기'}
                     </button>
                 </div>
             </div>
