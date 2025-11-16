@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 글로벌 focus 스타일 제거 */
+@layer base {
+  * {
+    @apply focus:outline-none focus:ring-0;
+  }
+
+  button {
+    @apply focus:outline-none focus:ring-0;
+  }
+
+  input, textarea, select {
+    @apply focus:outline-none focus:ring-0;
+  }
+}
+
 html, body, #root {
     height: 100%;
     overflow: hidden;
@@ -64,10 +79,6 @@ button {
 }
 button:hover {
   border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {

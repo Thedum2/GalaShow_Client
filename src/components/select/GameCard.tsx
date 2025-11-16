@@ -71,7 +71,7 @@ export const GameCard: React.FC<GameCardProps> = ({
                         className={"w-16 h-16 rounded-xl border-black object-cover"}
                         alt={title}
                         onError={(e) => {
-                            e.currentTarget.src = "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png";
+
                         }}
                     />
                 </div>
@@ -86,7 +86,7 @@ export const GameCard: React.FC<GameCardProps> = ({
                         playsInline
                         aria-hidden
                         onError={(e) => {
-                            e.currentTarget.src = "https://d1yviy8q74fot9.cloudfront.net/samplevideo2.mp4";
+
                         }}
                     />
                 </div>
@@ -165,7 +165,7 @@ export const GameCard: React.FC<GameCardProps> = ({
                 <div className="mt-4">
                     <button
                         onClick={onSelect}
-                        className={`w-full font-black text-lg py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
+                        className={`focus:outline-none focus:ring-0 w-full font-black text-lg py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
                             isSelected
                                 ? 'bg-green-600 hover:bg-green-500 text-white'
                                 : 'bg-yellow-500 hover:bg-yellow-400 text-black'
