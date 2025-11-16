@@ -63,7 +63,7 @@ export const WinnerPanel: React.FC<WinnerPanelProps> = ({
                 <div className="mb-4">
                     <div className="flex items-center gap-2 mb-3">
                         <div className="w-1 h-5 bg-yellow-400"></div>
-                        <span className="text-yellow-400 font-bold text-lg">최종 통계</span>
+                        <span className="text-yellow-400 font-bold text-xl">최종 통계</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-3">
@@ -94,7 +94,7 @@ export const WinnerPanel: React.FC<WinnerPanelProps> = ({
                 <div className="flex-1 flex flex-col min-h-0">
                     <div className="flex items-center gap-2 mb-3">
                         <div className="w-1 h-5 bg-yellow-400"></div>
-                        <span className="text-yellow-400 font-bold text-lg">라운드 결과</span>
+                        <span className="text-yellow-400 font-bold text-xl">라운드 결과</span>
                     </div>
 
                     <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-2">
@@ -139,7 +139,7 @@ export const WinnerPanel: React.FC<WinnerPanelProps> = ({
                 <div className="mt-6">
                     <button
                         onClick={onNewGame}
-                        className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl font-bold py-4 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                        className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-2xl font-bold py-4 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                         새로운 게임 시작하기
                     </button>

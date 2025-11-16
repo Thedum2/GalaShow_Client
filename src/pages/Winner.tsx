@@ -10,7 +10,7 @@ export default function Winner() {
     const {unityProvider, isLoaded, loadingProgression} = useUnity();
 
     // 임시 데이터
-    const winnerName = "가나디귀여웡ㅋ";
+    const winnerName = "가나디귀여웡가나디귀여웡가나디귀여웡가나디귀여웡";
     const winnerPlatform: PlatformType = "soop";
 
     const stats: WinnerStats = {
@@ -25,42 +25,42 @@ export default function Winner() {
             name: "트롤리 딜레마",
             percentage: 12.8,
             survived: true,
-            logoUrl: "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+            logoUrl: "https://e7.pngegg.com/pngimages/359/743/png-clipart-logo-community-text-logo.png"
         },
         {
             id: "2",
             name: "트롤리 딜레마",
             percentage: 88.8,
             survived: true,
-            logoUrl: "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+            logoUrl: "https://e7.pngegg.com/pngimages/359/743/png-clipart-logo-community-text-logo.png"
         },
         {
             id: "3",
             name: "트롤리 딜레마",
             percentage: 5.8,
             survived: true,
-            logoUrl: "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+            logoUrl: "https://e7.pngegg.com/pngimages/359/743/png-clipart-logo-community-text-logo.png"
         },
         {
             id: "4",
             name: "트롤리 딜레마",
             percentage: 3.8,
             survived: true,
-            logoUrl: "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+            logoUrl: "https://e7.pngegg.com/pngimages/359/743/png-clipart-logo-community-text-logo.png"
         },
         {
             id: "5",
             name: "트롤리 딜레마",
             percentage: 1.8,
             survived: true,
-            logoUrl: "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+            logoUrl: "https://e7.pngegg.com/pngimages/359/743/png-clipart-logo-community-text-logo.png"
         },
         {
             id: "6",
             name: "트롤리 딜레마",
             percentage: 50,
             survived: true,
-            logoUrl: "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+            logoUrl: "https://e7.pngegg.com/pngimages/359/743/png-clipart-logo-community-text-logo.png"
         },
     ];
 
