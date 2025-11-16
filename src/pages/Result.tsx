@@ -6,8 +6,14 @@ import {
     type Participant,
     type MVPData
 } from "@/components/result";
+import {useNavigate} from "react-router-dom";
+import {PATHS} from "@/routes/paths";
 
 export default function Result() {
+
+    const navigate = useNavigate();
+
+
     // 임시 데이터
     const survivors: Participant[] = Array(13).fill(null).map((_, i) => ({
         id: `survivor-${i}`,
@@ -49,6 +55,7 @@ export default function Result() {
 
     const handleNextRound = () => {
         console.log("다음 라운드로");
+        navigate(PATHS.winner);
     };
 
     return (

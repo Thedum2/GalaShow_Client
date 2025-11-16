@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from '@/components/icons/Icon';
-import {PlatformConfig, PlatformIconProps, PlatformType} from "@/types/common";
+import {PlatformIconProps, PlatformType} from "@/types/common";
+import {PlatformConfig} from "@/types/domain/platform";
 
 const PLATFORM_CONFIGS: Record<PlatformType, PlatformConfig> = {
     chzzk: {

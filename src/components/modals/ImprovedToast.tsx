@@ -24,25 +24,21 @@ export function ImprovedToast({
     const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
-        // 인덱스에 따라 지연 시간 추가 (각 토스트마다 400ms씩 차이)
-        const delayPerToast = 400;
-        const adjustedDuration = duration + (index * delayPerToast);
-
-        // 사라지기 시작하는 타이머
+        // 모든 토스트가 동일한 duration을 가짐
         const closeTimer = setTimeout(() => {
             setIsClosing(true);
-        }, adjustedDuration);
+        }, duration);
 
         // 애니메이션 완료 후 실제 제거
         const removeTimer = setTimeout(() => {
             onClose(id);
-        }, adjustedDuration + 300); // 애니메이션 시간(0.3s) 추가
+        }, duration + 300); // 애니메이션 시간(0.3s) 추가
 
         return () => {
             clearTimeout(closeTimer);
             clearTimeout(removeTimer);
         };
-    }, [id, duration, index, onClose]);
+    }, [id, duration, onClose]);
 
     const getToastStyles = () => {
         switch (type) {
@@ -96,10 +92,6 @@ export function ImprovedToast({
         }
     };
 
-    // 인덱스에 따라 조정된 duration 계산
-    const delayPerToast = 400;
-    const adjustedDuration = duration + (index * delayPerToast);
-
     return (
         <div
             className="transition-all duration-300 ease-out overflow-hidden pointer-events-none"
@@ -138,8 +130,8 @@ export function ImprovedToast({
                         className={`h-full ${getProgressBarColor()} transition-all ease-linear`}
                         style={{
                             width: isClosing ? '0%' : '100%',
-                            transitionDuration: isClosing ? '0ms' : `${adjustedDuration}ms`,
-                            animation: isClosing ? 'none' : `progress-shrink ${adjustedDuration}ms linear forwards`,
+                            transitionDuration: isClosing ? '0ms' : `${duration}ms`,
+                            animation: isClosing ? 'none' : `progress-shrink ${duration}ms linear forwards`,
                         }}
                     />
                 </div>
