@@ -22,8 +22,8 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: 'build/unity/',
-                    dest: 'build',
+                    src: 'build/unity/WebGL.*',
+                    dest: 'build/unity',
                 },
             ],
         }),

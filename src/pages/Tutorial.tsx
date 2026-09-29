@@ -7,6 +7,7 @@ import {useNavigate, useLocation} from "react-router-dom";
 import { PATHS } from "@/routes/paths";
 import { MinigameApi } from "@/api/modules/MinigameApi";
 import { MinigameDetail, ControlKey } from "@/api/model/response/minigame/MinigameDetail";
+import fallbackLogoUrl from "@/assets/svg/logo.svg?url";
 
 export default function Tutorial() {
     const {unityProvider, isLoaded, loadingProgression} = useUnity();
@@ -85,7 +86,7 @@ export default function Tutorial() {
                         className={"w-28 h-28 rounded-xl border-black object-cover"}
                         alt={gameDetail.name}
                         onError={(e) => {
-                            e.currentTarget.src = "https://d1yviy8q74fot9.cloudfront.net/samplelogo.png";
+                            e.currentTarget.src = fallbackLogoUrl;
                         }}
                     />
                     <p className={"font-black text-8xl text-white"}>{gameDetail.name}</p>

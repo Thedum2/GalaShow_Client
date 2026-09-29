@@ -18,7 +18,7 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
     const size = dimensions();
 
     return (
-        <div style={size}>
+        <div className={`relative ${className}`} style={size}>
             <Unity
                 unityProvider={unityProvider}
                 style={{

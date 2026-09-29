@@ -186,9 +186,8 @@ function PolyChatSamplePage() {
     // Platform configurations
     const [configs, setConfigs] = useState<Record<Platform, PlatformConfig>>({
         chzzk: {
-            clientId: import.meta.env.VITE_CHZZK_CLIENT_ID || '',
-            clientSecret: import.meta.env.VITE_CHZZK_CLIENT_SECRET || '',
-            redirectUri: 'http://localhost:3000/callback',
+            clientId: '',
+            redirectUri: `${window.location.origin}/callback`,
         },
         soop: {
             clientId: import.meta.env.VITE_SOOP_CLIENT_ID || '',
@@ -196,7 +195,7 @@ function PolyChatSamplePage() {
         },
         youtube: {
             clientId: import.meta.env.VITE_YOUTUBE_CLIENT_ID || '',
-            redirectUri: 'http://localhost:3000/callback',
+            redirectUri: `${window.location.origin}/callback`,
             pollingIntervalSeconds: 5, // 기본값 5초
         },
     });
@@ -255,8 +254,6 @@ function PolyChatSamplePage() {
                     throw new Error('redirectUri is required for CHZZK');
                 }
                 await (adapter as ChzzkAdapter).init({
-                    clientId: config.clientId,
-                    clientSecret: config.clientSecret || '',
                     redirectUri: config.redirectUri,
                     apiBaseUrl: `${API_BASE_URL}/chzzk`,
                 });
@@ -301,12 +298,7 @@ function PolyChatSamplePage() {
             const config = configs[platform];
 
             if (platform === 'chzzk') {
-                await (adapterState.adapter as ChzzkAdapter).authenticate({
-                    clientId: config.clientId,
-                    clientSecret: config.clientSecret || '',
-                    redirectUri: config.redirectUri || '',
-                    state: '', // adapter internal state will be used
-                });
+                await (adapterState.adapter as ChzzkAdapter).authenticate({});
             } else if (platform === 'soop') {
                 await (adapterState.adapter as SoopAdapter).authenticate({
                     clientId: config.clientId,
@@ -413,7 +405,7 @@ function PolyChatSamplePage() {
                                 <div key={platform} className="config-section">
                                     <h3>{getPlatformName(platform)} 설정</h3>
                                     <div className="config-form">
-                                        <div className="form-field">
+                                        {platform !== 'chzzk' && <div className="form-field">
                                             <label>Client ID</label>
                                             <input
                                                 type="text"
@@ -421,8 +413,8 @@ function PolyChatSamplePage() {
                                                 onChange={(e) => updateConfig(platform, 'clientId', e.target.value)}
                                                 placeholder="Client ID 입력"
                                             />
-                                        </div>
-                                        {(platform === 'chzzk' || platform === 'soop') && (
+                                        </div>}
+                                        {platform === 'soop' && (
                                             <div className="form-field">
                                                 <label>Client Secret</label>
                                                 <input

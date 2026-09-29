@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+<title>GalaShow sample avatar: blue</title>
+<rect width="160" height="160" rx="36" fill="#2563eb"/>
+<circle cx="58" cy="66" r="9" fill="white"/><circle cx="102" cy="66" r="9" fill="white"/>
+<path d="M48 99 Q80 126 112 99" fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/>
+</svg>

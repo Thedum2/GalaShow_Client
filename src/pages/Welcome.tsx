@@ -186,7 +186,7 @@ export default function Welcome() {
 
     // Memoize ribbon properties to prevent re-randomization on re-renders
     const ribbonConfigs = useMemo(() => {
-        return banners.slice(0, 5).map((banner, index) => ({
+        return banners.filter(banner => banner.message.trim()).slice(0, 5).map((banner, index) => ({
             id: banner.id,
             message: banner.message,
             rotate: getRandomValue(-15, 15),

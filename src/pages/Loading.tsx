@@ -1,6 +1,5 @@
 ﻿import React, {useEffect, useState} from "react";
 import {Icon} from "@/components/icons";
-import {backgroundService} from "@/services/backgroundService";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { useNavigate } from 'react-router-dom';
 import {PATHS} from "@/routes/paths";
@@ -11,7 +10,6 @@ export default function Loading() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        backgroundService.hide();
         const id = setInterval(() => {
             setProgress((p) => {
                 if (p >= 100) {

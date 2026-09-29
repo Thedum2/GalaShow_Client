@@ -8,6 +8,7 @@ import {
 } from "@/components/result";
 import {useNavigate} from "react-router-dom";
 import {PATHS} from "@/routes/paths";
+import fallbackLogoUrl from "@/assets/svg/logo.svg?url";
 
 export default function Result() {
 
@@ -63,7 +64,7 @@ export default function Result() {
             {/* 1.상단 */}
             <GameResultHeader
                 gameTitle="트롤리 딜레마"
-                gameLogoUrl="https://d1yviy8q74fot9.cloudfront.net/samplelogo.png"
+                gameLogoUrl={fallbackLogoUrl}
                 roundNumber={2}
                 totalParticipants={142}
                 survivors={58}

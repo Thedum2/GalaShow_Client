@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<title>GalaShow sample background: purple</title>
+<defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#111827"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs>
+<rect width="1920" height="1080" fill="url(#g)"/>
+<circle cx="1600" cy="150" r="380" fill="white" opacity=".06"/>
+<circle cx="200" cy="1050" r="500" fill="white" opacity=".04"/>
+<text x="80" y="990" fill="white" opacity=".6" font-family="sans-serif" font-size="30">GALASHOW / DEVELOPMENT SAMPLE</text>
+</svg>

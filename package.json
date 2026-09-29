@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "test": "node --experimental-vm-modules --test test/*.test.mjs",
     "dev": "vite",
     "clean": "if exist node_modules rmdir /s /q node_modules && if exist package-lock.json del package-lock.json && if exist dist rmdir /s /q dist && if exist .vite rmdir /s /q .vite && npm cache clean --force",
     "dev:c": "npm run clean && npm install && npm run dev",
@@ -18,7 +19,7 @@
     "events": "^3.3.0",
     "lucide-react": "^0.541.0",
     "pdfjs-dist": "^5.3.93",
-    "polychat-bridge": "^1.0.2",
+    "polychat-bridge": "file:../PolyChat",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-parallax-tilt": "^1.7.309",

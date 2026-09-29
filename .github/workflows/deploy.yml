@@ -1,108 +1,228 @@
-﻿name: Build & Deploy Galashow
+name: GalaShow Client CI/CD
 
 on:
+  pull_request:
+  push:
+    branches: [develop]
   workflow_dispatch:
     inputs:
       stage:
-        description: "Deploy Stage (dev 또는 prod)"
+        description: Deploy stage
         required: true
-        default: "dev"
+        default: dev
         type: choice
-        options:
-          - dev
-          - prod
-      client_branch:
-        description: "Galashow_Client 브랜치"
-        required: true
-        default: "develop"
+        options: [dev, prod]
+      unity_ref:
+        description: "Optional GalaShow_UnityBuild commit SHA (default: pinned submodule)"
+        required: false
         type: string
 
-jobs:
-  build_and_deploy:
-    runs-on: ubuntu-latest
-    env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
+permissions:
+  contents: read
 
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      polychat_sha: ${{ steps.polychat.outputs.sha }}
     steps:
-      # 1) 소스 + 서브모듈(LFS 포함) 체크아웃
-      - name: Checkout code + submodules
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.client_branch }}
-          fetch-depth: 0
+          persist-credentials: false
           submodules: recursive
           lfs: true
-
-      # 2) (옵션) 워크스페이스 구조 확인
-      - name: Debug workspace
-        run: |
-          echo "Working dir: $(pwd)"
-          ls -R .
-
-      # 3) Node.js 설치
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      # 4) 의존성 설치 (루트에서)
-      - name: Install dependencies
-        run: npm install
-
-      # 4-1) env생성
-      - name: Generate .env file
+          node-version: 24
+          cache: npm
+      - name: Build sibling PolyChat package
+        id: polychat
+        env:
+          POLYCHAT_REF: ${{ vars.POLYCHAT_REF || 'develop' }}
         run: |
-          if [ "${{ inputs.stage }}" = "prod" ]; then
-            echo "VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}" >> .env.production
-            echo "VITE_MODE=production" >> .env.production
-            echo "VITE_BASE_PATH=/" >> .env.production
-          else
-            echo "VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}" >> .env.development
-            echo "VITE_MODE=development" >> .env.development
-            echo "VITE_BASE_PATH=/" >> .env.development
+          set -euo pipefail
+          [[ "$POLYCHAT_REF" =~ ^[0-9a-f]{40}$ ]] || git check-ref-format --branch "$POLYCHAT_REF" >/dev/null
+          git init ../PolyChat
+          git -C ../PolyChat remote add origin https://github.com/Thedum2/Poly_chat.git
+          git -C ../PolyChat fetch --depth 1 origin "$POLYCHAT_REF"
+          git -C ../PolyChat checkout --detach FETCH_HEAD
+          printf 'sha=%s\n' "$(git -C ../PolyChat rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          npm ci --prefix ../PolyChat
+          npm run build --prefix ../PolyChat
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - name: Build both environments
+        run: |
+          npm run build:dev
+          npm run build:prod
+      - name: Validate Unity files
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in WebGL.loader.js WebGL.framework.js WebGL.data WebGL.wasm; do
+            test -s "build/react/build/unity/$file"
+            if head -c 128 "build/react/build/unity/$file" | grep -q 'version https://git-lfs.github.com/spec/v1'; then
+              echo "Unresolved Git LFS pointer: $file" >&2; exit 1
+            fi
+          done
+          node --input-type=module -e "import { readFileSync } from 'node:fs'; const magic = readFileSync('build/react/build/unity/WebGL.wasm').subarray(0, 8).toString('hex'); if (magic !== '0061736d01000000') throw new Error('Expected uncompressed WebAssembly');"
+
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: deploy-client-${{ inputs.stage || 'dev' }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.stage || 'dev' }}
+      url: ${{ inputs.stage == 'prod' && 'https://galashow.cloud' || 'https://dev.galashow.cloud' }}
+    env:
+      AWS_REGION: ap-northeast-2
+      AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      DEPLOY_STAGE: ${{ inputs.stage || 'dev' }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$DEPLOY_STAGE" == dev || "$DEPLOY_STAGE" == prod ]] || { echo "Invalid stage" >&2; exit 1; }
+          [[ "$AWS_ACCOUNT_ID" =~ ^[0-9]{12}$ ]] || { echo "Set AWS_ACCOUNT_ID in the GitHub environment" >&2; exit 1; }
+          [[ "$AWS_ROLE_ARN" == "arn:aws:iam::$AWS_ACCOUNT_ID:role/"* ]] || { echo "Set AWS_ROLE_ARN for the expected account" >&2; exit 1; }
+
+      - name: Resolve Unity artifact commit
+        id: unity
+        shell: bash
+        env:
+          UNITY_REF: ${{ inputs.unity_ref }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$UNITY_REF" ]]; then
+            UNITY_REF=$(git ls-tree HEAD build/unity | awk '$1 == "160000" {print $3}')
           fi
+          [[ "$UNITY_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "unity_ref must be an exact artifact commit SHA" >&2; exit 1; }
+          printf 'ref=%s\n' "$UNITY_REF" >> "$GITHUB_OUTPUT"
 
-      # 5) 빌드 (루트에서)
-      - name: Build project
+      - name: Checkout Unity build
+        uses: actions/checkout@v4
+        with:
+          repository: Thedum2/GalaShow_UnityBuild
+          ref: ${{ steps.unity.outputs.ref }}
+          path: build/unity
+          lfs: true
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Build sibling PolyChat package
+        env:
+          POLYCHAT_SHA: ${{ needs.validate.outputs.polychat_sha }}
         run: |
-          if [ "${{ inputs.stage }}" = "prod" ]; then
-            npm run build:prod
-          else
-            npm run build:dev
-          fi
-
-      # 6) (옵션) 빌드 결과 확인
-      - name: Debug build output
+          set -euo pipefail
+          [[ "$POLYCHAT_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "Missing validated PolyChat commit" >&2; exit 1; }
+          git init ../PolyChat
+          git -C ../PolyChat remote add origin https://github.com/Thedum2/Poly_chat.git
+          git -C ../PolyChat fetch --depth 1 origin "$POLYCHAT_SHA"
+          git -C ../PolyChat checkout --detach FETCH_HEAD
+          [[ "$(git -C ../PolyChat rev-parse HEAD)" == "$POLYCHAT_SHA" ]]
+          npm ci --prefix ../PolyChat
+          npm run build --prefix ../PolyChat
+      - run: npm ci
+      - name: Build deployment bundle
+        run: npm run "build:$DEPLOY_STAGE"
+      - name: Validate Unity files
+        shell: bash
         run: |
-          echo ">>> build 디렉토리 구조"
-          ls -R build
+          set -euo pipefail
+          for file in WebGL.loader.js WebGL.framework.js WebGL.data WebGL.wasm; do
+            test -s "build/react/build/unity/$file"
+            if head -c 128 "build/react/build/unity/$file" | grep -q 'version https://git-lfs.github.com/spec/v1'; then
+              echo "Unresolved Git LFS pointer: $file" >&2; exit 1
+            fi
+          done
+          node --input-type=module -e "import { readFileSync } from 'node:fs'; const magic = readFileSync('build/react/build/unity/WebGL.wasm').subarray(0, 8).toString('hex'); if (magic !== '0061736d01000000') throw new Error('Expected uncompressed WebAssembly');"
 
-      # 7) AWS 자격증명 구성
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          allowed-account-ids: ${{ vars.AWS_ACCOUNT_ID }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # 8) S3에 업로드
-      - name: Deploy to S3
+      - name: Resolve and verify deployment targets
+        shell: bash
         run: |
-          cd build/react
-          if [ "${{ inputs.stage }}" = "prod" ]; then
-            aws s3 sync . s3://${{ secrets.S3_BUCKET_PROD }} --delete
-          else
-            aws s3 sync . s3://${{ secrets.S3_BUCKET_DEV }} --delete
-          fi
+          set -euo pipefail
+          [[ "$(aws sts get-caller-identity --query Account --output text)" == "$AWS_ACCOUNT_ID" ]]
+          STACK_NAME="galashow-cloud-web-$DEPLOY_STAGE"
+          OUTPUTS=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].Outputs' --output json)
+          S3_BUCKET=$(jq -r '.[] | select(.OutputKey == "ClientBucket") | .OutputValue' <<< "$OUTPUTS")
+          DISTRIBUTION_ID=$(jq -r '.[] | select(.OutputKey == "ClientDistributionId") | .OutputValue' <<< "$OUTPUTS")
+          SITE_URL=$(jq -r '.[] | select(.OutputKey == "ClientUrl") | .OutputValue' <<< "$OUTPUTS")
+          EXPECTED_URL="https://dev.galashow.cloud"
+          if [[ "$DEPLOY_STAGE" == prod ]]; then EXPECTED_URL="https://galashow.cloud"; fi
+          [[ "$S3_BUCKET" == "galashow-$AWS_ACCOUNT_ID-$DEPLOY_STAGE-client" ]] || { echo "Unexpected bucket" >&2; exit 1; }
+          [[ "$DISTRIBUTION_ID" =~ ^[A-Z0-9]+$ && "$SITE_URL" == "$EXPECTED_URL" ]] || { echo "Unexpected CloudFormation outputs" >&2; exit 1; }
+          aws s3api head-bucket --bucket "$S3_BUCKET" --expected-bucket-owner "$AWS_ACCOUNT_ID"
+          printf 'S3_BUCKET=%s\nDISTRIBUTION_ID=%s\nSITE_URL=%s\n' "$S3_BUCKET" "$DISTRIBUTION_ID" "$SITE_URL" >> "$GITHUB_ENV"
 
-      # 9) CloudFront 캐시 무효화
-      - name: Invalidate CloudFront cache
+      - name: Deploy to S3
+        shell: bash
         run: |
-          DIST_ID=$(
-            if [ "${{ inputs.stage }}" = "prod" ]; then
-              echo ${{ secrets.DISTRIBUTION_ID_PROD }}
-            else
-              echo ${{ secrets.DISTRIBUTION_ID_DEV }}
-            fi
-          )
-          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+          set -euo pipefail
+          test -s build/react/index.html
+          # Preserve independently uploaded Unity and sample files during React sync.
+          aws s3 sync build/react/ "s3://$S3_BUCKET" --delete --exclude 'build/unity/*' --exclude 'sample-data/*'
+          for file in WebGL.loader.js WebGL.framework.js; do
+            aws s3 cp "build/react/build/unity/$file" "s3://$S3_BUCKET/build/unity/$file" --content-type application/javascript --cache-control 'no-cache'
+          done
+          aws s3 cp build/react/build/unity/WebGL.wasm "s3://$S3_BUCKET/build/unity/WebGL.wasm" --content-type application/wasm --cache-control 'no-cache'
+          aws s3 cp build/react/build/unity/WebGL.data "s3://$S3_BUCKET/build/unity/WebGL.data" --content-type application/octet-stream --cache-control 'no-cache'
+          if [[ "$DEPLOY_STAGE" == dev && -d build/react/sample-data ]]; then
+            aws s3 sync build/react/sample-data/ "s3://$S3_BUCKET/sample-data/" --exclude '*.mp4'
+            aws s3 cp build/react/sample-data/ "s3://$S3_BUCKET/sample-data/" --recursive --exclude '*' --include '*.mp4' --content-type video/mp4
+          fi
+          aws s3 cp build/react/index.html "s3://$S3_BUCKET/index.html" --content-type text/html --cache-control 'no-cache'
+
+      - name: Invalidate CloudFront cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths '/*' --query 'Invalidation.Id' --output text)
+          aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION_ID" --id "$INVALIDATION_ID"
+
+      - name: Check deployed site
+        env:
+          UNITY_COMMIT: ${{ steps.unity.outputs.ref }}
+          POLYCHAT_COMMIT: ${{ needs.validate.outputs.polychat_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 3 "$SITE_URL/" -o /tmp/site.html
+          grep -q '<div id="root">' /tmp/site.html
+          curl --fail --silent --show-error --retry 3 "$SITE_URL/lobby" -o /tmp/spa.html
+          cmp /tmp/site.html /tmp/spa.html
+          printf '### Client deployed\n- Stage: %s\n- URL: %s\n- Commit: %s\n' "$DEPLOY_STAGE" "$SITE_URL" "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          curl --fail --silent --show-error --retry 3 --head "$SITE_URL/build/unity/WebGL.wasm" -o /tmp/wasm.headers
+          grep -qi '^content-type: application/wasm' /tmp/wasm.headers
+          curl --fail --silent --show-error --retry 3 --range 0-7 "$SITE_URL/build/unity/WebGL.wasm" -o /tmp/wasm.magic
+          node --input-type=module -e "import { readFileSync } from 'node:fs'; if (readFileSync('/tmp/wasm.magic').subarray(0, 8).toString('hex') !== '0061736d01000000') throw new Error('Deployed WASM is invalid');"
+          printf -- '- Unity artifact: %s\n' "$UNITY_COMMIT" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- PolyChat commit: %s\n' "$POLYCHAT_COMMIT" >> "$GITHUB_STEP_SUMMARY"
