@@ -1,7 +1,6 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import './PolyChatSamplePage.css';
 import { ChzzkAdapter, SoopAdapter, YouTubeAdapter, ChatMessage, PolyChat, BroadcasterInfo, IChatAdapter } from 'polychat-bridge';
-import {API_BASE_URL} from "@/api/config";
 
 type Platform = 'chzzk' | 'soop' | 'youtube';
 
@@ -117,7 +116,7 @@ function PolyChatSamplePage() {
         };
 
         const handleError = ({ platform, error }: { platform: string; error: Error }) => {
-            console.log(`[${platform.toUpperCase()}] Error:`, error);
+            console.log(`[${platform.toUpperCase()}] Error:`, platform === 'chzzk' ? 'Request failed' : error);
             updateAdapterState(platform as Platform, { error: error.message });
             addSystemMessage(platform as Platform, `❌ 오류 발생: ${error.message}`);
         };
@@ -187,6 +186,7 @@ function PolyChatSamplePage() {
     const [configs, setConfigs] = useState<Record<Platform, PlatformConfig>>({
         chzzk: {
             clientId: '',
+            clientSecret: '',
             redirectUri: `${window.location.origin}/callback`,
         },
         soop: {
@@ -255,7 +255,7 @@ function PolyChatSamplePage() {
                 }
                 await (adapter as ChzzkAdapter).init({
                     redirectUri: config.redirectUri,
-                    apiBaseUrl: `${API_BASE_URL}/chzzk`,
+                    clientId: config.clientId,
                 });
             } else if (platform === 'youtube') {
                 // YouTube requires redirectUri
@@ -298,7 +298,7 @@ function PolyChatSamplePage() {
             const config = configs[platform];
 
             if (platform === 'chzzk') {
-                await (adapterState.adapter as ChzzkAdapter).authenticate({});
+                await (adapterState.adapter as ChzzkAdapter).authenticate({ clientSecret: config.clientSecret || '' });
             } else if (platform === 'soop') {
                 await (adapterState.adapter as SoopAdapter).authenticate({
                     clientId: config.clientId,
@@ -404,8 +404,9 @@ function PolyChatSamplePage() {
                             {Array.from(selectedPlatforms).map((platform) => (
                                 <div key={platform} className="config-section">
                                     <h3>{getPlatformName(platform)} 설정</h3>
+                                    {platform === 'chzzk' && <p>치지직 공식 API를 직접 호출합니다. 현재 브라우저 CORS 정책으로 토큰 발급이 차단됩니다. Client Secret은 이 화면의 메모리에만 보관됩니다.</p>}
                                     <div className="config-form">
-                                        {platform !== 'chzzk' && <div className="form-field">
+                                        <div className="form-field">
                                             <label>Client ID</label>
                                             <input
                                                 type="text"
@@ -413,8 +414,8 @@ function PolyChatSamplePage() {
                                                 onChange={(e) => updateConfig(platform, 'clientId', e.target.value)}
                                                 placeholder="Client ID 입력"
                                             />
-                                        </div>}
-                                        {platform === 'soop' && (
+                                        </div>
+                                        {(platform === 'soop' || platform === 'chzzk') && (
                                             <div className="form-field">
                                                 <label>Client Secret</label>
                                                 <input

@@ -36,7 +36,9 @@ PolyChat 샘플의 CHZZK/YouTube 기본 콜백은 `${window.location.origin}/cal
 
 Google의 승인된 JavaScript 원본에는 위 주소에서 `/callback`을 뺀 origin을 등록한다. 샘플에서 주소를 직접 수정한 경우 그 주소도 제공자 설정과 일치해야 한다. CloudFront는 `/callback` 등 SPA 경로를 `index.html`로 제공해야 한다. 제공자 등록과 실제 로그인 검증은 별도 운영 작업이다.
 
-샘플의 CHZZK 요청은 선택한 API의 `/chzzk`로 전송된다. 공개 clientId는 API의 `/chzzk/config`에서 받고, CHZZK Client Secret은 서버에만 설정한다. 샘플은 CHZZK ID 또는 Secret 입력을 요구하지 않는다.
+샘플의 CHZZK 요청은 `https://openapi.chzzk.naver.com`으로 직접 전송된다. GalaShow API나 개발 프록시를 거치지 않으며 `VITE_API_URL`의 영향을 받지 않는다. 설정 화면에서 Client ID와 Client Secret을 직접 입력한다. `init({ clientId, redirectUri })` 뒤 `authenticate({ clientSecret })`를 호출하며 입력값은 React 메모리에만 보관한다. Secret은 `VITE_*`, 공개 환경 파일 또는 브라우저 저장소에 넣지 않는다. 입력한 Secret은 현재 페이지와 개발자 도구에서 접근할 수 있다.
+
+2026-09-29 확인 결과 개발 웹(`https://dev.galashow.cloud`)과 로컬(`http://localhost:5173`)에서 치지직 토큰·사용자·세션 API의 OPTIONS 요청은 모두 `403 Invalid CORS request`로 거부되고 허용 origin 헤더가 없다. 현재 치지직 정책에서는 브라우저 직접 호출로 토큰 발급과 채팅 연결을 완료할 수 없다. 코드와 빌드 검증은 이 제한을 해소하거나 실제 로그인 성공을 증명하지 않는다. 프록시나 CORS 우회는 포함하지 않는다.
 
 ## 배포
 
