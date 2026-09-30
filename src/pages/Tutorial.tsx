@@ -142,7 +142,7 @@ export default function Tutorial() {
                         loadingProgression={loadingProgression}
                         loadError={loadError}
                     />
-                    {!loadError && practice.status !== "running" && (practice.practiceCount === 0 || practice.status === "error" || practice.status === "unsupported") && (
+                    {isLoaded && !loadError && practice.status !== "running" && (practice.practiceCount === 0 || practice.status === "error" || practice.status === "unsupported") && (
                         <GameStageOverlay
                             eyebrow="튜토리얼"
                             title={gameDetail.name}

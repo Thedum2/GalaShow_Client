@@ -76,8 +76,8 @@ export default function Play() {
                 <UnityPlayer unityProvider={unityProvider} isLoaded={isLoaded} loadingProgression={loadingProgression} loadError={unityLoadError} />
             </div>
 
-            {/* 진행 전·오류: Unity 로딩·초기화 화면을 덮는다 (게임 중·결과 정리 중에는 Unity 화면이 보인다) */}
-            {!unityLoadError && live.status !== "running" && live.status !== "completed" && (
+            {/* 진행 전·오류: Unity 초기화 화면을 덮는다 (Unity 로딩 중에는 UnityPlayer 로딩 화면) (게임 중·결과 정리 중에는 Unity 화면이 보인다) */}
+            {isLoaded && !unityLoadError && live.status !== "running" && live.status !== "completed" && (
                 <GameStageOverlay
                     eyebrow={`${roundLabel(round)} 라운드 · 참가 ${survivorCount}명`}
                     title={detail?.name ?? "게임 준비 중"}
