@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {Unity} from "react-unity-webgl";
 
 interface UnityPlayerProps {
@@ -24,23 +24,24 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                 style={{
                     width: "100%",
                     height: "100%",
-                    display: "block"
+                    display: "block",
+                    // 로딩이 끝나기 전 Unity가 그리는 첫 화면이 비치지 않게 숨긴다
+                    visibility: isLoaded ? "visible" : "hidden"
                 }}
             />
 
+            {/* 로딩 화면: Unity 캔버스(초기 화면 포함)를 완전히 가린다 */}
             {!isLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-white">
+                <div className="absolute inset-0 flex items-center justify-center bg-black text-white">
                     <div className="text-center">
-                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mb-4 mx-auto"/>
-                        <div className="text-xl font-semibold mb-2">Unity Loading...</div>
-                        <div className="text-sm opacity-75 mb-4">{Math.round(loadingProgression * 100)}%</div>
-                        <div className="w-48 h-2 bg-gray-700 rounded-full mx-auto">
+                        <div className="text-3xl font-black tracking-widest text-yellow-300 mb-5">GALASHOW</div>
+                        <div className="w-64 h-2.5 bg-white/10 rounded-full mx-auto overflow-hidden">
                             <div
-                                className="h-2 bg-blue-500 rounded-full transition-all duration-300"
+                                className="h-full bg-yellow-400 rounded-full transition-all duration-300"
                                 style={{width: `${loadingProgression * 100}%`}}
                             />
                         </div>
-                        <div className="text-xs opacity-50 mt-4">WebGL 빌드를 불러오는 중...</div>
+                        <div className="text-lg font-bold text-white/70 mt-3">게임 불러오는 중... {Math.round(loadingProgression * 100)}%</div>
                     </div>
                 </div>
             )}

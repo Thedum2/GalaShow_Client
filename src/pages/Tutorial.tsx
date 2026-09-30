@@ -31,6 +31,7 @@ function statusText(status: RgfStatus, error: string | null) {
 /**
  * 미니게임 튜토리얼: 규칙 설명과 연습 라운드.
  * 화면에 들어오면 Unity가 준비되는 대로 연습을 바로 시작한다. 탈락은 반영되지 않는다.
+ * 연습이 끝나면 다시 연습할지, 실전으로 갈지 고르는 팝업을 띄운다.
  * [시작하기]로 실전(Play) 화면으로 넘어간다.
  */
 export default function Tutorial() {
@@ -147,6 +148,33 @@ export default function Tutorial() {
                         />
                     )}
                     <HostPromptPopup prompt={practice.prompt} onSelect={practice.selectHostOption} />
+
+                    {/* 연습이 끝나면 다시 연습할지, 실전으로 갈지 고른다 */}
+                    {practice.status === "ready" && practice.practiceCount > 0 && (
+                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/70 animate-fade-in motion-reduce:animate-none">
+                            <div className="flex flex-col items-center gap-6 rounded-3xl border-2 border-yellow-500 bg-gray-950 px-12 py-10 shadow-[0_0_40px_rgba(234,179,8,0.4)] animate-page-in motion-reduce:animate-none">
+                                <div className="text-5xl font-black text-white">연습이 끝났어요!</div>
+                                <div className="text-2xl font-bold text-white/75">한 번 더 연습할까요?</div>
+                                <div className="flex gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={practice.restart}
+                                        className="rounded-2xl bg-pink-700 px-8 py-4 text-2xl font-black text-white transition-colors hover:bg-pink-600 active:scale-95"
+                                    >
+                                        다시 연습하기
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleStartLive}
+                                        disabled={!canStart}
+                                        className="rounded-2xl bg-green-600 px-8 py-4 text-2xl font-black text-white transition-colors hover:bg-green-500 active:scale-95 disabled:opacity-40"
+                                    >
+                                        실전 시작하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* 1-3. 하단 */}
