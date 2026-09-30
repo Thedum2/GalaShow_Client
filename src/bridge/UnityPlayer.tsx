@@ -66,7 +66,7 @@ const UnityPlayer: React.FC<UnityPlayerProps> = ({
                                     />
                                 </div>
                                 <div className="text-lg font-bold text-white/70 mt-3">
-                                    게임 불러오는 중...{percent > 0 ? ` ${percent}%` : ""}
+                                    {percent >= 100 ? "게임 준비 중..." : `게임 불러오는 중...${percent > 0 ? ` ${percent}%` : ""}`}
                                 </div>
                                 {stalled && <div className="text-base text-white/50 mt-2">불러오는 데 시간이 오래 걸리고 있어요</div>}
                             </>
