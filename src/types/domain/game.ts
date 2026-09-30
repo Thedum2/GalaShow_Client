@@ -16,7 +16,8 @@ export interface ParticipationOption {
  */
 export interface ParticipationInstructions {
     prefix: string;
-    highlight: string;
+    /** 강조할 명령어. 여러 개면 "또는"으로 이어 표시한다. */
+    highlight: string | string[];
     suffix: string;
 }
 

@@ -9,67 +9,74 @@ import {
 import {useNavigate} from "react-router-dom";
 import {PATHS} from "@/routes/paths";
 import fallbackLogoUrl from "@/assets/svg/logo.svg?url";
+import {selectLastResult, useSessionStore} from "@/stores/session";
+import type {LobbyParticipant} from "@/stores/lobby";
+
+const toParticipant = (p: LobbyParticipant): Participant => ({id: p.id, name: p.nickname, platform: p.platform});
+
+/**
+ * 게임별 결과 상세에서 한 줄 요약을 만든다 (트롤리: 호스트가 지킨 쪽)
+ */
+function achievementText(detail: any): string | undefined {
+    if (detail?.hostChoiceNumber || detail?.hostChoice) {
+        return `호스트가 지킨 ${detail.hostChoiceNumber ? `${detail.hostChoiceNumber}번` : detail.hostChoice}을 맞혔습니다!`;
+    }
+    return undefined;
+}
 
 export default function Result() {
-
     const navigate = useNavigate();
+    const result = useSessionStore(selectLastResult);
+    const nextRound = useSessionStore((s) => s.nextRound);
 
+    if (!result) {
+        return (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-6 text-white">
+                <span className="text-4xl font-black">아직 확정된 라운드 결과가 없습니다</span>
+                <button
+                    onClick={() => navigate(PATHS.select)}
+                    className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-3 rounded-xl"
+                >
+                    게임 선택으로
+                </button>
+            </div>
+        );
+    }
 
-    // 임시 데이터
-    const survivors: Participant[] = Array(13).fill(null).map((_, i) => ({
-        id: `survivor-${i}`,
-        name: i % 3 === 0 ? "불친절한델시코기" : i % 3 === 1 ? "대상혁" : "가나다라마바사아자차카타파하",
-        platform: (["chzzk", "youtube", "soop"] as const)[i % 3]
-    }));
+    const survivors = result.survivors.map(toParticipant);
+    const eliminated = result.eliminated.map(toParticipant);
+    const total = result.participants.length;
+    const survivalRate = total > 0 ? Math.round((survivors.length / total) * 1000) / 10 : 0;
 
-    const eliminated: Participant[] = Array(13).fill(null).map((_, i) => ({
-        id: `eliminated-${i}`,
-        name: i % 3 === 0 ? "불친절한델시코기" : i % 3 === 1 ? "대상혁" : "가나다라마바사아자차카타파하",
-        platform: (["chzzk", "youtube", "soop"] as const)[i % 3]
-    }));
+    // 이번 라운드 생존자 중 앞의 3명을 소개한다 (MVP 선정 기준은 PRD 미정)
+    const achievement = achievementText(result.detail);
+    const mvps: MVPData[] = survivors.slice(0, 3).map((p) => ({...p, achievement}));
 
-    const mvps: MVPData[] = [
-        {
-            id: "mvp-1",
-            name: "불친절한델시코기",
-            platform: "chzzk",
-            achievement: "5번의 네네코 마시로의 딜레마를 전부 맞췄습니다!"
-        },
-        {
-            id: "mvp-2",
-            name: "가나디의슬기운여행",
-            platform: "youtube",
-            comment: "구냥 바보",
-            achievement: "5번의 네네코 마시로의 딜레마를 전부 맞췄습니다!"
-        },
-        {
-            id: "mvp-3",
-            name: "가나다라마바사아자차카타파하",
-            platform: "soop",
-            comment: "구루룽"
-        }
-    ];
+    // 최후의 1인: 생존자가 1명 이하이면 최종 결과로
+    const isFinal = survivors.length <= 1;
 
-    const handleGameEnd = () => {
-        console.log("게임 종료");
-    };
+    const handleGameEnd = () => navigate(PATHS.winner);
 
     const handleNextRound = () => {
-        console.log("다음 라운드로");
-        navigate(PATHS.winner);
+        if (isFinal) {
+            navigate(PATHS.winner);
+            return;
+        }
+        nextRound();
+        navigate(PATHS.select, {viewTransition: true});
     };
 
     return (
         <div className="flex flex-col h-full w-full pr-10 pl-10 pt-6 pb-6 gap-6">
             {/* 1.상단 */}
             <GameResultHeader
-                gameTitle="트롤리 딜레마"
-                gameLogoUrl={fallbackLogoUrl}
-                roundNumber={2}
-                totalParticipants={142}
-                survivors={58}
-                eliminated={84}
-                survivalRate={12.8}
+                gameTitle={result.gameName}
+                gameLogoUrl={result.gameLogoUrl || fallbackLogoUrl}
+                roundNumber={result.round}
+                totalParticipants={total}
+                survivors={survivors.length}
+                eliminated={eliminated.length}
+                survivalRate={survivalRate}
             />
 
             {/* 2.하단 */}

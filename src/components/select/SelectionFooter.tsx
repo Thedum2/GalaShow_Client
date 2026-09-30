@@ -5,12 +5,18 @@ interface SelectionFooterProps {
     onStartGame?: () => void;
     onRedraw?: () => void;
     isDisabled?: boolean;
+    /** 다른 후보가 없으면 재추첨을 막는다 */
+    isRedrawDisabled?: boolean;
+    /** 지금까지 들어온 투표 수 */
+    totalVotes?: number;
 }
 
 const SelectionFooter: React.FC<SelectionFooterProps> = ({
     onStartGame,
     onRedraw,
     isDisabled = false,
+    isRedrawDisabled = false,
+    totalVotes = 0,
 }) => {
     return (
         <div className="h-[170px] w-full flex justify-between bg-black/40 rounded-lg">
@@ -21,7 +27,10 @@ const SelectionFooter: React.FC<SelectionFooterProps> = ({
                     <h3 className="text-yellow-600 text-2xl font-bold">민심 확인을 위한 투표</h3>
                 </div>
                 <div>
-                    <p className="text-sm text-gray-400">채팅창에 원하는 게임 번호를 입력해주세요!</p>
+                    <p className="text-sm text-gray-400">
+                        채팅창에 원하는 게임 번호를 입력해주세요!
+                        {totalVotes > 0 && <span className="ml-2 font-bold text-yellow-400">{totalVotes}명 투표</span>}
+                    </p>
                 </div>
                 <div className="text-gray-300 text-sm space-y-1">
                     <div className="w-[400px] bg-yellow-900/70 rounded-lg flex items-center justify-start px-3 py-3 gap-2">
@@ -51,7 +60,9 @@ const SelectionFooter: React.FC<SelectionFooterProps> = ({
                 <button
                     onClick={onRedraw}
                     type="button"
-                    className="flex-1 bg-indigo-700 hover:bg-indigo-600 text-white rounded-lg font-black text-xl flex items-center justify-center gap-3 transition-all duration-200"
+                    disabled={isRedrawDisabled}
+                    title={isRedrawDisabled ? "다른 후보 게임이 없습니다" : "다른 후보 게임으로 바꿉니다. 투표는 초기화됩니다."}
+                    className="flex-1 bg-indigo-700 hover:bg-indigo-600 text-white rounded-lg font-black text-xl flex items-center justify-center gap-3 transition-all duration-200 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
                 >
                     <Icon name="Dices" type="lucide" size={28}/>
                     재추첨

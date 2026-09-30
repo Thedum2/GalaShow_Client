@@ -12,6 +12,8 @@ interface LoginedCardProps {
     buttonIconForConnected?: React.ReactNode;
     buttonIconForDisConnect?: React.ReactNode;
     onClick?: () => void;
+    /** 연결 해제 버튼. 없으면 onClick을 사용한다 */
+    onDisconnect?: () => void;
     disabled?: boolean;
     logo?: React.ReactNode;
     loginedIcon?: React.ReactNode;
@@ -30,6 +32,7 @@ export default function LoginedCard({
     buttonIconForConnected = <Icon name="verified_account" size={28} mode="eager" />,
     buttonIconForDisConnect = <Icon name="logout" size={28} mode="eager" />,
     onClick,
+    onDisconnect = onClick,
     disabled,
     logo,
     loginedIcon = <Icon name="neneko" size={83} mode="eager" />,
@@ -91,7 +94,7 @@ export default function LoginedCard({
                             onClick={disabled ? undefined : onClick}
                             disabled={disabled}
                             className={`
-                w-[115px] max-w-xs h-[43px] rounded-full px-2 text-lg font-black
+                min-w-[115px] h-[43px] rounded-full px-4 text-lg font-black whitespace-nowrap shrink-0
                 flex justify-center items-center gap-2
                 transition-all duration-200 border border-transparent
                 disabled:bg-neutral-700/60 disabled:text-white/60 disabled:cursor-not-allowed
@@ -104,10 +107,10 @@ export default function LoginedCard({
                         </button>
 
                         <button
-                            onClick={disabled ? undefined : onClick}
+                            onClick={disabled ? undefined : onDisconnect}
                             disabled={disabled}
                             className={`
-                w-[164px] max-w-xs h-[43px] rounded-full px-2 text-lg font-black
+                min-w-[164px] h-[43px] rounded-full px-4 text-lg font-black whitespace-nowrap shrink-0
                 flex justify-center items-center gap-2
                 transition-all duration-200 border border-transparent
                 disabled:bg-neutral-700/60 disabled:text-white/60 disabled:cursor-not-allowed

@@ -2,7 +2,7 @@ import LoginCard from "@/components/welcome/LoginCard";
 import Icon from "@/components/icons/Icon";
 import StepsBox from "@/components/welcome/StepsBox";
 import RibbonOverlay from "@/components/RibbonOverlay";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { BannersApi, PoliciesApi, SnsLinksApi } from "@/api";
 import { Banner } from "@/api/model/response/banner/Banner";
 import { PolicyLinks } from "@/api/model/response/policy/PolicyLinks";
@@ -16,6 +16,9 @@ import OneButtonPopup from "@/components/modals/OneButtonPopup";
 import TwoButtonPopup from "@/components/modals/TwoButtonPopup";
 import ImageTwoButtonPopup from "@/components/modals/ImageTwoButtonPopup";
 import EmojiOneButtonPopup from "@/components/modals/EmojiOneButtonPopup";
+import { usePolyChatStore } from "@/stores/polychat";
+import MainProfilePopup, { MainProfileOption } from "@/components/modals/MainProfilePopup";
+import type { PlatformType } from "@/types/common";
 import {
     ImprovedToastContainer,
     ImprovedToastType,
@@ -25,62 +28,112 @@ import {
 const stepSets = [
     [
         {
-            icon: <Icon name="HelpCircle" type="lucide" size={100} className="p-4" />,
-            title: "매 라운드 선택지 중 하나를 고르세요",
-            desc: "방장(스트리머)의 선택을 맞추세요!",
+            icon: <Icon name="Radio" type="lucide" size={100} className="p-4" />,
+            title: "방송을 연결하고 게임방을 여세요",
+            desc: "스트리머가 방을 만들고 진행을 이끌어요.",
             iconBgColor: "#0545B1",
-            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            mediaUrl: '/intro/connect.svg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Icon name="Users" type="lucide" size={100} className="p-4" />,
-            title: "선택에 따라 생존자가 결정됩니다",
-            desc: "다수결, 소수결 또는 특별 규칙!",
+            icon: <Icon name="MessageSquareText" type="lucide" size={100} className="p-4" />,
+            title: "시청자는 채팅으로 참가!",
+            desc: "설치도, 복잡한 가입도 필요 없어요.",
             iconBgColor: "#03C75A",
-            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            mediaUrl: '/intro/chat-join.svg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Icon name="Star" type="lucide" size={100} className="p-4" />,
-            title: "마지막까지 살아남으면 승리!",
-            desc: "너가 이겼다....",
-            iconBgColor: "#EAB308",
-            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            icon: <Icon name="Gamepad2" type="lucide" size={100} className="p-4" />,
+            title: "짧고 쉬운 미니게임이 이어져요",
+            desc: "규칙은 짧게, 판단은 빠르게!",
+            iconBgColor: "#0545B1",
+            mediaUrl: '/intro/minigames.svg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
         },
     ],
     [
         {
-            icon: <Icon name="Gamepad2" type="lucide" size={100} className="p-4" />,
-            title: "새로운 게임 모드",
-            desc: "전혀 다른 방식의 게임을 즐겨보세요.",
-            iconBgColor: "#0545B1",
-            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            icon: <Icon name="Timer" type="lucide" size={100} className="p-4" />,
+            title: "제한 시간 안에 선택하세요",
+            desc: "다른 사람의 선택이 판을 뒤집을 수도 있어요!",
+            iconBgColor: "#FF0000",
+            mediaUrl: '/intro/choice.svg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Icon name="Mic" type="lucide" size={100} className="p-4" />,
-            title: "채팅으로 참여하기",
-            desc: "채팅으로 직접 게임에 참여할 수 있습니다.",
+            icon: <Icon name="Users" type="lucide" size={100} className="p-4" />,
+            title: "라운드마다 생존자가 줄어들어요",
+            desc: "판정 이유와 결과를 모두 함께 확인해요.",
             iconBgColor: "#03C75A",
-            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            mediaUrl: '/intro/survivors.svg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
         },
         {
-            icon: <Icon name="Heart" type="lucide" size={100} className="p-4" />,
-            title: "팬들을 위한 특별 라운드",
-            desc: "스트리머와 팬이 함께 만드는 특별한 순간!",
-            iconBgColor: "#707070",
-            mediaUrl: 'https://thumbnail6.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4fd8/97064bfaf334573c27a0537766d3d4b49349a698c9053645a7b0fbe2557f.jpg',
+            icon: <Icon name="Crown" type="lucide" size={100} className="p-4" />,
+            title: "최후의 1인이 우승!",
+            desc: "마지막까지 살아남아 왕관을 차지하세요.",
+            iconBgColor: "#EAB308",
+            mediaUrl: '/intro/winner.svg',
             progress: 60,
             accent: 'rgba(56,189,248,0.14)',
         },
     ]
+];
+
+// 홈 로그인 카드. 각 플랫폼은 PolyChat으로 로그인 → 채팅 연결까지 한 번에 진행한다.
+const LOGIN_CARDS: {
+    platform: PlatformType;
+    name: string;
+    title: string;
+    subtext: string;
+    color: string;
+    glow: string;
+    buttonText: string;
+    buttonIcon?: React.ReactNode;
+    logo: React.ReactNode;
+    loginedLogo: React.ReactNode;
+}[] = [
+    {
+        platform: "soop",
+        name: "SOOP",
+        title: "스트리머라면?",
+        subtext: "SOOP 계정으로 연동",
+        color: "#0545B1",
+        glow: "#3b82f6",
+        buttonText: "SOOP 로그인",
+        buttonIcon: <Icon name="soopmini" size={28} mode="eager" />,
+        logo: <Icon name="soop" size={230} mode="eager" />,
+        loginedLogo: <Icon name="soop" size={188} mode="eager" />,
+    },
+    {
+        platform: "chzzk",
+        name: "CHZZK",
+        title: "스트리머라면?",
+        subtext: "NAVER 계정으로 연동",
+        color: "#03C75A",
+        glow: "#22c55e",
+        buttonText: "네이버 로그인",
+        buttonIcon: <Icon name="naver" size={16} mode="eager" />,
+        logo: <Icon name="chzzk" size={230} mode="eager" />,
+        loginedLogo: <Icon name="chzzk" size={188} mode="eager" />,
+    },
+    {
+        platform: "youtube",
+        name: "YouTube",
+        title: "크리에이터라면?",
+        subtext: "GOOGLE 계정으로 연동",
+        color: "#FF0000",
+        glow: "#ef4444",
+        buttonText: "구글 로그인",
+        logo: <Icon name="youtube" size={90} mode="eager" />,
+        loginedLogo: <Icon name="youtube" size={90} mode="eager" />,
+    },
 ];
 
 interface Toast {
@@ -97,10 +150,26 @@ export default function Welcome() {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
     const [pdfTitle, setPdfTitle] = useState("");
-    const [isSoopLogined, setIsSoopLogined] = useState(false);
-    const [isNaverLogined, setIsNaverLogined] = useState(false);
-    const [isGoogleLogined, setIsGoogleLogined] = useState(false);
+    const platforms = usePolyChatStore((state) => state.platforms);
+    const connectPlatform = usePolyChatStore((state) => state.connect);
+    const disconnectPlatform = usePolyChatStore((state) => state.disconnect);
+    const mainPlatform = usePolyChatStore((state) => state.mainPlatform);
+    const setMainPlatform = usePolyChatStore((state) => state.setMainPlatform);
+    const resetConnections = usePolyChatStore((state) => state.reset);
+    const connectedCount = Object.values(platforms).filter((p) => p.status === "connected").length;
+    const [showProfilePopup, setShowProfilePopup] = useState(false);
+    const profileOptions: MainProfileOption[] = LOGIN_CARDS
+        .filter((card) => platforms[card.platform].status === "connected")
+        .map((card) => ({
+            platform: card.platform,
+            name: card.name,
+            nickname: platforms[card.platform].broadcaster?.nickname ?? card.name,
+            imageUrl: platforms[card.platform].broadcaster?.profileImageUrl,
+            color: card.color,
+        }));
     const navigate = useNavigate();
+    // 선택 연출이 끝나면 View Transition으로 교차 페이드하며 로비로 넘어간다.
+    const goToLobby = useCallback(() => navigate(PATHS.lobby, { viewTransition: true }), [navigate]);
 
     // Popup states
     const [showOneButton, setShowOneButton] = useState(false);
@@ -161,6 +230,21 @@ export default function Welcome() {
     const addToast = (type: ImprovedToastType, message: string) => {
         const id = Date.now().toString();
         setToasts((prev) => [...prev, { id, type, message }]);
+    };
+
+    const handleLogin = async (platform: PlatformType) => {
+        const card = LOGIN_CARDS.find((c) => c.platform === platform)!;
+        if (await connectPlatform(platform)) {
+            addToast("success", `${card.name} 채팅이 연결되었습니다.`);
+        } else {
+            const error = usePolyChatStore.getState().platforms[platform].error;
+            if (error) addToast("error", `${card.name} 로그인 실패: ${error}`);
+        }
+    };
+
+    const handleLogout = async (platform: PlatformType) => {
+        await disconnectPlatform(platform);
+        addToast("info", `${LOGIN_CARDS.find((c) => c.platform === platform)!.name} 연결을 해제했습니다.`);
     };
 
     const removeToast = (id: string) => {
@@ -225,93 +309,41 @@ export default function Welcome() {
 
                         <div className="grow-[3] basis-0 flex flex-col justify-center items-center overflow-hidden">
                             <div className="flex flex-row justify-center items-center gap-[50px]">
-                                {
-                                    isSoopLogined ? (
+                                {LOGIN_CARDS.map((card) => {
+                                    const connection = platforms[card.platform];
+                                    return connection.status === "connected" ? (
                                         <LoginedCard
+                                            key={card.platform}
                                             borderWidth="8px"
-                                            borderColor="#0545B1"
-                                            title="네네코 마시로"
-                                            loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
-                                            onClick={() =>
-                                                // navigate(PATHS.lobby)
-                                                setIsSoopLogined(true)
-                                            }
-                                            glow="#3b82f6"
-                                            logo={<Icon name="soop" size={188} mode="eager" />}
+                                            borderColor={card.color}
+                                            title={connection.broadcaster?.nickname ?? card.name}
+                                            loginedIcon={connection.broadcaster?.profileImageUrl ? (
+                                                <img
+                                                    src={connection.broadcaster.profileImageUrl}
+                                                    alt={connection.broadcaster.nickname}
+                                                    className="w-[83px] h-[83px] rounded-full object-cover"
+                                                />
+                                            ) : undefined}
+                                            onDisconnect={() => handleLogout(card.platform)}
+                                            glow={card.glow}
+                                            logo={card.loginedLogo}
                                         />
                                     ) : (
                                         <LoginCard
-                                            title="스트리머라면?"
-                                            subtext="SOOP 계정으로 연동"
-                                            subtextColor="#6E6E6E"
-                                            color="#0545B1"
-                                            buttonText="SOOP 로그인"
-                                            buttonIcon={<Icon name="soopmini" size={28} mode="eager" />}
-                                            onClick={() =>
-                                                // navigate(PATHS.lobby)
-                                                setIsSoopLogined(true)
-                                            }
-                                            glow="#3b82f6"
-                                            logo={<Icon name="soop" size={230} mode="eager" />}
+                                            key={card.platform}
+                                            title={card.title}
+                                            subtext={card.subtext}
+                                            subtextColor="#D4D4D4"
+                                            color={card.color}
+                                            buttonText={connection.status === "loggingIn" ? "로그인 중…" : card.buttonText}
+                                            buttonIcon={card.buttonIcon}
+                                            disabled={connection.status === "loggingIn"}
+                                            onClick={() => handleLogin(card.platform)}
+                                            glow={card.glow}
+                                            logo={card.logo}
                                         />
-                                    )
-                                }
-                                {
-                                    isNaverLogined ? (
-                                        <LoginedCard
-                                            borderWidth="8px"
-                                            borderColor="#03C75A"
-                                            title="네네코 마시로"
-                                            loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
-                                            onClick={() =>
-                                                // navigate(PATHS.lobby)
-                                                setIsNaverLogined(true)
-                                            }
-                                            glow="#3b82f6"
-                                            logo={<Icon name="chzzk" size={188} mode="eager" />}
-                                        />
-                                    ) : (
-                                        <LoginCard
-                                            title="스트리머라면?"
-                                            subtext="NAVER 계정으로 연동"
-                                            subtextColor="#6E6E6E"
-                                            color="#03C75A"
-                                            buttonText="네이버 로그인"
-                                            buttonIcon={<Icon name="naver" size={16} mode="eager" />}
-                                            onClick={() =>
-                                                // navigate(PATHS.lobby)
-                                                setIsNaverLogined(true)
-                                            }
-                                            glow="#22c55e"
-                                            logo={<Icon name="chzzk" size={230} mode="eager" />}
-                                        />
-                                    )
-                                }
-                                {
-                                    isGoogleLogined ? (
-                                        <LoginedCard
-                                            borderWidth="8px"
-                                            borderColor="#FF0000"
-                                            title="네네코 마시로"
-                                            logo={<Icon name="youtube" size={90} mode="eager" />}
-                                            loginedIcon={<Icon name="neneko" size={83} mode="eager" />}
-                                        />
-                                    ) : (
-                                        <LoginCard
-                                            title="크리에이터라면?"
-                                            subtext="GOOGLE 계정으로 연동"
-                                            subtextColor="#6E6E6E"
-                                            color="#707070"
-                                            buttonText="준비중입니다"
-                                            onClick={() =>
-                                                // navigate(PATHS.lobby)
-                                                setIsGoogleLogined(true)
-                                            }
-                                            glow="#3f3f46"
-                                            logo={<Icon name="youtube" size={90} mode="eager" />}
-                                        />
-                                    )
-                                }
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -326,18 +358,16 @@ export default function Welcome() {
                                 backgroundColor="#000000"
                                 textColor="#F3F4F6"
                                 onClick={() => {
-                                    console.log("Reset button clicked");
+                                    void resetConnections();
                                 }}
                             />
                             <StartGameButton
-                                text="N개의 계정으로 시작하기"
-                                disabled={!isSoopLogined && !isNaverLogined && !isGoogleLogined}
+                                text={`${connectedCount}개의 계정으로 시작하기`}
+                                disabled={connectedCount === 0}
                                 icon={<Icon name="bookmark" size={35} mode="eager" />}
                                 backgroundColor="#FFDE59"
                                 textColor="#000000"
-                                onClick={() => {
-                                    navigate(PATHS.lobby)
-                                }}
+                                onClick={() => setShowProfilePopup(true)}
                             />
                         </div>
                     </div>
@@ -428,6 +458,15 @@ export default function Welcome() {
                     console.log("이모지 원버튼 팝업 - 확인");
                     addToast("success", "주문이 완료되었습니다!");
                 }}
+            />
+
+            <MainProfilePopup
+                isOpen={showProfilePopup}
+                profiles={profileOptions}
+                initialPlatform={mainPlatform}
+                onSelect={setMainPlatform}
+                onComplete={goToLobby}
+                onClose={() => setShowProfilePopup(false)}
             />
 
             {/* Toast Container */}

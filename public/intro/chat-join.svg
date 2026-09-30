@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140" width="560" height="140">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#062417"/><stop offset="1" stop-color="#05070F"/></linearGradient>
+    <g id="p"><circle r="12"/><rect x="-14" y="14" width="28" height="15" rx="7.5"/></g>
+  </defs>
+  <rect width="560" height="140" fill="url(#bg)"/>
+  <!-- chat panel -->
+  <rect x="116" y="14" width="156" height="112" rx="10" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.2"/>
+  <circle cx="133" cy="34" r="7" fill="#03C75A"/>
+  <rect x="146" y="27" width="96" height="14" rx="7" fill="#FFFFFF" opacity="0.85"/>
+  <circle cx="133" cy="60" r="7" fill="#FFDE59"/>
+  <rect x="146" y="53" width="72" height="14" rx="7" fill="#FFFFFF" opacity="0.85"/>
+  <circle cx="133" cy="86" r="7" fill="#6EA0FF"/>
+  <rect x="146" y="79" width="108" height="14" rx="7" fill="#FFFFFF" opacity="0.85"/>
+  <circle cx="133" cy="110" r="7" fill="#FF5A5A" opacity="0.8"/>
+  <rect x="146" y="104" width="58" height="12" rx="6" fill="#FFFFFF" opacity="0.4"/>
+  <!-- arrow -->
+  <path d="M288 70 h22" stroke="#03C75A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M308 60 L322 70 L308 80 Z" fill="#03C75A"/>
+  <!-- players joining -->
+  <use href="#p" x="352" y="40" fill="#03C75A"/>
+  <use href="#p" x="390" y="40" fill="#FFDE59"/>
+  <use href="#p" x="428" y="40" fill="#6EA0FF"/>
+  <use href="#p" x="371" y="88" fill="#FF5A5A"/>
+  <g transform="translate(409 88)" opacity="0.55">
+    <circle r="12" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4 3"/>
+    <path d="M-5 0 H5 M0 -5 V5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+</svg>

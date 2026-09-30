@@ -1,4 +1,5 @@
 import { MinigameTags } from "./MinigameTags";
+import { PhaseData } from "./PhaseData";
 
 export class TutorialStep {
   step: number;
@@ -40,6 +41,10 @@ export class MinigameDetail {
   tags: MinigameTags;
   tutorial: TutorialStep[];
   controls: ControlKey[];
+  /** 단계 시간(ms). Unity StartRound phaseDuration으로 변환해 쓴다 */
+  phaseData: PhaseData;
+  /** 게임별 데이터 (pluginId 등) */
+  gameData: any;
   createdAt: string;
   updatedAt: string;
 
@@ -52,6 +57,8 @@ export class MinigameDetail {
     tags: MinigameTags,
     tutorial: TutorialStep[],
     controls: ControlKey[],
+    phaseData: PhaseData,
+    gameData: any,
     createdAt: string,
     updatedAt: string
   ) {
@@ -63,6 +70,8 @@ export class MinigameDetail {
     this.tags = tags;
     this.tutorial = tutorial;
     this.controls = controls;
+    this.phaseData = phaseData;
+    this.gameData = gameData;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -80,6 +89,8 @@ export class MinigameDetail {
       MinigameTags.fromJSON(j?.tags ?? {}),
       tutorial,
       controls,
+      PhaseData.fromJSON(j?.phaseData ?? {}),
+      j?.gameData ?? {},
       String(j?.createdAt ?? ""),
       String(j?.updatedAt ?? "")
     );

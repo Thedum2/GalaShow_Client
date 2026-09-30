@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140" width="560" height="140">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B1230"/><stop offset="1" stop-color="#05070F"/></linearGradient>
+    <linearGradient id="scr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0545B1"/><stop offset="1" stop-color="#032A6E"/></linearGradient>
+  </defs>
+  <rect width="560" height="140" fill="url(#bg)"/>
+  <g fill="#FFFFFF" opacity="0.08"><circle cx="40" cy="30" r="2"/><circle cx="520" cy="110" r="2"/><circle cx="500" cy="24" r="2"/><circle cx="70" cy="118" r="2"/></g>
+  <!-- platform nodes: SOOP / CHZZK / YouTube -->
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="13" text-anchor="middle">
+    <circle cx="150" cy="34" r="18" fill="#0545B1" stroke="#FFFFFF" stroke-opacity="0.35"/>
+    <text x="150" y="39" fill="#FFFFFF">S</text>
+    <circle cx="150" cy="70" r="18" fill="#03C75A" stroke="#FFFFFF" stroke-opacity="0.35"/>
+    <text x="150" y="75" fill="#FFFFFF">C</text>
+    <circle cx="150" cy="106" r="18" fill="#FF0000" stroke="#FFFFFF" stroke-opacity="0.35"/>
+    <path d="M145 99 L157 106 L145 113 Z" fill="#FFFFFF"/>
+  </g>
+  <!-- links -->
+  <g fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7">
+    <path d="M172 34 C220 34 230 70 270 70" stroke="#6EA0FF"/>
+    <path d="M172 70 L270 70" stroke="#03C75A"/>
+    <path d="M172 106 C220 106 230 70 270 70" stroke="#FF5A5A"/>
+  </g>
+  <!-- game screen -->
+  <rect x="276" y="26" width="144" height="88" rx="10" fill="url(#scr)" stroke="#FFDE59" stroke-width="2"/>
+  <rect x="286" y="36" width="124" height="56" rx="6" fill="#000000" opacity="0.35"/>
+  <path d="M338 50 L366 64 L338 78 Z" fill="#FFDE59"/>
+  <circle cx="296" cy="103" r="3.5" fill="#FF0000"/>
+  <text x="304" y="106.5" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" fill="#FFFFFF">LIVE</text>
+  <rect x="338" y="100" width="72" height="5" rx="2.5" fill="#FFFFFF" opacity="0.25"/>
+  <rect x="338" y="100" width="44" height="5" rx="2.5" fill="#FFDE59"/>
+  <!-- open room badge -->
+  <g transform="translate(446 70)">
+    <circle r="16" fill="#FFDE59"/>
+    <path d="M-6 0 H6 M0 -6 V6" stroke="#0B1230" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

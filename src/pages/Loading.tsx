@@ -1,12 +1,15 @@
-﻿import React, {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Icon} from "@/components/icons";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { useNavigate } from 'react-router-dom';
 import {PATHS} from "@/routes/paths";
+import HostAvatar from "@/components/common/HostAvatar";
+
+// 100%를 채운 뒤 다음 화면으로 넘어가기 전에 머무는 시간
+const HOLD_AT_FULL_MS = 450;
 
 export default function Loading() {
     const [progress, setProgress] = useState(0);
-    const avatarUrl = 'https://yt3.googleusercontent.com/aBBmBfA_6zGskSPx65DMzPDbOczqRkl_FPj05OiUfsXD3AhE0jevgR0ERIH44J1wNGixAkztmfM=s900-c-k-c0x00ffffff-no-rj';
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,24 +27,20 @@ export default function Loading() {
         };
     }, []);
 
+    // 다 채워진 막대를 잠깐 보여준 뒤 교차 페이드로 선택 화면에 넘어간다.
     useEffect(() => {
-        if (progress >= 100) {
-            navigate(PATHS.select);
-        }
+        if (progress < 100) return;
+        const timer = setTimeout(() => navigate(PATHS.select, { viewTransition: true }), HOLD_AT_FULL_MS);
+        return () => clearTimeout(timer);
     }, [progress, navigate]);
 
     return (
-        <div className="h-full w-full text-white flex items-center justify-center">
+        <div className="h-full w-full text-white flex items-center justify-center animate-page-in motion-reduce:animate-none">
             <div className="flex flex-col items-center gap-10">
                 <div className="flex items-center gap-10">
 
-                    <div className="relative h-[175px] w-[175px] rounded-full ring-4 ring-red-500 overflow-hidden">
-                        <img
-                            src={avatarUrl}
-                            alt="avatar"
-                            className="h-full w-full object-cover"
-                        />
-                    </div>
+                    {/* 홈에서 고른 메인 프로필(방송 호스트)의 사진 */}
+                    <HostAvatar size={175} />
 
                     <div className="text-9xl font-black select-none text-red-500">×</div>
 

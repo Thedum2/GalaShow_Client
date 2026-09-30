@@ -145,3 +145,17 @@ button:hover {
 .scrollbar-yellow::-webkit-scrollbar-thumb:hover {
   background-color: #EAB308;
 }
+
+/* 화면 전환(navigate viewTransition) 교차 페이드를 조금 느리게 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

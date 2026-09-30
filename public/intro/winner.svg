@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140" width="560" height="140">
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.45" r="0.5"><stop offset="0" stop-color="#FFDE59" stop-opacity="0.45"/><stop offset="1" stop-color="#FFDE59" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="560" height="140" fill="#05070F"/>
+  <ellipse cx="280" cy="62" rx="170" ry="70" fill="url(#glow)"/>
+  <!-- rays -->
+  <g stroke="#FFDE59" stroke-width="3" stroke-linecap="round" opacity="0.6">
+    <path d="M280 6 v8"/><path d="M228 20 l7 7"/><path d="M332 20 l-7 7"/><path d="M204 58 h12"/><path d="M356 58 h-12"/>
+  </g>
+  <!-- crown -->
+  <path d="M250 56 L257 30 L270 44 L280 22 L290 44 L303 30 L310 56 Z" fill="#FFDE59" stroke="#E0B800" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="280" cy="22" r="4" fill="#FF0000"/>
+  <circle cx="257" cy="30" r="3.5" fill="#03C75A"/>
+  <circle cx="303" cy="30" r="3.5" fill="#6EA0FF"/>
+  <!-- winner -->
+  <circle cx="280" cy="72" r="13" fill="#FFDE59"/>
+  <rect x="265" y="87" width="30" height="15" rx="7.5" fill="#FFDE59"/>
+  <!-- podium -->
+  <rect x="252" y="104" width="56" height="36" rx="4" fill="#0545B1"/>
+  <text x="280" y="129" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="18" text-anchor="middle" fill="#FFFFFF">1</text>
+  <!-- confetti -->
+  <rect x="170" y="30" width="9" height="4" fill="#FF0000" transform="rotate(30 174 32)"/>
+  <rect x="384" y="34" width="9" height="4" fill="#03C75A" transform="rotate(-25 388 36)"/>
+  <rect x="198" y="92" width="9" height="4" fill="#6EA0FF" transform="rotate(60 202 94)"/>
+  <rect x="360" y="90" width="9" height="4" fill="#FFDE59" transform="rotate(-50 364 92)"/>
+  <circle cx="410" cy="72" r="3" fill="#FF0000"/>
+  <circle cx="150" cy="66" r="3" fill="#FFDE59"/>
+  <!-- eliminated, faded -->
+  <g fill="#707070" opacity="0.35">
+    <circle cx="200" cy="124" r="8"/><circle cx="360" cy="124" r="8"/><circle cx="226" cy="130" r="7"/><circle cx="334" cy="130" r="7"/>
+  </g>
+</svg>

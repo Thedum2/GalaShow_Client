@@ -1,0 +1,57 @@
+{
+  "name": "galashow-simulator",
+  "productName": "GalaShow Simulator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GalaShow 시청자 시뮬레이터 - 여러 계정 없이 가짜 채팅으로 로비 참가·예외·부하를 시험하는 Windows 앱",
+  "author": "GalaShow",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build",
+    "start": "vite build && electron .",
+    "test": "node --test test/*.test.mjs",
+    "dist": "vite build && electron-builder --win portable"
+  },
+  "dependencies": {
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "autoprefixer": "^10.4.21",
+    "electron": "^44.5.0",
+    "electron-builder": "^26.15.3",
+    "lucide-react": "^0.541.0",
+    "postcss": "^8.5.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5"
+  },
+  "build": {
+    "appId": "cloud.galashow.simulator",
+    "productName": "GalaShow Simulator",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**",
+      "electron/**",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "build/icon.png"
+    },
+    "portable": {
+      "artifactName": "GalaShow-Simulator-${version}.exe"
+    }
+  }
+}

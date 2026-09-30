@@ -24,8 +24,6 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    outputs:
-      polychat_sha: ${{ steps.polychat.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,20 +34,6 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - name: Build sibling PolyChat package
-        id: polychat
-        env:
-          POLYCHAT_REF: ${{ vars.POLYCHAT_REF || 'develop' }}
-        run: |
-          set -euo pipefail
-          [[ "$POLYCHAT_REF" =~ ^[0-9a-f]{40}$ ]] || git check-ref-format --branch "$POLYCHAT_REF" >/dev/null
-          git init ../PolyChat
-          git -C ../PolyChat remote add origin https://github.com/Thedum2/Poly_chat.git
-          git -C ../PolyChat fetch --depth 1 origin "$POLYCHAT_REF"
-          git -C ../PolyChat checkout --detach FETCH_HEAD
-          printf 'sha=%s\n' "$(git -C ../PolyChat rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          npm ci --prefix ../PolyChat
-          npm run build --prefix ../PolyChat
       - run: npm ci
       - run: npm test
       - run: npm run lint
@@ -131,19 +115,6 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - name: Build sibling PolyChat package
-        env:
-          POLYCHAT_SHA: ${{ needs.validate.outputs.polychat_sha }}
-        run: |
-          set -euo pipefail
-          [[ "$POLYCHAT_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "Missing validated PolyChat commit" >&2; exit 1; }
-          git init ../PolyChat
-          git -C ../PolyChat remote add origin https://github.com/Thedum2/Poly_chat.git
-          git -C ../PolyChat fetch --depth 1 origin "$POLYCHAT_SHA"
-          git -C ../PolyChat checkout --detach FETCH_HEAD
-          [[ "$(git -C ../PolyChat rev-parse HEAD)" == "$POLYCHAT_SHA" ]]
-          npm ci --prefix ../PolyChat
-          npm run build --prefix ../PolyChat
       - run: npm ci
       - name: Build deployment bundle
         run: npm run "build:$DEPLOY_STAGE"
@@ -211,7 +182,6 @@ jobs:
       - name: Check deployed site
         env:
           UNITY_COMMIT: ${{ steps.unity.outputs.ref }}
-          POLYCHAT_COMMIT: ${{ needs.validate.outputs.polychat_sha }}
         shell: bash
         run: |
           set -euo pipefail
@@ -225,4 +195,4 @@ jobs:
           curl --fail --silent --show-error --retry 3 --range 0-7 "$SITE_URL/build/unity/WebGL.wasm" -o /tmp/wasm.magic
           node --input-type=module -e "import { readFileSync } from 'node:fs'; if (readFileSync('/tmp/wasm.magic').subarray(0, 8).toString('hex') !== '0061736d01000000') throw new Error('Deployed WASM is invalid');"
           printf -- '- Unity artifact: %s\n' "$UNITY_COMMIT" >> "$GITHUB_STEP_SUMMARY"
-          printf -- '- PolyChat commit: %s\n' "$POLYCHAT_COMMIT" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- polychat-bridge: %s\n' "$(node -p "require('./node_modules/polychat-bridge/package.json').version")" >> "$GITHUB_STEP_SUMMARY"

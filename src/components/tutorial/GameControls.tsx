@@ -10,6 +10,10 @@ interface GameControlsProps {
     choices: ChoiceSection[];
     onRestart?: () => void;
     onStart?: () => void;
+    restartLabel?: string;
+    startLabel?: string;
+    restartDisabled?: boolean;
+    startDisabled?: boolean;
 }
 
 const titleColorMap = {
@@ -24,7 +28,11 @@ const titleColorMap = {
 export default function GameControls({
     choices,
     onRestart,
-    onStart
+    onStart,
+    restartLabel = "다시 연습하기",
+    startLabel = "시작하기",
+    restartDisabled = false,
+    startDisabled = false,
 }: GameControlsProps) {
     return (
         <div className="h-[130px] w-full flex gap-4">
@@ -49,19 +57,23 @@ export default function GameControls({
 
             {/* 우측 버튼 영역 */}
             <div className="w-[200px] flex flex-col gap-3">
+                {onRestart && (
                 <button
                     onClick={onRestart}
-                    className="flex-1 bg-pink-800 hover:bg-pink-900 text-white rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2 shadow-lg"
+                    disabled={restartDisabled}
+                    className="flex-1 bg-pink-800 hover:bg-pink-900 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2 shadow-lg"
                 >
                     <Icon name="RotateCcw" type="lucide" size={25} color="#ffffffff" />
-                    <span>다시 연습하기</span>
+                    <span>{restartLabel}</span>
                 </button>
+                )}
                 <button
                     onClick={onStart}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2 shadow-lg"
+                    disabled={startDisabled}
+                    className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2 shadow-lg"
                 >
                     <Icon name="LandPlot" type="lucide" size={25} color="#fde047" />
-                    <span>시작하기</span>
+                    <span>{startLabel}</span>
                 </button>
             </div>
         </div>

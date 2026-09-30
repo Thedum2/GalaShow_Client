@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140" width="560" height="140">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B1230"/><stop offset="1" stop-color="#05070F"/></linearGradient>
+    <g id="p"><circle r="11"/><rect x="-13" y="13" width="26" height="14" rx="7"/></g>
+  </defs>
+  <rect width="560" height="140" fill="url(#bg)"/>
+  <!-- survivors -->
+  <rect x="116" y="14" width="160" height="112" rx="12" fill="#03C75A" fill-opacity="0.12" stroke="#03C75A" stroke-opacity="0.6"/>
+  <g fill="#03C75A">
+    <use href="#p" x="156" y="42"/><use href="#p" x="196" y="42"/><use href="#p" x="236" y="42"/>
+    <use href="#p" x="176" y="84"/><use href="#p" x="216" y="84"/>
+  </g>
+  <!-- eliminated -->
+  <rect x="284" y="14" width="160" height="112" rx="12" fill="#FF0000" fill-opacity="0.08" stroke="#FF0000" stroke-opacity="0.5"/>
+  <g fill="#707070" opacity="0.7">
+    <use href="#p" x="324" y="42"/><use href="#p" x="364" y="42"/><use href="#p" x="404" y="42"/>
+    <use href="#p" x="344" y="84"/><use href="#p" x="384" y="84"/>
+  </g>
+  <g stroke="#FF0000" stroke-width="3.5" stroke-linecap="round">
+    <path d="M318 36 l12 12 M330 36 l-12 12"/>
+    <path d="M358 36 l12 12 M370 36 l-12 12"/>
+    <path d="M398 36 l12 12 M410 36 l-12 12"/>
+    <path d="M338 78 l12 12 M350 78 l-12 12"/>
+    <path d="M378 78 l12 12 M390 78 l-12 12"/>
+  </g>
+</svg>

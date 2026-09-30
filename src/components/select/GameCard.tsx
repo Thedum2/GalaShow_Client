@@ -16,8 +16,16 @@ export interface GameCardProps {
     logoUrl: string;
     videoUrl: string;
     options?: OptionItem[];
-    votePercentage?: number;
+    /** 채팅 투표 번호(!번호). 카드 좌측 상단에 표시한다. */
+    number?: number;
+    /** 이 게임이 받은 표 */
+    votes?: number;
+    /** 전체 투표 수 */
     totalVotes?: number;
+    /** 가장 많은 표를 받은 카드 */
+    isLeading?: boolean;
+    /** 현재 생존자 수. 생존율로 예상 생존 인원을 계산한다. */
+    survivorCount?: number;
     isSelected?: boolean;
     onSelect?: () => void;
 }
@@ -29,8 +37,11 @@ export const GameCard: React.FC<GameCardProps> = ({
                                                       logoUrl,
                                                       videoUrl,
                                                       options,
-                                                      votePercentage,
-                                                      totalVotes,
+                                                      number,
+                                                      votes = 0,
+                                                      totalVotes = 0,
+                                                      isLeading = false,
+                                                      survivorCount,
                                                       isSelected = false,
                                                       onSelect,
                                                   }) => {
@@ -55,12 +66,24 @@ export const GameCard: React.FC<GameCardProps> = ({
         loadSurvivalRate();
     }, [gameId]);
 
+    const votePercentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+    const rate = survivalRate?.survivalRate ?? 0;
+    // 생존율은 소수 첫째 자리까지만 보여준다(예: 14.655172 → 14.7).
+    const rateLabel = Number.isInteger(rate) ? String(rate) : rate.toFixed(1);
+    const expectedSurvivors = survivorCount !== undefined ? Math.round((survivorCount * rate) / 100) : null;
+
     return (
         <div className={`relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-200 ${
             isSelected ? 'ring-4 ring-yellow-500' : ''
         }`} style={{
             background: 'linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)'
         }}>
+
+            {number !== undefined && (
+                <div className="absolute left-3 top-3 z-10 flex h-10 min-w-10 items-center justify-center rounded-full border-2 border-black bg-yellow-400 px-2 text-xl font-black text-black shadow-lg">
+                    {number}
+                </div>
+            )}
 
             {/* 카드 내용 */}
             <div className="relative flex flex-col h-full">
@@ -117,22 +140,22 @@ export const GameCard: React.FC<GameCardProps> = ({
                             ))}
                         </div>
                     )}
-                    {/* 투표율 섹션 - 현재 비워둠 */}
-                    {votePercentage !== undefined && (
+                    {/* 채팅 투표(민심) */}
+                    {number !== undefined && (
                         <div className="w-full space-y-1.5">
                             <div className="flex items-center gap-1.5">
-                                <div className="w-9 h-9 bg-purple-600 rounded-xl flex items-center justify-center">
-                                    <Icon name="Vote" type="lucide" size={26} className="text-white"/>
+                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isLeading ? 'bg-yellow-500' : 'bg-purple-600'}`}>
+                                    <Icon name={isLeading ? "Crown" : "Vote"} type="lucide" size={isLeading ? 22 : 26} className={isLeading ? "text-black" : "text-white"}/>
                                 </div>
-                                <span className="text-white text-2xl font-bold">--%</span>
+                                <span className="text-white text-2xl font-bold">{totalVotes > 0 ? `${votePercentage}%` : '--%'}</span>
                                 <span className="text-gray-400 text-lg ml-auto">
-                                    투표 준비중
+                                    {totalVotes > 0 ? `${votes}표` : `!${number} 입력`}
                                 </span>
                             </div>
                             <div className="w-full h-3.5 bg-gray-700 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-purple-600 rounded-full transition-all duration-300"
-                                    style={{width: '0%'}}
+                                    className={`h-full rounded-full transition-all duration-500 ${isLeading ? 'bg-yellow-500' : 'bg-purple-600'}`}
+                                    style={{width: `${votePercentage}%`}}
                                 />
                             </div>
                         </div>
@@ -146,15 +169,17 @@ export const GameCard: React.FC<GameCardProps> = ({
                     ) : survivalRate ? (
                         <div className="w-full space-y-1">
                             <div className="text-red-400 text-lg font-semibold">
-                                생존율 {survivalRate.survivalRate}%
-                                <span className="text-gray-400 text-sm ml-2">
-                                    NNN명 중 NN명 생존 예상
-                                </span>
+                                생존율 {rateLabel}%
+                                {expectedSurvivors !== null && (
+                                    <span className="text-gray-400 text-sm ml-2">
+                                        {survivorCount}명 중 {expectedSurvivors}명 생존 예상
+                                    </span>
+                                )}
                             </div>
                             <div className="w-full h-2.5 bg-gray-700 rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-red-500 rounded-full transition-all duration-300"
-                                    style={{width: `${survivalRate.survivalRate}%`}}
+                                    style={{width: `${Math.min(rate, 100)}%`}}
                                 />
                             </div>
                         </div>

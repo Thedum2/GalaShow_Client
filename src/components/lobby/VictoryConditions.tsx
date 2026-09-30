@@ -12,6 +12,8 @@ interface VictoryConditionsProps {
     minSurvivorCount?: number;
     maxSurvivorCount?: number;
     minRoundCount?: number;
+    /** 아직 제공하지 않는 모드. "준비 중"으로 표시하고 선택할 수 없다. */
+    unavailableOptions?: VictoryOptionId[];
     className?: string;
 }
 
@@ -145,20 +147,27 @@ const InputSection: React.FC<InputSectionProps> = ({
 type VictoryOptionProps = {
     option: typeof optionsConfig[0];
     isSelected: boolean;
+    unavailable?: boolean;
     onSelect: () => void;
 } & Omit<InputSectionProps, 'type' | 'styling' | 'disabled'>;
 
-const VictoryOption: React.FC<VictoryOptionProps> = ({ option, isSelected, onSelect, ...rest }) => {
+const VictoryOption: React.FC<VictoryOptionProps> = ({ option, isSelected, unavailable = false, onSelect, ...rest }) => {
     const { id, title, description, tag, styling, inputSection } = option;
 
     return (
-        <label className={`group block rounded-2xl border transition-all duration-200 cursor-pointer ${isSelected ? styling.selected : styling.unselected}`}>
+        <label
+            className={`group block rounded-2xl border transition-all duration-200 ${
+                unavailable ? 'cursor-not-allowed opacity-45 grayscale border-white/10 bg-black/30' : `cursor-pointer ${isSelected ? styling.selected : styling.unselected}`
+            }`}
+            aria-disabled={unavailable}
+        >
             <input
                 type="radio"
                 name="victory-option"
                 value={id}
                 className="sr-only"
                 checked={isSelected}
+                disabled={unavailable}
                 onChange={onSelect}
             />
             <div className="flex flex-col gap-3 p-4">
@@ -169,7 +178,7 @@ const VictoryOption: React.FC<VictoryOptionProps> = ({ option, isSelected, onSel
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
                             <span className="text-xl font-semibold text-white">{title}</span>
-                            <span className={styling.tag}>{tag}</span>
+                            <span className={styling.tag}>{unavailable ? '준비 중' : tag}</span>
                         </div>
                         <p className={`mt-1 text-base ${isSelected ? '' : styling.unselected}`}>{description}</p>
                     </div>
@@ -178,7 +187,7 @@ const VictoryOption: React.FC<VictoryOptionProps> = ({ option, isSelected, onSel
                     <InputSection
                         type={inputSection as 'survivorCount' | 'roundCount'}
                         styling={styling}
-                        disabled={!isSelected}
+                        disabled={!isSelected || unavailable}
                         {...rest}
                     />
                 )}
@@ -198,6 +207,7 @@ const VictoryConditions: React.FC<VictoryConditionsProps> = ({
     minSurvivorCount = 2,
     maxSurvivorCount = 10,
     minRoundCount = 1,
+    unavailableOptions = [],
     className = "",
 }) => {
     const handleSurvivorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,6 +242,7 @@ const VictoryConditions: React.FC<VictoryConditionsProps> = ({
                         key={option.id}
                         option={option}
                         isSelected={selectedOption === option.id}
+                        unavailable={unavailableOptions.includes(option.id)}
                         onSelect={() => onSelectOption(option.id)}
                         survivorCount={survivorCount}
                         onSurvivorCountChange={onSurvivorCountChange}

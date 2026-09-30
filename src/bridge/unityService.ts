@@ -90,7 +90,13 @@ class UnityBridgeService {
                 if (p) {
                     clearTimeout(p.timer);
                     this.pending.delete(payload.id);
-                    p.resolve(payload.data);
+                    // 실패 ACK(ok:false)는 성공으로 처리하지 않는다
+                    if (payload.ok === false) {
+                        const reason = (payload.data as any)?.message;
+                        p.reject(new Error(`ACK failed for ${payload.route}${reason ? `: ${reason}` : ""} (id=${payload.id})`));
+                    } else {
+                        p.resolve(payload.data);
+                    }
                 }
                 await MainHandler.handleIncomingAck(payload);
                 return;

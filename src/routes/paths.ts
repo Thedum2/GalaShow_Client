@@ -5,7 +5,9 @@ export const PATHS = {
     select: "/select",
     loading: "/loading",
     tutorial: "/tutorial",
+    play: "/play",
     result: "/result",
     winner: "/winner",
     polychat_sample: "/polychat_sample",
+    oauth_callback: "/callback",
 } as const;

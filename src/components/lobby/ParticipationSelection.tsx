@@ -1,35 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { ParticipationSelectionItem } from "@/types/domain/participant";
+import Icon from "@/components/icons/Icon";
 
 interface ParticipationSelectionProps {
     title: string;
     items: ParticipationSelectionItem[];
+    selectedIds: string[];
+    onToggle: (itemId: string) => void;
     className?: string;
 }
 
 const ParticipationSelection: React.FC<ParticipationSelectionProps> = ({
     title,
     items,
+    selectedIds,
+    onToggle,
     className = "",
 }: ParticipationSelectionProps) => {
-    const [selectedItems, setSelectedItems] = useState<ParticipationSelectionItem[]>([]);
-
-    const handleSelectItem = (itemId: string) => {
-        setSelectedItems((prev) => {
-            const isAlreadySelected = prev.some((item) => item.id === itemId);
-
-            if (isAlreadySelected) {
-                return prev.filter((item) => item.id !== itemId);
-            } else {
-                const item = items.find((item) => item.id === itemId);
-                if (item) {
-                    return [...prev, item];
-                }
-                return prev;
-            }
-        });
-    };
-
     return (
         <div
             className={`bg-black bg-opacity-25 border-2 border-yellow-500 rounded-xl h-full min-h-0 p-4 flex flex-col  gap-4 shadow-[0_0_15px_rgba(234,179,8,0.3)] overflow-hidden ${className}`}
@@ -40,26 +27,42 @@ const ParticipationSelection: React.FC<ParticipationSelectionProps> = ({
             </div>
 
             <div className="grid grid-cols-4 gap-2 grid-rows-2 h-full">
-                {items.map((item) => (
-                    <div
-                        key={item.id}
-                        className={`${selectedItems.find((selectedItem) => selectedItem.id === item.id) ? "border-4 border-blue-500" : ""
-                            } rounded-lg h-full relative cursor-pointer transition-all duration-200 hover:scale-105 overflow-hidden`}
-                        onClick={() => handleSelectItem(item.id)}
-                    >
-                        {/* 배경 이미지 - 중앙 정렬, 꽉 채우기, 잘리지 않게 */}
+                {items.map((item) => {
+                    const isSelected = selectedIds.includes(item.id);
+                    return (
                         <div
-                            className="absolute inset-0 bg-center bg-cover bg-no-repeat"
-                            style={{ backgroundImage: `url(${item.avatarUrl})` }}
-                        />
-                        {/* 검은색 오버레이 */}
-                        <div className="absolute inset-0 bg-black bg-opacity-40" />
-                        {/* 우측 하단 텍스트 */}
-                        <div className="absolute bottom-2 right-2 text-white text-sm font-semibold drop-shadow-lg">
-                            {item.name}
+                            key={item.id}
+                            role="button"
+                            aria-pressed={isSelected}
+                            className={`rounded-lg h-full relative cursor-pointer transition-all duration-200 hover:scale-105 overflow-hidden ${
+                                isSelected
+                                    ? "ring-4 ring-yellow-400 shadow-[0_0_14px_rgba(250,204,21,0.55)]"
+                                    : "ring-1 ring-white/20 hover:ring-2 hover:ring-yellow-400/60"
+                            }`}
+                            onClick={() => onToggle(item.id)}
+                        >
+                            {/* 배경 이미지 - 중앙 정렬, 꽉 채우기 (원래 밝기 그대로) */}
+                            <div
+                                className="absolute inset-0 bg-center bg-cover bg-no-repeat"
+                                style={{ backgroundImage: `url(${item.avatarUrl})` }}
+                            />
+                            {/* 이름이 읽히도록 아래쪽에만 어둡게 */}
+                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 to-transparent" />
+                            {isSelected && (
+                                <div className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-yellow-400 text-black shadow">
+                                    <Icon name="Check" type="lucide" size={16} strokeWidth={3} />
+                                </div>
+                            )}
+                            {/* 우측 하단 텍스트 */}
+                            <div
+                                className="absolute bottom-1.5 right-2 text-lg font-black leading-none text-white"
+                                style={{ WebkitTextStroke: "4px #000", paintOrder: "stroke fill", textShadow: "0 2px 4px rgba(0,0,0,0.6)" }}
+                            >
+                                {item.name}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );

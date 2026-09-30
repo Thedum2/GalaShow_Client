@@ -15,6 +15,8 @@ export interface Participant {
 export interface ParticipantListItem {
     id: string;
     name: string;
+    /** 참가 신청한 방송 플랫폼. 없으면 ID로 임의 표시한다(샘플 데이터용). */
+    platform?: PlatformType;
     avatarUrl?: string;
     detail?: string;
     badgeLabel?: string;

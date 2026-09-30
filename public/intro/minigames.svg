@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140" width="560" height="140">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B1230"/><stop offset="1" stop-color="#05070F"/></linearGradient>
+  </defs>
+  <rect width="560" height="140" fill="url(#bg)"/>
+  <!-- side minigame cards -->
+  <g transform="rotate(-10 200 72)">
+    <rect x="160" y="28" width="80" height="92" rx="10" fill="#03C75A" stroke="#FFFFFF" stroke-opacity="0.3"/>
+    <path d="M186 70 l14 -14 l14 14 l-14 14 z" fill="#FFFFFF" opacity="0.9"/>
+  </g>
+  <g transform="rotate(10 360 72)">
+    <rect x="320" y="28" width="80" height="92" rx="10" fill="#FF0000" stroke="#FFFFFF" stroke-opacity="0.3"/>
+    <circle cx="360" cy="70" r="14" fill="none" stroke="#FFFFFF" stroke-width="5" opacity="0.9"/>
+  </g>
+  <!-- center card -->
+  <rect x="238" y="16" width="84" height="104" rx="12" fill="#0545B1" stroke="#FFDE59" stroke-width="2.5"/>
+  <g transform="translate(280 58)">
+    <rect x="-26" y="-14" width="52" height="28" rx="14" fill="#FFDE59"/>
+    <path d="M-16 0 h10 M-11 -5 v10" stroke="#0545B1" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="9" cy="-3" r="3" fill="#0545B1"/>
+    <circle cx="16" cy="4" r="3" fill="#0545B1"/>
+  </g>
+  <!-- timer bar -->
+  <rect x="250" y="96" width="60" height="8" rx="4" fill="#FFFFFF" opacity="0.2"/>
+  <rect x="250" y="96" width="38" height="8" rx="4" fill="#FFDE59"/>
+  <!-- round progress -->
+  <circle cx="262" cy="131" r="3" fill="#FFDE59"/>
+  <circle cx="274" cy="131" r="3" fill="#FFDE59"/>
+  <circle cx="286" cy="131" r="3" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="298" cy="131" r="3" fill="#FFFFFF" opacity="0.3"/>
+</svg>
