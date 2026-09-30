@@ -10,7 +10,7 @@ import { PATHS } from "@/routes/paths";
 
 export default function Winner() {
     const navigate = useNavigate();
-    const {unityProvider, isLoaded, loadingProgression} = useUnity();
+    const {unityProvider, isLoaded, loadingProgression, loadError} = useUnity();
 
     const { survivors, results, startedAt, reset } = useSessionStore();
     const resetLobby = useLobbyStore((s) => s.reset);
@@ -50,6 +50,7 @@ export default function Winner() {
                     unityProvider={unityProvider}
                     isLoaded={isLoaded}
                     loadingProgression={loadingProgression}
+                    loadError={loadError}
                 />
             </div>
 

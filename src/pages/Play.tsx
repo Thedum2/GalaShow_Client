@@ -30,7 +30,7 @@ function statusText(status: RgfStatus, error: string | null) {
  * 튜토리얼의 [시작하기]로 들어온다. 준비되면 자동으로 시작한다.
  */
 export default function Play() {
-    const { unityProvider, isLoaded, loadingProgression } = useUnity();
+    const { unityProvider, isLoaded, loadingProgression, loadError: unityLoadError } = useUnity();
     const navigate = useNavigate();
     const location = useLocation();
     const gameId = (location.state as { gameId?: number })?.gameId ?? useSessionStore.getState().currentGameId ?? undefined;
@@ -73,11 +73,11 @@ export default function Play() {
         <div className="h-full w-full relative">
             {/* Unity 전체 화면 */}
             <div className="absolute inset-0">
-                <UnityPlayer unityProvider={unityProvider} isLoaded={isLoaded} loadingProgression={loadingProgression} />
+                <UnityPlayer unityProvider={unityProvider} isLoaded={isLoaded} loadingProgression={loadingProgression} loadError={unityLoadError} />
             </div>
 
             {/* 진행 전·오류: Unity 로딩·초기화 화면을 덮는다 (게임 중·결과 정리 중에는 Unity 화면이 보인다) */}
-            {live.status !== "running" && live.status !== "completed" && (
+            {!unityLoadError && live.status !== "running" && live.status !== "completed" && (
                 <GameStageOverlay
                     eyebrow={`${roundLabel(round)} 라운드 · 참가 ${survivorCount}명`}
                     title={detail?.name ?? "게임 준비 중"}

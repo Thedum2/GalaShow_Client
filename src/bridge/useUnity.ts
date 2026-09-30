@@ -1,4 +1,4 @@
-﻿import {useEffect, useMemo, useRef} from "react";
+import {useEffect, useMemo, useRef} from "react";
 import {useUnityContext} from "react-unity-webgl";
 import {UNITY_BUILD} from "./unityConfig";
 import {unityService} from "@/bridge/unityService";
@@ -11,6 +11,7 @@ export function useUnity() {
         sendMessage,
         isLoaded,
         loadingProgression,
+        initialisationError,
     } = useUnityContext({
         loaderUrl: UNITY_BUILD.loaderUrl,
         dataUrl: UNITY_BUILD.dataUrl,
@@ -56,5 +57,5 @@ export function useUnity() {
         };
     }, [transport]);
 
-    return {unityProvider, isLoaded, loadingProgression, bridge: unityService};
+    return {unityProvider, isLoaded, loadingProgression, loadError: initialisationError, bridge: unityService};
 }

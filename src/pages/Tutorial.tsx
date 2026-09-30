@@ -35,7 +35,7 @@ function statusText(status: RgfStatus, error: string | null) {
  * [시작하기]로 실전(Play) 화면으로 넘어간다.
  */
 export default function Tutorial() {
-    const {unityProvider, isLoaded, loadingProgression} = useUnity();
+    const {unityProvider, isLoaded, loadingProgression, loadError} = useUnity();
     const navigate = useNavigate();
     const location = useLocation();
     const gameId = (location.state as { gameId?: number })?.gameId ?? useSessionStore.getState().currentGameId ?? undefined;
@@ -71,8 +71,12 @@ export default function Tutorial() {
 
     if (isLoadingDetail) {
         return (
-            <div className="flex h-full w-full items-center justify-center">
-                <span className="text-white text-3xl">게임 정보 로딩 중...</span>
+            <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-black">
+                <div className="text-3xl font-black tracking-widest text-yellow-300">GALASHOW</div>
+                <div className="h-2.5 w-64 overflow-hidden rounded-full bg-white/10">
+                    <div className="h-full w-1/4 animate-pulse rounded-full bg-yellow-400" />
+                </div>
+                <span className="text-lg font-bold text-white/70">게임 정보 불러오는 중...</span>
             </div>
         );
     }
@@ -136,8 +140,9 @@ export default function Tutorial() {
                         unityProvider={unityProvider}
                         isLoaded={isLoaded}
                         loadingProgression={loadingProgression}
+                        loadError={loadError}
                     />
-                    {practice.status !== "running" && (practice.practiceCount === 0 || practice.status === "error" || practice.status === "unsupported") && (
+                    {!loadError && practice.status !== "running" && (practice.practiceCount === 0 || practice.status === "error" || practice.status === "unsupported") && (
                         <GameStageOverlay
                             eyebrow="튜토리얼"
                             title={gameDetail.name}
