@@ -14,15 +14,15 @@ const OPTION_COLORS = [
 
 /**
  * 호스트 선택 팝업 (게임 공통). Unity가 RGFManager_PromptOpened로 열고 PromptClosed로 닫는다.
- * 선택지 설명과 함께 호스트가 고를 버튼을 보여 준다. 호스트가 고르면 바로 닫힌다
- * (방송 화면에는 Unity 상단의 "호스트 선택 완료"만 남는다).
+ * Unity 화면을 검게 가리고 그 위 가운데에 선택지 설명과 호스트가 고를 버튼을 보여 준다.
+ * 호스트가 고르면 바로 닫힌다 (방송 화면에는 Unity 상단의 "호스트 선택 완료"만 남는다).
  */
 export default function HostPromptPopup({ prompt, onSelect }: HostPromptPopupProps) {
     if (!prompt) return null;
 
     return (
-        <div className="absolute inset-x-0 top-[12%] z-20 flex justify-center px-6 animate-page-in motion-reduce:animate-none">
-            <div className="w-full max-w-[1100px] rounded-3xl border-2 border-yellow-500 bg-black/85 p-6 shadow-[0_0_30px_rgba(234,179,8,0.35)] backdrop-blur-sm">
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/90 px-6 animate-fade-in motion-reduce:animate-none">
+            <div className="w-full max-w-[1100px] rounded-3xl border-2 border-yellow-500 bg-gray-950 p-6 shadow-[0_0_40px_rgba(234,179,8,0.45)] animate-page-in motion-reduce:animate-none">
                 <div className="text-center">
                     <div className="text-5xl font-black text-yellow-300">{prompt.title}</div>
                     {prompt.description && <p className="mt-3 text-2xl font-bold leading-snug text-white/90">{prompt.description}</p>}

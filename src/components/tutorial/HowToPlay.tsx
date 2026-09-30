@@ -29,7 +29,7 @@ export default function HowToPlay({
             {/* 내용 영역 */}
             <div className="bg-gradient-to-b from-gray-800 to-gray-900 flex-1 px-6 py-5 overflow-y-auto">
                 {/* 질문 */}
-                <p className="text-yellow-400 font-bold text-base mb-4">
+                <p className="text-yellow-400 font-bold text-xl leading-snug mb-4">
                     {question}
                 </p>
 
@@ -37,10 +37,10 @@ export default function HowToPlay({
                 <div className="border-4 border-yellow-600 rounded-2xl p-4 space-y-3">
                     {descriptions.map((desc, index) => (
                         <div key={index} className="flex items-start gap-3">
-                            <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0">
-                                <span className="text-gray-900 font-black text-lg">{index + 1}</span>
+                            <div className="w-11 h-11 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0">
+                                <span className="text-gray-900 font-black text-xl">{index + 1}</span>
                             </div>
-                            <p className="text-white font-bold text-base flex-1 pt-2">{desc}</p>
+                            <p className="text-white font-bold text-xl leading-snug flex-1 pt-1.5">{desc}</p>
                         </div>
                     ))}
                 </div>
